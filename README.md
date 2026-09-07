@@ -16,6 +16,7 @@ This project is an **Autonomous College Academic Performance & Marksheet Portal*
 4. **Interactive D3.js Visualizations**: Bar charts, Pass/Fail donut charts, Scatter correlation plots, and Student Radar/Gauge diagrams.
 5. **Print-Ready Academic Marksheets**: Dedicated `@media print` styling for high-contrast, official A4 progress cards.
 
+
 ---
 
 ## 📁 2. Project Architecture & Directory Structure

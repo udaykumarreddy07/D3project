@@ -4427,17 +4427,13 @@ function getSubjectGradeInfo(rawMark) {
     if (mark >= 90) {
         return { grade: "O", gradePoint: 10, description: "Outstanding", isPass: true, badgeClass: "grade-O" };
     } else if (mark >= 80) {
-        return { grade: "A+", gradePoint: 9, description: "Excellent", isPass: true, badgeClass: "grade-Aplus" };
+        return { grade: "A", gradePoint: 9, description: "Excellent", isPass: true, badgeClass: "grade-A" };
     } else if (mark >= 70) {
-        return { grade: "A", gradePoint: 8, description: "Very Good", isPass: true, badgeClass: "grade-A" };
+        return { grade: "B", gradePoint: 8, description: "Very Good", isPass: true, badgeClass: "grade-B" };
     } else if (mark >= 60) {
-        return { grade: "B+", gradePoint: 7, description: "Good", isPass: true, badgeClass: "grade-Bplus" };
-    } else if (mark >= 55) {
-        return { grade: "B", gradePoint: 6, description: "Above Average", isPass: true, badgeClass: "grade-B" };
-    } else if (mark >= 45) {
-        return { grade: "C", gradePoint: 5, description: "Average", isPass: true, badgeClass: "grade-C" };
+        return { grade: "C", gradePoint: 7, description: "Good", isPass: true, badgeClass: "grade-C" };
     } else if (mark >= 35) {
-        return { grade: "P", gradePoint: 4, description: "Pass", isPass: true, badgeClass: "grade-P" };
+        return { grade: "D", gradePoint: 6, description: "Pass", isPass: true, badgeClass: "grade-D" };
     } else {
         return { grade: "F", gradePoint: 0, description: "Fail / Arrear", isPass: false, badgeClass: "grade-F" };
     }
@@ -4470,12 +4466,10 @@ function computeStatus(maths, science, english, programming) {
 function computeGrade(avg, status) {
     if (status === "Fail") return "F";
     if (avg >= 90) return "O";
-    if (avg >= 80) return "A+";
-    if (avg >= 70) return "A";
-    if (avg >= 60) return "B+";
-    if (avg >= 55) return "B";
-    if (avg >= 45) return "C";
-    if (avg >= 35) return "P";
+    if (avg >= 80) return "A";
+    if (avg >= 70) return "B";
+    if (avg >= 60) return "C";
+    if (avg >= 35) return "D";
     return "F";
 }
 
@@ -4754,7 +4748,7 @@ function viewFirstPassedCard() {
  * Synchronize What-If Simulator sliders with current student
  */
 function syncSimulatorInputs(student) {
-    if (!student) return;
+    if (!student || d3.select("#simMaths").empty()) return;
     d3.select("#simMaths").property("value", student.maths);
     d3.select("#simMathsVal").text(student.maths);
 
@@ -4774,6 +4768,7 @@ function syncSimulatorInputs(student) {
  * Live recalculation when sliders move
  */
 function updateSimulatorPreview() {
+    if (d3.select("#simMaths").empty()) return;
     const m = Number(d3.select("#simMaths").property("value")) || 0;
     const s = Number(d3.select("#simScience").property("value")) || 0;
     const e = Number(d3.select("#simEnglish").property("value")) || 0;
@@ -4818,7 +4813,7 @@ function updateSimulatorPreview() {
 function resetSimulator() {
     const student = students.find(s => s.id === currentSelectedStudentId);
     if (student) {
-        syncSimulatorInputs(student);
+        if (!d3.select("#simMaths").empty()) syncSimulatorInputs(student);
         populateMarksheet(student);
         showToast("Simulator reset to student's verified academic marks.", "info");
     }
