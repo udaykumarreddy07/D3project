@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Analytics & Student Marksheet Portal | BIET Autonomous</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- D3.js with fallback -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        if (typeof d3 === 'undefined') {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"><\/script>');
+        }
+    </script>
+
+    <!-- Modular Stylesheets (by Language/Layer) -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/charts.css">
+    <link rel="stylesheet" href="css/marksheet.css">
+</head>
+
+<body>
+
+    <!-- ====================================================
+         CENTERED AUTHENTICATION GATEWAY WITH GOOGLE SIGN-IN
+    ==================================================== -->
+    <div id="loginGateway">
+        <div class="auth-aurora-wave auth-aurora-1"></div>
+        <div class="auth-aurora-wave auth-aurora-2"></div>
+
+        <div class="login-standalone-card">
+            <div class="login-brand-header">
+                <div class="login-brand-icon">🏛️</div>
+                <h2>Academic Analytics Portal</h2>
+                <p>Sign in to access student marksheets & cohort records</p>
+            </div>
+
+            <!-- Role Selector Tabs -->
+            <div class="auth-nav-tabs">
+                <button type="button" class="auth-nav-tab active" id="tabSignIn" onclick="switchAuthTab('signin')">Sign In</button>
+                <button type="button" class="auth-nav-tab" id="tabRegister" onclick="switchAuthTab('register')">Create Account</button>
+            </div>
+
+            <!-- Google Institutional Sign-In Button -->
+            <button type="button" class="btn-google-auth" onclick="handleGoogleSignIn()">
+                <svg width="18" height="18" viewBox="0 0 18 18">
+                    <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/>
+                    <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                    <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.347 2.825.957 4.039l3.007-2.332z"/>
+                    <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/>
+                </svg>
+                <span>Continue with Google Account</span>
+            </button>
+
+            <div class="auth-divider">
+                <span>or sign in with credentials</span>
+            </div>
+
+            <!-- Sign In Form -->
+            <form id="signInForm" onsubmit="handleSignIn(event)">
+                <div class="auth-field-group">
+                    <label class="auth-field-label" for="loginUsername">Username / Roll No.</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">👤</span>
+                        <input type="text" id="loginUsername" class="auth-control" placeholder="e.g. admin or sneha"
+                            required autocomplete="username" value="admin">
+                    </div>
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label" for="loginPassword">Password</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">🔒</span>
+                        <input type="password" id="loginPassword" class="auth-control" placeholder="••••••••"
+                            required autocomplete="current-password" value="admin123">
+                        <button type="button" class="auth-pwd-toggle"
+                            onclick="togglePwdVisibility('loginPassword', this)">👁️</button>
+                    </div>
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label">Signing in as</label>
+                    <div class="auth-role-grid">
+                        <label class="auth-role-option selected" id="roleOptFaculty" onclick="selectRole('Faculty')">
+                            <input type="radio" name="loginRole" value="Faculty" checked>
+                            <span>👨‍🏫 Faculty / Admin</span>
+                        </label>
+                        <label class="auth-role-option" id="roleOptStudent" onclick="selectRole('Student')">
+                            <input type="radio" name="loginRole" value="Student">
+                            <span>🎓 Student</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="auth-extra-row">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" id="rememberMe" checked> Remember session
+                    </label>
+                    <a href="javascript:void(0)"
+                        onclick="showToast('Demo Credentials: admin / admin123, sneha / pass123, arun / pass123', 'info')">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-auth-submit">
+                    <span>Sign In to Portal</span>
+                    <span>&rarr;</span>
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
+                <div class="auth-field-group">
+                    <label class="auth-field-label" for="regFullName">Full Name</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">📝</span>
+                        <input type="text" id="regFullName" class="auth-control" placeholder="e.g. Uday Kiran" required>
+                    </div>
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label" for="regUsername">Choose Username / Roll No</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">👤</span>
+                        <input type="text" id="regUsername" class="auth-control" placeholder="e.g. uday" required>
+                    </div>
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label" for="regDepartment">Department / Branch</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">🏫</span>
+                        <select id="regDepartment" class="auth-control" style="cursor: pointer;">
+                            <option value="CSE">CSE - Computer Science & Engineering</option>
+                            <option value="ECE">ECE - Electronics & Comm. Engg</option>
+                            <option value="EEE">EEE - Electrical & Electronics Engg</option>
+                            <option value="MECH">MECH - Mechanical Engineering</option>
+                            <option value="CIVIL">CIVIL - Civil Engineering</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label" for="regPassword">Create Password</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">🔒</span>
+                        <input type="password" id="regPassword" class="auth-control" placeholder="Minimum 4 characters" required minlength="4">
+                    </div>
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label">Account Type</label>
+                    <div class="auth-role-grid">
+                        <label class="auth-role-option" id="regRoleFaculty" onclick="selectRegRole('Faculty')">
+                            <input type="radio" name="regRole" value="Faculty">
+                            <span>👨‍🏫 Faculty</span>
+                        </label>
+                        <label class="auth-role-option selected" id="regRoleStudent" onclick="selectRegRole('Student')">
+                            <input type="radio" name="regRole" value="Student" checked>
+                            <span>🎓 Student</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth-submit">
+                    <span>Create & Launch Account</span>
+                    <span>&rarr;</span>
+                </button>
+            </form>
+
+            <!-- Fast 1-Click Demo Profiles -->
+            <div class="quick-login-section">
+                <div class="quick-login-title">⚡ Fast 1-Click Demo Profiles</div>
+                <div class="quick-login-grid">
+                    <button type="button" class="quick-login-btn" onclick="quickLogin('admin')">
+                        <span>👨‍🏫 <b>Prof. Sharma</b> (Admin)</span>
+                    </button>
+                    <button type="button" class="quick-login-btn" onclick="quickLogin('sneha')">
+                        <span>🎓 <b>Sneha Devi</b> (Student)</span>
+                    </button>
+                    <button type="button" class="quick-login-btn" onclick="quickLogin('arun')">
+                        <span>🧑‍🎓 <b>Arun Kumar</b> (Student)</span>
+                    </button>
+                    <button type="button" class="quick-login-btn" onclick="quickLogin('priya')">
+                        <span>👩‍🎓 <b>Priya Sharma</b> (Student)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         STICKY APPLICATION HEADER
+    ==================================================== -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-title">
+                <h1 id="portalHeaderTitle">
+                    Academic Analytics & Marksheet Portal
+                    <span class="badge-version" id="portalRoleBadge">Faculty Portal</span>
+                </h1>
+                <p id="portalHeaderSub">Comprehensive Student Marksheet, D3.js Visualizations & Official Progress Cards</p>
+            </div>
+
+            <div class="header-actions">
+                <div class="realtime-indicator-pill">
+                    <span class="pulse-dot"></span>
+                    <span id="realtimeStatusText">Live Sync</span>
+                </div>
+
+                <!-- Quick Role Switcher for Demo testing -->
+                <div class="role-switcher-group" title="Quickly switch between faculty and student views">
+                    <button class="role-switch-btn" id="btnSwitchFaculty" onclick="quickSwitchRole('Faculty')">👨‍🏫 Faculty</button>
+                    <button class="role-switch-btn" id="btnSwitchStudent" onclick="quickSwitchRole('Student')">🎓 Student</button>
+                </div>
+
+                <div class="user-session-bar" id="userSessionPill">
+                    <div class="user-avatar-circle" id="userAvatarText">PS</div>
+                    <div class="user-info-text">
+                        <span class="user-info-name" id="userDisplayName">Prof. Sharma</span>
+                        <span class="user-info-role" id="userDisplayRole">Faculty / Admin</span>
+                    </div>
+                </div>
+
+                <!-- Sign Out -->
+                <button class="btn btn-outline-white" onclick="logoutUser()"
+                    style="border-color: rgba(244, 63, 94, 0.4); color: #fb7185;"
+                    title="Lock session & return to login gateway">
+                    🔒 Sign Out
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================================================
+         MAIN DASHBOARD: HORIZONTAL NAVIGATION & WORKSPACE
+    ==================================================== -->
+    <div class="container">
+
+        <!-- 1. Horizontal Top Navigation & Actions Bar -->
+        <div class="dashboard-horizontal-nav">
+            <nav class="horizontal-nav-tabs">
+                <button type="button" class="horizontal-nav-btn active" id="tabView-all" onclick="switchViewTab('all')">
+                    <span>🌟</span>
+                    <span>Full Dashboard Overview</span>
+                </button>
+                <button type="button" class="horizontal-nav-btn" id="tabView-analytics" onclick="switchViewTab('analytics')">
+                    <span>📊</span>
+                    <span>Live Analytics & Charts</span>
+                </button>
+                <button type="button" class="horizontal-nav-btn" id="tabView-marksheet" onclick="switchViewTab('marksheet')">
+                    <span>🎓</span>
+                    <span>Student Marksheet Hub</span>
+                </button>
+                <button type="button" class="horizontal-nav-btn" id="tabView-table" onclick="switchViewTab('table')">
+                    <span>📋</span>
+                    <span>Master Records Gradebook</span>
+                </button>
+            </nav>
+
+            <div class="horizontal-action-buttons faculty-control">
+                <button class="btn btn-primary" id="addStudentBtn" onclick="openAddStudentModal()">
+                    + Add New Student
+                </button>
+                <button class="btn btn-primary" id="livePushBtn" onclick="simulateRealtimePush()"
+                    style="background: #f59e0b; color: #1e1b4b; font-weight: 700;"
+                    title="Simulate real-time grade update via D3.js">
+                    ⚡ Live Push
+                </button>
+                <button class="btn btn-outline" id="exportCsvBtn" onclick="exportToCSV()">
+                    ⬇ CSV Export
+                </button>
+                <button class="btn btn-outline" id="resetBtn" onclick="resetToDefaultData()">
+                    ↺ Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. Horizontal Quick Filters & Cohort Snapshot Bar -->
+        <div class="dashboard-horizontal-filters faculty-control">
+            <div class="horizontal-filters-left">
+                <span class="horizontal-filter-label">⚡ Quick Filters:</span>
+                <div class="horizontal-filters-stack">
+                    <button type="button" class="quick-filter-pill active" id="pill-all" onclick="applyQuickFilter('all')">
+                        <span>👥 All Cohort</span>
+                        <b>(22)</b>
+                    </button>
+                    <button type="button" class="quick-filter-pill" id="pill-toppers" onclick="applyQuickFilter('topper')">
+                        <span>🌟 Grade O Toppers</span>
+                    </button>
+                    <button type="button" class="quick-filter-pill" id="pill-status-pass" onclick="applyQuickFilter('status', 'Pass')">
+                        <span>🟢 Passed</span>
+                    </button>
+                    <button type="button" class="quick-filter-pill" id="pill-status-fail" onclick="applyQuickFilter('status', 'Fail')">
+                        <span>🔴 Arrears (&lt;35)</span>
+                    </button>
+                    <button type="button" class="quick-filter-pill" id="pill-low-att" onclick="applyQuickFilter('attendance')">
+                        <span>⚠️ Low Attendance</span>
+                    </button>
+                </div>
+
+                <div class="horizontal-dept-divider"></div>
+
+                <div class="horizontal-dept-pills">
+                    <button type="button" class="quick-filter-pill" id="pill-dept-CSE" onclick="applyQuickFilter('dept', 'CSE')">CSE</button>
+                    <button type="button" class="quick-filter-pill" id="pill-dept-ECE" onclick="applyQuickFilter('dept', 'ECE')">ECE</button>
+                    <button type="button" class="quick-filter-pill" id="pill-dept-EEE" onclick="applyQuickFilter('dept', 'EEE')">EEE</button>
+                    <button type="button" class="quick-filter-pill" id="pill-dept-MECH" onclick="applyQuickFilter('dept', 'MECH')">MECH</button>
+                    <button type="button" class="quick-filter-pill" id="pill-dept-CIVIL" onclick="applyQuickFilter('dept', 'CIVIL')">CIVIL</button>
+                </div>
+            </div>
+
+            <div class="horizontal-cohort-snapshot">
+                <div class="cohort-snap-pill">
+                    <span>👥 Total:</span>
+                    <b id="sidebarTotalEnrolled">22 Students</b>
+                </div>
+                <div class="cohort-snap-pill">
+                    <span>📊 Mean:</span>
+                    <b id="sidebarClassMean">76.5%</b>
+                </div>
+                <div class="cohort-snap-pill">
+                    <span>Pass:</span>
+                    <b id="sidebarPassClearance" style="color: #34d399;">20/22 (91%)</b>
+                </div>
+                <div class="cohort-snap-pill">
+                    <span>Avg Att:</span>
+                    <b id="sidebarAvgAttendance" style="color: #38bdf8;">84.8%</b>
+                </div>
+            </div>
+        </div>
+
+                <!-- Student Personalized Banner -->
+                <section class="student-portal-banner student-control" id="studentBanner" style="display: none;">
+                    <div>
+                        <h2 id="studentBannerGreeting">Welcome, Student! 👋</h2>
+                        <p id="studentBannerSub">Here is your verified academic evaluation, subject marks breakdown, and official semester progress card.</p>
+                        <div id="studentBannerMetrics" style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                            <span class="badge"
+                                style="background: rgba(255,255,255,0.2); color: #fff; font-size: 13px; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.35);">
+                                📊 Aggregate Percentage: <b id="bannerTotalPct" style="margin-left: 4px; color: #34d399; font-size: 14px;">0.00%</b>
+                            </span>
+                            <span class="badge"
+                                style="background: rgba(255,255,255,0.15); color: #e2e8f0; font-size: 13px; padding: 6px 12px;">
+                                🏆 Grand Total: <b id="bannerGrandTotal" style="margin-left: 4px; color: #fef08a;">0 / 400</b>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-success" onclick="switchViewTab('marksheet')" style="font-weight: 700;">
+                            🎓 View Official Marksheet Card
+                        </button>
+                    </div>
+                </section>
+
+                <!-- KPI Metrics Overview Grid (6 Comprehensive Institutional Metrics) -->
+                <section class="kpi-container">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" id="kpiIcon1">👥</div>
+                        <div class="kpi-details">
+                            <h3 id="kpiTitle1">Total Students</h3>
+                            <div class="value" id="kpiValue1">0</div>
+                            <div class="subtext" id="kpiSubtext1">Active records</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card kpi-blue">
+                        <div class="kpi-icon" id="kpiIcon2">📊</div>
+                        <div class="kpi-details">
+                            <h3 id="kpiTitle2">Cohort Total %</h3>
+                            <div class="value" id="kpiValue2">0.00%</div>
+                            <div class="subtext" id="kpiSubtext2">Across subjects</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card kpi-green">
+                        <div class="kpi-icon" id="kpiIcon3">🎓</div>
+                        <div class="kpi-details">
+                            <h3 id="kpiTitle3">Pass Status</h3>
+                            <div class="value" id="kpiValue3">0%</div>
+                            <div class="subtext" id="kpiSubtext3">Min 35 in all subjects</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card kpi-amber">
+                        <div class="kpi-icon" id="kpiIcon4">⏱</div>
+                        <div class="kpi-details">
+                            <h3 id="kpiTitle4">Attendance</h3>
+                            <div class="value" id="kpiValue4">0%</div>
+                            <div class="subtext" id="kpiSubtext4">Eligibility cutoff: 75%</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card kpi-purple">
+                        <div class="kpi-icon" id="kpiIcon5">🌟</div>
+                        <div class="kpi-details">
+                            <h3 id="kpiTitle5">Cohort Topper</h3>
+                            <div class="value" id="kpiValue5" style="font-size: 15px;">-</div>
+                            <div class="subtext" id="kpiSubtext5">-</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-rose">
+                        <div class="kpi-icon" id="kpiIcon6">⚠️</div>
+                        <div class="kpi-details">
+                            <h3 id="kpiTitle6">Arrears / Remedials</h3>
+                            <div class="value" id="kpiValue6">0 Students</div>
+                            <div class="subtext" id="kpiSubtext6">Academic alerts</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ====================================================
+                     SECTION 1: ANALYTICS & D3 VISUALIZATIONS
+                ==================================================== -->
+                <div id="analyticsSection">
+                    <!-- Horizontal Section Heading Card -->
+                    <div class="section-horizontal-heading-card">
+                        <div class="horizontal-heading-content">
+                            <div class="horizontal-heading-tag">ACADEMIC COHORT VISUALIZATIONS</div>
+                            <div class="horizontal-heading-title">📊 Subject Performance & Student Analytics</div>
+                            <div class="horizontal-heading-sub">Interactive D3.js evaluation across engineering departments with real-time filters</div>
+                        </div>
+
+                        <div class="horizontal-heading-actions">
+                            <button type="button" class="btn btn-outline btn-sm" onclick="openColorGuideModal()"
+                                title="Click to view why each color is used across graphs and charts">
+                                🎨 Color Meaning & Indicator Key
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Faculty Detailed Filter Toolbar -->
+                    <section class="filters faculty-control" id="facultyFilterSection">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label for="departmentFilter">Department</label>
+                                <select id="departmentFilter">
+                                    <option value="All">All Departments</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="MECH">MECH</option>
+                                    <option value="CIVIL">CIVIL</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="genderFilter">Gender</label>
+                                <select id="genderFilter">
+                                    <option value="All">All Genders</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="statusFilter">Status (Pass/Fail)</label>
+                                <select id="statusFilter">
+                                    <option value="All">All Status (Pass & Fail)</option>
+                                    <option value="Pass">Pass Only (Eligible for Card)</option>
+                                    <option value="Fail">Fail Only (&lt;35 marks)</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="gradeFilter">Grade</label>
+                                <select id="gradeFilter">
+                                    <option value="All">All Grades</option>
+                                    <option value="O">Grade O (&ge;90)</option>
+                                    <option value="A">Grade A (80-89)</option>
+                                    <option value="B">Grade B (70-79)</option>
+                                    <option value="C">Grade C (60-69)</option>
+                                    <option value="D">Grade D (35-59)</option>
+                                    <option value="F">Grade F (&lt;35 / Fail)</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group" style="flex: 2; min-width: 200px;">
+                                <label for="searchInput">Search Students</label>
+                                <input type="text" id="searchInput" placeholder="Search by student name or roll ID...">
+                            </div>
+
+                            <div class="filter-actions">
+                                <button class="btn btn-outline" onclick="resetFilters()">Clear Filters</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- D3 Visualizations Grid -->
+                    <section class="charts">
+                        <div class="chart-card" id="cardSubjectChart">
+                            <div class="chart-header">
+                                <h2 id="chartTitle1">📚 Cohort Subject Average Marks</h2>
+                            </div>
+                            <svg id="subjectChart"></svg>
+                            <div class="chart-legend-bar" id="legendSubjectChart"></div>
+                        </div>
+
+                        <div class="chart-card" id="cardGradeChart">
+                            <div class="chart-header">
+                                <h2 id="chartTitle2">🍩 Grade & Result Distribution</h2>
+                            </div>
+                            <svg id="gradeChart"></svg>
+                            <div class="chart-legend-bar" id="legendGradeChart"></div>
+                        </div>
+
+                        <div class="chart-card" id="cardAttendanceChart">
+                            <div class="chart-header">
+                                <h2 id="chartTitle3">📈 Attendance vs Performance Scatter</h2>
+                            </div>
+                            <svg id="attendanceChart"></svg>
+                            <div class="chart-legend-bar" id="legendAttendanceChart"></div>
+                        </div>
+
+                        <div class="chart-card" id="cardGenderChart">
+                            <div class="chart-header">
+                                <h2 id="chartTitle4">⚖️ Gender-wise Performance</h2>
+                            </div>
+                            <svg id="genderChart"></svg>
+                            <div class="chart-legend-bar" id="legendGenderChart"></div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ====================================================
+                     SECTION 2: DEDICATED SINGLE-PAGE MARKSHEET HUB
+                ==================================================== -->
+                <div id="marksheetHubSection" style="margin-bottom: 30px;">
+                    <!-- Horizontal Heading Card -->
+                    <div class="section-horizontal-heading-card">
+                        <div class="horizontal-heading-content">
+                            <div class="horizontal-heading-tag">OFFICIAL ACADEMIC TRANSCRIPT</div>
+                            <div class="horizontal-heading-title">🎓 Student Semester Marksheet Progress Card</div>
+                            <div class="horizontal-heading-sub">Choice Based Credit System (CBCS) official 10-point evaluation card</div>
+                        </div>
+
+                        <div class="marksheet-selector-bar">
+                            <select id="hubStudentSelect" class="marksheet-student-select" onchange="onHubStudentChange(this.value)"></select>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="navigateHubStudent(-1)" title="Previous Student">◀ Prev</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="navigateHubStudent(1)" title="Next Student">Next ▶</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="copyTranscriptSummary()" title="Copy Transcript Summary">📋 Copy</button>
+                            <button type="button" class="btn btn-accent btn-sm" onclick="window.print()" title="Print A4 Marksheet">🖨️ Print Marksheet</button>
+                        </div>
+                    </div>
+
+                    <!-- Single-Page Complete Official Progress Card Certificate -->
+                    <div class="progress-card-modal">
+                        <!-- College Letterhead (College Information) -->
+                        <div class="college-letterhead">
+                            <div class="college-header-top">
+                                <svg class="college-emblem-svg" viewBox="0 0 100 100" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="50" cy="50" r="48" fill="#1e1b4b" stroke="#f59e0b" stroke-width="4" />
+                                    <circle cx="50" cy="50" r="40" stroke="#cbd5e1" stroke-dasharray="3,3" stroke-width="1.5" />
+                                    <path d="M50 18 L76 34 L76 66 L50 82 L24 66 L24 34 Z" fill="rgba(245, 158, 11, 0.2)"
+                                        stroke="#f59e0b" stroke-width="2.5" />
+                                    <path d="M50 26 L50 74 M32 38 L68 62 M32 62 L68 38" stroke="#fef08a" stroke-width="2" />
+                                    <circle cx="50" cy="50" r="14" fill="#f59e0b" />
+                                    <text x="50" y="55" font-family="'Cinzel', serif" font-size="12" font-weight="900"
+                                        fill="#1e1b4b" text-anchor="middle">BIET</text>
+                                </svg>
+
+                                <div class="college-title-block">
+                                    <div class="college-name-primary">BHARATH INSTITUTE OF ENGINEERING & TECHNOLOGY</div>
+                                    <div class="college-autonomous-badge">UGC AUTONOMOUS INSTITUTION &bull; ESTD. 1998</div>
+                                </div>
+                            </div>
+
+                            <div class="college-affiliation-text">
+                                Approved by AICTE, New Delhi &bull; Affiliated to State Technological University (JNTUH)<br>
+                                Accredited by NAAC with <b>'A++' Grade</b> &bull; NBA Accredited UG Programmes &bull; Hyderabad - 501510
+                            </div>
+
+                            <div class="marksheet-title-ribbon">
+                                OFFICIAL SEMESTER GRADE REPORT & ACADEMIC TRANSCRIPT (CBCS)
+                            </div>
+                        </div>
+
+                        <div class="progress-card-body">
+                            <div class="progress-watermark">BIET OFFICIAL TRANSCRIPT</div>
+
+                            <div class="marksheet-serial-row">
+                                <div>
+                                    <span>CERTIFICATE SL. NO: </span>
+                                    <span class="serial-badge val-cardSerialNo">BIET/2026/UG/0004</span>
+                                </div>
+                                <div>
+                                    <span>EXAMINATION: </span>
+                                    <span style="color: #0f172a; font-weight: 800;">B.Tech Semester VI (Annual Exams 2026)</span>
+                                </div>
+                                <div>
+                                    <span>STATUS: </span>
+                                    <span style="color: #166534; font-weight: 800;">OFFICIAL & VERIFIED</span>
+                                </div>
+                            </div>
+
+                            <!-- Student Basic Information Panel -->
+                            <div class="student-details-panel">
+                                <div class="detail-item">
+                                    <span class="lbl">Student Name</span>
+                                    <span class="val val-cardStudentName">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="lbl">Roll No / Reg No</span>
+                                    <span class="val val-cardStudentID">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="lbl">Branch / Department</span>
+                                    <span class="val val-cardStudentDept">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="lbl">Degree Program</span>
+                                    <span class="val">B.Tech</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="lbl">Semester & Academic Year</span>
+                                    <span class="val">Semester VI (2025-2026)</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="lbl">Examination Status</span>
+                                    <span class="val" style="color: #166534; font-weight: 800;">REGULAR (MAY 2026)</span>
+                                </div>
+                            </div>
+
+                            <!-- Subject Names, Marks, Credits, Grade Table (Clean 8 Columns, No Max/Min) -->
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 14%; text-align: center;">Course Code</th>
+                                        <th style="width: 32%;">Course Title</th>
+                                        <th style="width: 9%; text-align: center;">Credits</th>
+                                        <th style="width: 9%; text-align: center;">Marks</th>
+                                        <th style="width: 9%; text-align: center;">Grade</th>
+                                        <th style="width: 9%; text-align: center;">Grade Point</th>
+                                        <th style="width: 9%; text-align: center;">Credit Points</th>
+                                        <th style="width: 9%; text-align: center;">Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hubMarksTableBody"></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2" style="text-align: right; font-weight: 800;">CUMULATIVE EVALUATION:</td>
+                                        <td style="text-align: center; font-weight: 800;">16.0</td>
+                                        <td class="val-cardGrandTotal" style="text-align: center; font-weight: 900; font-size: 13px; color: var(--primary);">0</td>
+                                        <td class="val-cardOverallGradeCell" style="text-align: center; font-weight: 800;">-</td>
+                                        <td style="text-align: center; font-weight: 800;">-</td>
+                                        <td class="val-cardTotalCreditPoints" style="text-align: center; font-weight: 800; color: #4f46e5;">-</td>
+                                        <td class="val-cardOverallStatusCell" style="text-align: center; font-weight: 800;">-</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                            <!-- Summary Single Row -->
+                            <div class="report-summary-grid">
+                                <div class="summary-block">
+                                    <div class="num val-cardAverage">0.0%</div>
+                                    <div class="lbl">Aggregate Percentage</div>
+                                </div>
+                                <div class="summary-block">
+                                    <div class="num val-cardGPA">0.0 / 10</div>
+                                    <div class="lbl">Semester SGPA (CBCS)</div>
+                                </div>
+                                <div class="summary-block">
+                                    <div class="num val-cardGrade">-</div>
+                                    <div class="lbl">Letter Grade</div>
+                                </div>
+                                <div class="summary-block">
+                                    <div class="num val-cardDivision">-</div>
+                                    <div class="lbl">Academic Classification</div>
+                                </div>
+                            </div>
+
+                            <!-- Official Stamp & Signatures -->
+                            <div class="result-stamp-panel">
+                                <div class="stamp-and-security">
+                                    <div class="val-cardStampContainer"></div>
+                                    <div class="security-cert-hash">
+                                        <span class="cert-dot"></span>
+                                        <span class="val-cardCertHash">BIET-DIGI-CERT-2026-0004</span>
+                                    </div>
+                                </div>
+
+                                <!-- University Circular Seal Emblem -->
+                                <div class="university-official-seal" onclick="showSealVerification()" title="Official Institutional Seal • Click to verify Accreditation">
+                                    <svg class="seal-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="40" cy="40" r="38" stroke="#1e3a8a" stroke-width="2" stroke-dasharray="4,2"/>
+                                        <circle cx="40" cy="40" r="33" stroke="#1e3a8a" stroke-width="1.2"/>
+                                        <circle cx="40" cy="40" r="14" fill="rgba(30, 58, 138, 0.08)" stroke="#1e3a8a" stroke-width="1"/>
+                                        <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">BIET AUTONOMOUS</text>
+                                        <text x="40" y="42.5" font-size="7.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" font-family="'Cinzel', serif">SEAL</text>
+                                        <text x="40" y="60" font-size="4.5" font-weight="800" fill="#1e3a8a" text-anchor="middle" letter-spacing="0.5">★ EXAM BRANCH ★</text>
+                                    </svg>
+                                </div>
+
+                                <!-- Official Authorized Interactive Signatures -->
+                                <div class="signatures-wrapper">
+                                    <div class="signature-col val-cardSigFaculty" onclick="showSignatoryVerification('faculty')" title="Click to verify Department HOD digital signature">
+                                        <div class="sig-image-box val-cardSigFacultySvg"></div>
+                                        <div class="sig-line"></div>
+                                        <div class="sig-officer-name val-cardSigFacultyName">Prof. R. K. Sharma</div>
+                                        <div class="sig-text val-cardSigFacultyRole">Faculty In-Charge</div>
+                                        <div class="sig-cert-tag">✓ Digitally Signed</div>
+                                    </div>
+
+                                    <div class="signature-col val-cardSigCoe" onclick="showSignatoryVerification('coe')" title="Click to verify Controller of Examinations signature">
+                                        <div class="sig-image-box val-cardSigCoeSvg"></div>
+                                        <div class="sig-line"></div>
+                                        <div class="sig-officer-name">Dr. K. Ramanathan</div>
+                                        <div class="sig-text">Controller of Exams</div>
+                                        <div class="sig-cert-tag">✓ Digitally Signed</div>
+                                    </div>
+
+                                    <div class="signature-col val-cardSigPrincipal" onclick="showSignatoryVerification('principal')" title="Click to verify Principal signature">
+                                        <div class="sig-image-box val-cardSigPrincipalSvg"></div>
+                                        <div class="sig-line"></div>
+                                        <div class="sig-officer-name">Dr. S. N. V. Prasad</div>
+                                        <div class="sig-text">Principal / Dean</div>
+                                        <div class="sig-cert-tag">✓ Digitally Signed</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ====================================================
+                     SECTION 3: MASTER STUDENT GRADEBOOK & RECORDS TABLE
+                ==================================================== -->
+                <div id="tableSection">
+                    <!-- Horizontal Heading Card -->
+                    <div class="section-horizontal-heading-card">
+                        <div class="horizontal-heading-content">
+                            <div class="horizontal-heading-tag">STUDENT GRADEBOOK & REGISTRATION</div>
+                            <div class="horizontal-heading-title" id="tableSectionHeading">📋 Cohort Master Evaluation Records</div>
+                            <div class="horizontal-heading-sub">Searchable, sortable student marksheet records with quick academic progress card viewer</div>
+                        </div>
+
+                        <div>
+                            <button class="btn btn-accent btn-sm faculty-control" onclick="openAddStudentModal()">+ Add New Student</button>
+                        </div>
+                    </div>
+
+                    <section class="table-card">
+                        <div class="table-toolbar">
+                            <div class="table-info" id="tableRecordCount">Showing records</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span class="badge status-pass">Pass: All Subjects &ge; 35</span>
+                                <span class="badge status-fail">Fail: Any Subject &lt; 35</span>
+                                <span class="badge" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc;">🎓 Official Marksheet</span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr id="tableHeaderRow">
+                                        <th onclick="sortTable('id')">ID</th>
+                                        <th onclick="sortTable('name')">Name</th>
+                                        <th onclick="sortTable('department')">Dept</th>
+                                        <th onclick="sortTable('gender')">Gender</th>
+                                        <th onclick="sortTable('maths')">Maths</th>
+                                        <th onclick="sortTable('science')">Science</th>
+                                        <th onclick="sortTable('english')">English</th>
+                                        <th onclick="sortTable('programming')">Prog</th>
+                                        <th onclick="sortTable('total')">Total (400)</th>
+                                        <th onclick="sortTable('average')">Percentage (%)</th>
+                                        <th onclick="sortTable('attendance')">Attendance</th>
+                                        <th onclick="sortTable('status')">Status</th>
+                                        <th onclick="sortTable('grade')">Grade</th>
+                                        <th style="cursor: default;">Progress Card</th>
+                                        <th class="faculty-control" id="thActions" style="cursor: default;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentTable"></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+    </div>
+
+    <!-- ====================================================
+         POPUP OFFICIAL PROGRESS CARD / MARKSHEET MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="progressCardModal">
+        <div class="modal-content progress-card-modal" id="progressCardContent">
+            <div class="college-letterhead">
+                <button class="modal-close" style="position: absolute; right: 18px; top: 16px; color: #cbd5e1;"
+                    onclick="closeProgressCardModal()">&times;</button>
+
+                <div class="college-header-top">
+                    <svg class="college-emblem-svg" viewBox="0 0 100 100" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="48" fill="#1e1b4b" stroke="#f59e0b" stroke-width="4" />
+                        <circle cx="50" cy="50" r="40" stroke="#cbd5e1" stroke-dasharray="3,3" stroke-width="1.5" />
+                        <path d="M50 18 L76 34 L76 66 L50 82 L24 66 L24 34 Z" fill="rgba(245, 158, 11, 0.2)"
+                            stroke="#f59e0b" stroke-width="2.5" />
+                        <path d="M50 26 L50 74 M32 38 L68 62 M32 62 L68 38" stroke="#fef08a" stroke-width="2" />
+                        <circle cx="50" cy="50" r="14" fill="#f59e0b" />
+                        <text x="50" y="55" font-family="'Cinzel', serif" font-size="12" font-weight="900"
+                            fill="#1e1b4b" text-anchor="middle">BIET</text>
+                    </svg>
+
+                    <div class="college-title-block">
+                        <div class="college-name-primary">BHARATH INSTITUTE OF ENGINEERING & TECHNOLOGY</div>
+                        <div class="college-autonomous-badge">UGC AUTONOMOUS INSTITUTION &bull; ESTD. 1998</div>
+                    </div>
+                </div>
+
+                <div class="college-affiliation-text">
+                    Approved by AICTE, New Delhi &bull; Affiliated to State Technological University (JNTUH)<br>
+                    Accredited by NAAC with <b>'A++' Grade</b> &bull; NBA Accredited UG Programmes &bull; Hyderabad - 501510
+                </div>
+
+                <div class="marksheet-title-ribbon">
+                    OFFICIAL SEMESTER GRADE REPORT & ACADEMIC TRANSCRIPT (CBCS)
+                </div>
+            </div>
+
+            <div class="progress-card-body">
+                <div class="progress-watermark">BIET OFFICIAL TRANSCRIPT</div>
+
+                <div class="marksheet-serial-row">
+                    <div>
+                        <span>CERTIFICATE SL. NO: </span>
+                        <span class="serial-badge val-cardSerialNo">BIET/2026/UG/0004</span>
+                    </div>
+                    <div>
+                        <span>EXAMINATION: </span>
+                        <span style="color: #0f172a; font-weight: 800;">B.Tech Semester VI (Annual Exams 2026)</span>
+                    </div>
+                    <div>
+                        <span>STATUS: </span>
+                        <span style="color: #166534; font-weight: 800;">OFFICIAL & VERIFIED</span>
+                    </div>
+                </div>
+
+                <!-- Student Basic Information -->
+                <div class="student-details-panel">
+                    <div class="detail-item">
+                        <span class="lbl">Student Name</span>
+                        <span class="val val-cardStudentName">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="lbl">Roll No / Reg No</span>
+                        <span class="val val-cardStudentID">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="lbl">Branch / Department</span>
+                        <span class="val val-cardStudentDept">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="lbl">Degree Program</span>
+                        <span class="val">B.Tech</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="lbl">Semester & Academic Year</span>
+                        <span class="val">Semester VI (2025-2026)</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="lbl">Examination Status</span>
+                        <span class="val" style="color: #166534; font-weight: 800;">REGULAR (MAY 2026)</span>
+                    </div>
+                </div>
+
+                <!-- Subject Names, Marks, Credits, Grade Table (Clean 8 Columns, No Max/Min) -->
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 14%; text-align: center;">Course Code</th>
+                            <th style="width: 32%;">Course Title</th>
+                            <th style="width: 9%; text-align: center;">Credits</th>
+                            <th style="width: 9%; text-align: center;">Marks</th>
+                            <th style="width: 9%; text-align: center;">Grade</th>
+                            <th style="width: 9%; text-align: center;">Grade Point</th>
+                            <th style="width: 9%; text-align: center;">Credit Points</th>
+                            <th style="width: 9%; text-align: center;">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cardMarksTableBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" style="text-align: right; font-weight: 800;">CUMULATIVE EVALUATION:</td>
+                            <td style="text-align: center; font-weight: 800;">16.0</td>
+                            <td class="val-cardGrandTotal" style="text-align: center; font-weight: 900; font-size: 13px; color: var(--primary);">0</td>
+                            <td class="val-cardOverallGradeCell" style="text-align: center; font-weight: 800;">-</td>
+                            <td style="text-align: center; font-weight: 800;">-</td>
+                            <td class="val-cardTotalCreditPoints" style="text-align: center; font-weight: 800; color: #4f46e5;">-</td>
+                            <td class="val-cardOverallStatusCell" style="text-align: center; font-weight: 800;">-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Summary Grid -->
+                <div class="report-summary-grid">
+                    <div class="summary-block">
+                        <div class="num val-cardAverage">0.0%</div>
+                        <div class="lbl">Aggregate Percentage</div>
+                    </div>
+                    <div class="summary-block">
+                        <div class="num val-cardGPA">0.0 / 10</div>
+                        <div class="lbl">Semester SGPA (CBCS)</div>
+                    </div>
+                    <div class="summary-block">
+                        <div class="num val-cardGrade">-</div>
+                        <div class="lbl">Letter Grade</div>
+                    </div>
+                    <div class="summary-block">
+                        <div class="num val-cardDivision">-</div>
+                        <div class="lbl">Academic Classification</div>
+                    </div>
+                </div>
+
+                <!-- Official Stamp & Signatures -->
+                <div class="result-stamp-panel">
+                    <div class="stamp-and-security">
+                        <div class="val-cardStampContainer"></div>
+                        <div class="security-cert-hash">
+                            <span class="cert-dot"></span>
+                            <span class="val-cardCertHash">BIET-DIGI-CERT-2026-0004</span>
+                        </div>
+                    </div>
+
+                    <!-- University Circular Seal Emblem -->
+                    <div class="university-official-seal" onclick="showSealVerification()" title="Official Institutional Seal • Click to verify Accreditation">
+                        <svg class="seal-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="38" stroke="#1e3a8a" stroke-width="2" stroke-dasharray="4,2"/>
+                            <circle cx="40" cy="40" r="33" stroke="#1e3a8a" stroke-width="1.2"/>
+                            <circle cx="40" cy="40" r="14" fill="rgba(30, 58, 138, 0.08)" stroke="#1e3a8a" stroke-width="1"/>
+                            <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">BIET AUTONOMOUS</text>
+                            <text x="40" y="42.5" font-size="7.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" font-family="'Cinzel', serif">SEAL</text>
+                            <text x="40" y="60" font-size="4.5" font-weight="800" fill="#1e3a8a" text-anchor="middle" letter-spacing="0.5">★ EXAM BRANCH ★</text>
+                        </svg>
+                    </div>
+
+                    <!-- Official Authorized Interactive Signatures -->
+                    <div class="signatures-wrapper">
+                        <div class="signature-col val-cardSigFaculty" onclick="showSignatoryVerification('faculty')" title="Click to verify Department HOD digital signature">
+                            <div class="sig-image-box val-cardSigFacultySvg"></div>
+                            <div class="sig-line"></div>
+                            <div class="sig-officer-name val-cardSigFacultyName">Prof. R. K. Sharma</div>
+                            <div class="sig-text val-cardSigFacultyRole">Faculty In-Charge</div>
+                            <div class="sig-cert-tag">✓ Digitally Signed</div>
+                        </div>
+
+                        <div class="signature-col val-cardSigCoe" onclick="showSignatoryVerification('coe')" title="Click to verify Controller of Examinations signature">
+                            <div class="sig-image-box val-cardSigCoeSvg"></div>
+                            <div class="sig-line"></div>
+                            <div class="sig-officer-name">Dr. K. Ramanathan</div>
+                            <div class="sig-text">Controller of Exams</div>
+                            <div class="sig-cert-tag">✓ Digitally Signed</div>
+                        </div>
+
+                        <div class="signature-col val-cardSigPrincipal" onclick="showSignatoryVerification('principal')" title="Click to verify Principal signature">
+                            <div class="sig-image-box val-cardSigPrincipalSvg"></div>
+                            <div class="sig-line"></div>
+                            <div class="sig-officer-name">Dr. S. N. V. Prasad</div>
+                            <div class="sig-text">Principal / Dean</div>
+                            <div class="sig-cert-tag">✓ Digitally Signed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeProgressCardModal()">Close</button>
+                <button type="button" class="btn btn-outline" onclick="copyTranscriptSummary()">📋 Copy Summary</button>
+                <button type="button" class="btn btn-accent" onclick="window.print()">🖨️ Print Marksheet PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         ADD / EDIT STUDENT MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="studentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Student Record</h3>
+                <button class="modal-close" onclick="closeStudentModal()">&times;</button>
+            </div>
+
+            <form id="studentForm" onsubmit="handleSaveStudent(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="editStudentId">
+
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label for="studentName">Student Full Name *</label>
+                            <input type="text" id="studentName" class="form-control" placeholder="e.g. Ananya Rao" required>
+                        </div>
+
+                        <div>
+                            <label for="studentDepartment">Department *</label>
+                            <select id="studentDepartment" class="form-control" required>
+                                <option value="CSE">CSE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="MECH">MECH</option>
+                                <option value="CIVIL">CIVIL</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="studentGender">Gender *</label>
+                            <select id="studentGender" class="form-control" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="studentAttendance">Attendance (%) [0-100] *</label>
+                            <input type="number" id="studentAttendance" class="form-control" min="0" max="100" placeholder="e.g. 88" required>
+                        </div>
+
+                        <div class="marks-section">
+                            <div class="marks-section-title">
+                                <span>Subject Marks (Passing Minimum &ge; 35)</span>
+                                <span id="previewGrade" style="font-weight: 700; font-size: 13px;">Avg: 0.0 | Status: -</span>
+                            </div>
+                            <div class="marks-grid">
+                                <div>
+                                    <label for="markMaths">Maths *</label>
+                                    <input type="number" id="markMaths" class="form-control mark-input" min="0" max="100" placeholder="0 - 100" required oninput="updateGradePreview()">
+                                </div>
+                                <div>
+                                    <label for="markScience">Science *</label>
+                                    <input type="number" id="markScience" class="form-control mark-input" min="0" max="100" placeholder="0 - 100" required oninput="updateGradePreview()">
+                                </div>
+                                <div>
+                                    <label for="markEnglish">English *</label>
+                                    <input type="number" id="markEnglish" class="form-control mark-input" min="0" max="100" placeholder="0 - 100" required oninput="updateGradePreview()">
+                                </div>
+                                <div>
+                                    <label for="markProgramming">Programming *</label>
+                                    <input type="number" id="markProgramming" class="form-control mark-input" min="0" max="100" placeholder="0 - 100" required oninput="updateGradePreview()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="closeStudentModal()">Cancel</button>
+                    <button type="submit" class="btn btn-accent" id="saveButton">Save Student Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         ACADEMIC COLOR SCHEME & INDICATOR INTELLIGENCE MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="colorGuideModal">
+        <div class="modal-content" style="max-width: 840px;">
+            <div class="modal-header">
+                <div>
+                    <h3 style="display: flex; align-items: center; gap: 8px; font-size: 18px;">
+                        <span>🎨</span> Academic Analytics Color System & Indicator Guide
+                    </h3>
+                    <p style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Institutional color coding criteria, evaluation standards, and domain indicators</p>
+                </div>
+                <button class="modal-close" onclick="closeColorGuideModal()">&times;</button>
+            </div>
+
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <div style="font-size: 13px; font-weight: 700; color: #93c5fd; margin-bottom: 8px;">👑 UGC CBCS Grade & Evaluation Indicators</div>
+                <div class="color-guide-grid">
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #f59e0b; color: #f59e0b;"></span>
+                            <span class="color-guide-name">Grade O (Outstanding / Topper Tier)</span>
+                        </div>
+                        <div class="color-guide-meaning"><b>Golden Amber:</b> Represents aggregate scores &ge; 90% (Grade Point: 10.0). Indicates top-tier institutional excellence and First Class with Exemplary Distinction.</div>
+                        <div class="color-guide-stat">Range: 90.0% – 100% | Grade Point: 10.0</div>
+                    </div>
+
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #10b981; color: #10b981;"></span>
+                            <span class="color-guide-name">Grade A (Excellent) & Passed Status</span>
+                        </div>
+                        <div class="color-guide-meaning"><b>Emerald Green:</b> Represents aggregate scores 80%–89% (Grade Point: 9.0) and confirmed subject passing clearance (Score &ge; 35 in all subjects).</div>
+                        <div class="color-guide-stat">Range: 80.0% – 89.9% | Grade Point: 9.0</div>
+                    </div>
+
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #06b6d4; color: #06b6d4;"></span>
+                            <span class="color-guide-name">Grade B (Very Good / First Class)</span>
+                        </div>
+                        <div class="color-guide-meaning"><b>Electric Cyan:</b> Represents aggregate scores 70%–79% (Grade Point: 8.0). Demonstrates strong concept mastery and above-average academic rigor.</div>
+                        <div class="color-guide-stat">Range: 70.0% – 79.9% | Grade Point: 8.0</div>
+                    </div>
+
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #8b5cf6; color: #8b5cf6;"></span>
+                            <span class="color-guide-name">Grade C (Good / Second Class)</span>
+                        </div>
+                        <div class="color-guide-meaning"><b>Neon Violet:</b> Represents aggregate scores 60%–69% (Grade Point: 7.0). Indicates standard competence fulfilling all autonomous learning outcomes.</div>
+                        <div class="color-guide-stat">Range: 60.0% – 69.9% | Grade Point: 7.0</div>
+                    </div>
+
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #f97316; color: #f97316;"></span>
+                            <span class="color-guide-name">Grade D (Pass / Borderline Clearance)</span>
+                        </div>
+                        <div class="color-guide-meaning"><b>Coral Orange:</b> Represents scores 35%–59% (Grade Point: 6.0). Cleared minimum passing score but positioned near the boundary threshold.</div>
+                        <div class="color-guide-stat">Range: 35.0% – 59.9% | Grade Point: 6.0</div>
+                    </div>
+
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #f43f5e; color: #f43f5e;"></span>
+                            <span class="color-guide-name">Grade F (Arrear / Remedial Required)</span>
+                        </div>
+                        <div class="color-guide-meaning"><b>Crimson Red:</b> Signals an academic alert: student scored &lt; 35 in one or more subjects (Grade Point: 0.0). Requires supplementary re-examination.</div>
+                        <div class="color-guide-stat">Cutoff: &lt; 35 Marks | Grade Point: 0.0 (Fail)</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 13px; font-weight: 700; color: #93c5fd; margin: 18px 0 8px 0;">📚 Subject Domain & Demographics Colors</div>
+                <div class="color-guide-grid">
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #6366f1; color: #6366f1;"></span>
+                            <span class="color-guide-name">Mathematics (Royal Indigo)</span>
+                        </div>
+                        <div class="color-guide-meaning">Calculus, Linear Algebra, and Quantitative Problem Solving (4 Credits).</div>
+                    </div>
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #0ea5e9; color: #0ea5e9;"></span>
+                            <span class="color-guide-name">Applied Science (Sky Blue)</span>
+                        </div>
+                        <div class="color-guide-meaning">Engineering Physics, Chemistry & Experimental Laboratory Sciences (4 Credits).</div>
+                    </div>
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #10b981; color: #10b981;"></span>
+                            <span class="color-guide-name">Professional English (Mint Green)</span>
+                        </div>
+                        <div class="color-guide-meaning">Technical Communication, Professional Fluency & Interpersonal Soft Skills (3 Credits).</div>
+                    </div>
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #a855f7; color: #a855f7;"></span>
+                            <span class="color-guide-name">Computer Programming (Neon Purple)</span>
+                        </div>
+                        <div class="color-guide-meaning">Data Structures, Algorithms & Software Engineering Foundations (4 Credits).</div>
+                    </div>
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #38bdf8; color: #38bdf8;"></span>
+                            <span class="color-guide-name">Male Cohort (Sky Blue)</span>
+                        </div>
+                        <div class="color-guide-meaning">Male demographic student subgroup evaluation & performance comparison.</div>
+                    </div>
+                    <div class="color-guide-card">
+                        <div class="color-guide-head">
+                            <span class="color-guide-badge" style="background: #f472b6; color: #f472b6;"></span>
+                            <span class="color-guide-name">Female Cohort (Rose Pink)</span>
+                        </div>
+                        <div class="color-guide-meaning">Female demographic student subgroup evaluation & performance comparison.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeColorGuideModal()">Understood</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         INTERACTIVE SIGNATORY & DIGITAL SEAL VERIFICATION MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="sigVerifyModal">
+        <div class="modal-content" style="max-width: 580px;">
+            <div class="modal-header">
+                <div>
+                    <h3 style="display: flex; align-items: center; gap: 8px; font-size: 17px;" id="sigModalHeading">
+                        <span>🔐</span> Institutional Digital Signature Verification
+                    </h3>
+                    <p style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Cryptographic Public Key Certificate & Signatory Credentials</p>
+                </div>
+                <button class="modal-close" onclick="closeSigVerifyModal()">&times;</button>
+            </div>
+
+            <div class="modal-body" id="sigModalBody" style="padding: 18px 22px;">
+                <!-- Populated dynamically via showSignatoryVerification() -->
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="btnCopySigKey" onclick="copySigCertCode()">📋 Copy Cert Key</button>
+                <button type="button" class="btn btn-primary" onclick="closeSigVerifyModal()">Close Verification</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip & Toast Containers -->
+    <div class="tooltip" id="tooltip"></div>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Footer -->
+    <footer>
+        Bharath Institute of Engineering & Technology (Autonomous) &bull; Minimum Qualifying Pass Criteria: 35 Marks
+        &bull; Official Academic Progress Card Portal
+    </footer>
+
+    <!-- Modular JavaScript Controllers (by Language/Layer) -->
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/marksheet.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

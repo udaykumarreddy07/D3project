@@ -1,0 +1,379 @@
+/* ====================================================
+   GLOBAL STYLES, DESIGN TOKENS & AESTHETIC AURORA SYSTEM
+   Deep Velvet Obsidian, Glassmorphism & Vibrant Neon Glows
+==================================================== */
+
+:root {
+    /* Primary Brand Colors (Vibrant Aesthetic Gradients) */
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --primary-light: rgba(99, 102, 241, 0.14);
+    --primary-glow: rgba(99, 102, 241, 0.35);
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #7c3aed 100%);
+
+    --secondary: #0ea5e9;
+    --secondary-hover: #0284c7;
+    --secondary-light: rgba(14, 165, 233, 0.14);
+    --secondary-glow: rgba(14, 165, 233, 0.35);
+    --secondary-gradient: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%);
+
+    --accent: #a855f7;
+    --accent-hover: #9333ea;
+    --accent-light: rgba(168, 85, 247, 0.14);
+    --accent-glow: rgba(168, 85, 247, 0.35);
+    --accent-gradient: linear-gradient(135deg, #c084fc 0%, #a855f7 50%, #7c3aed 100%);
+
+    --success: #10b981;
+    --success-hover: #059669;
+    --success-light: rgba(16, 185, 129, 0.14);
+    --success-glow: rgba(16, 185, 129, 0.35);
+    --success-border: rgba(16, 185, 129, 0.3);
+
+    --warning: #f59e0b;
+    --warning-hover: #d97706;
+    --warning-light: rgba(245, 158, 11, 0.14);
+    --warning-glow: rgba(245, 158, 11, 0.35);
+    --warning-border: rgba(245, 158, 11, 0.3);
+
+    --danger: #f43f5e;
+    --danger-hover: #e11d48;
+    --danger-light: rgba(244, 63, 94, 0.14);
+    --danger-glow: rgba(244, 63, 94, 0.35);
+    --danger-border: rgba(244, 63, 94, 0.3);
+
+    --info: #06b6d4;
+    --info-hover: #0891b2;
+    --info-light: rgba(6, 182, 212, 0.14);
+
+    /* Deep Velvet Obsidian & Glass Surface Scales */
+    --bg-main: #0a0f1d;
+    --bg-surface: #111827;
+    --bg-surface-glass: rgba(17, 24, 39, 0.75);
+    --bg-subtle: #1e293b;
+    --bg-muted: #334155;
+
+    --slate-950: #030712;
+    --slate-900: #0f172a;
+    --slate-800: #1e293b;
+    --slate-700: #334155;
+    --slate-600: #475569;
+    --slate-500: #64748b;
+    --slate-400: #94a3b8;
+    --slate-300: #cbd5e1;
+    --slate-200: #e2e8f0;
+    --slate-100: #f1f5f9;
+    --slate-50: #f8fafc;
+
+    /* Card & Glass Tokens */
+    --card-bg: rgba(17, 24, 39, 0.8);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-hover-border: rgba(129, 140, 248, 0.35);
+    --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+
+    /* Radii */
+    --radius-xs: 6px;
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --radius-xl: 30px;
+
+    /* Elevation & Glowing Shadows */
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 2px 6px -1px rgba(0, 0, 0, 0.4), 0 1px 3px -1px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.5), 0 4px 8px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 16px 36px -6px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.15);
+    --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(99, 102, 241, 0.25);
+
+    --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    background: var(--bg-main);
+    background-image:
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.12) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(168, 85, 247, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: var(--slate-200);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* ----------------------------------------------------
+   BUTTONS & AESTHETIC ACTION UTILITIES
+---------------------------------------------------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    outline: none;
+    text-decoration: none;
+    user-select: none;
+    line-height: 1.3;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+    filter: brightness(1.1);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    filter: brightness(1.1);
+}
+
+.btn-outline {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--slate-200);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-xs);
+}
+
+.btn-outline:hover {
+    background: rgba(51, 65, 85, 0.85);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.btn-outline-white,
+.btn-outline-light {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    backdrop-filter: blur(8px);
+}
+
+.btn-outline-white:hover,
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-accent {
+    background: var(--accent-gradient);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35);
+}
+
+.btn-accent:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    filter: brightness(1.1);
+}
+
+.btn-sm {
+    padding: 5px 12px;
+    font-size: 11.5px;
+    border-radius: var(--radius-xs);
+}
+
+/* ----------------------------------------------------
+   TOOLTIP & AESTHETIC GLOWING TOAST NOTIFICATIONS
+---------------------------------------------------- */
+.tooltip {
+    position: absolute;
+    opacity: 0;
+    background: rgba(15, 23, 42, 0.96);
+    color: #ffffff;
+    padding: 12px 15px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    pointer-events: none;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(99, 102, 241, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(16px);
+    z-index: 99999;
+    max-width: 320px;
+    min-width: 240px;
+    transition: opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    line-height: 1.45;
+}
+
+.tooltip-color-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.tooltip-color-name {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #cbd5e1;
+}
+
+.tooltip-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.tooltip-reason-box {
+    background: rgba(255, 255, 255, 0.06);
+    border-left: 3px solid var(--accent, #6366f1);
+    padding: 6px 9px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    color: #e2e8f0;
+    margin: 6px 0;
+}
+
+.tooltip-reason-label {
+    font-size: 9.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #93c5fd;
+    margin-bottom: 2px;
+}
+
+.tooltip-metric-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 11.5px;
+    color: #cbd5e1;
+    margin-top: 5px;
+}
+
+.tooltip-metric-item b {
+    color: #fef08a;
+}
+
+.tooltip-action-hint {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #38bdf8;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background: rgba(17, 24, 39, 0.92);
+    color: #ffffff;
+    padding: 12px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    animation: slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInToast {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.toast-success {
+    border-left: 4px solid var(--success);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(16, 185, 129, 0.25);
+}
+
+.toast-danger {
+    border-left: 4px solid var(--danger);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(244, 63, 94, 0.25);
+}
+
+.toast-warning {
+    border-left: 4px solid var(--warning);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 158, 11, 0.25);
+}
+
+.toast-info {
+    border-left: 4px solid var(--secondary);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(14, 165, 233, 0.25);
+}
+
+/* ----------------------------------------------------
+   PORTAL FOOTER
+---------------------------------------------------- */
+footer {
+    margin-top: auto;
+    background: rgba(17, 24, 39, 0.85);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px 24px;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--slate-400);
+    font-weight: 600;
+    backdrop-filter: blur(12px);
+}

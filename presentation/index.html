@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Presentation - Academic Analytics & Student Marksheet Portal</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- D3.js for Live Chart Rendering in PPT -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: #131b2e;
+            --bg-card-hover: #1e293b;
+            --border-card: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #0ea5e9;
+            --accent: #a855f7;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #f43f5e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
+            --font-mono: 'Space Grotesk', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+        }
+
+        /* Top Presentation Navigation Bar */
+        .ppt-topbar {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-card);
+            padding: 12px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .ppt-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ppt-brand-logo {
+            font-size: 22px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .ppt-brand-title {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 16px;
+            letter-spacing: -0.2px;
+            color: var(--text-main);
+        }
+
+        .ppt-brand-title span {
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 12px;
+            display: block;
+        }
+
+        .ppt-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-ctrl {
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--text-main);
+            border: 1px solid var(--border-card);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            text-decoration: none;
+        }
+
+        .btn-ctrl:hover {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: #818cf8;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+        }
+
+        .btn-ctrl.btn-accent {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+
+        .slide-counter {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--primary);
+            background: #eef2ff;
+            border: 1.5px solid #c7d2fe;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+        }
+
+        /* Slide Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            position: sticky;
+            top: 63px;
+            z-index: 99;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary), var(--accent));
+            width: 10%;
+            transition: width 0.3s ease;
+        }
+
+        /* Main Presentation Stage */
+        .ppt-stage {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            perspective: 1000px;
+        }
+
+        .slide-deck {
+            width: 100%;
+            max-width: 1240px;
+            aspect-ratio: 16 / 9;
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            border-radius: 24px;
+            box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.08), 0 0 30px rgba(79, 70, 229, 0.04);
+            padding: 40px 48px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Individual Slide Elements */
+        .slide-item {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            animation: slideFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .slide-item.active {
+            display: flex;
+        }
+
+        @keyframes slideFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .slide-header {
+            margin-bottom: 24px;
+            border-bottom: 1.5px solid var(--border-card);
+            padding-bottom: 14px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+
+        .slide-category {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--secondary);
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+        }
+
+        .slide-badge {
+            background: #eef2ff;
+            border: 1.5px solid #c7d2fe;
+            color: #4338ca;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .slide-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .slide-footer {
+            margin-top: auto;
+            padding-top: 14px;
+            border-top: 1.5px solid var(--border-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Slide Components */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1.5px solid var(--border-card);
+            border-radius: 14px;
+            padding: 20px;
+            transition: all 0.25s ease;
+        }
+
+        .card:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            background: #ffffff;
+        }
+
+        .card-accent-indigo {
+            border-top: 4px solid var(--primary);
+        }
+
+        .card-accent-sky {
+            border-top: 4px solid var(--secondary);
+        }
+
+        .card-accent-violet {
+            border-top: 4px solid var(--accent);
+        }
+
+        .card-accent-success {
+            border-top: 4px solid var(--success);
+        }
+
+        .card-title {
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+        }
+
+        .card-desc {
+            font-size: 13px;
+            line-height: 1.55;
+            color: var(--text-muted);
+        }
+
+        /* Hero Slide 1 Specifics */
+        .hero-title {
+            font-family: var(--font-heading);
+            font-size: 38px;
+            font-weight: 900;
+            line-height: 1.15;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #0f172a 40%, var(--primary) 80%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 14px;
+        }
+
+        .hero-subtitle {
+            font-size: 17px;
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .hero-desc {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            max-width: 900px;
+            margin-bottom: 28px;
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hero-badge-pill {
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Architecture Tree Code Box */
+        .code-tree-box {
+            background: #f8fafc;
+            border: 1.5px solid var(--border-card);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #0369a1;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* D3 Chart Container in Slide 5 */
+        .chart-stage-wrapper {
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            border-radius: 14px;
+            padding: 14px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .chart-toggle-btn {
+            background: #f8fafc;
+            color: var(--text-muted);
+            border: 1.5px solid var(--border-card);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .chart-toggle-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        #pptBarChartSvg {
+            width: 100%;
+            height: 280px;
+        }
+
+        /* UGC Grade Table */
+        .ugc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .ugc-table th {
+            background: #f8fafc;
+            color: #334155;
+            padding: 8px 10px;
+            text-align: left;
+            border: 1.5px solid var(--border-card);
+            font-weight: 800;
+        }
+
+        .ugc-table td {
+            padding: 7px 10px;
+            border: 1px solid var(--border-card);
+            color: #1e293b;
+        }
+
+        .ugc-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        /* Keyboard Help Modal */
+        .kb-help-modal {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .kb-key {
+            background: #f1f5f9;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* Print Stylesheet for Slide Deck */
+        @media print {
+            body {
+                background: #fff;
+                color: #000;
+            }
+
+            .ppt-topbar,
+            .progress-bar-container,
+            .kb-help-modal {
+                display: none !important;
+            }
+
+            .slide-deck {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-after: always;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .slide-item {
+                display: flex !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top Presentation Header -->
+    <header class="ppt-topbar">
+        <div class="ppt-brand">
+            <div class="ppt-brand-logo">📊</div>
+            <div class="ppt-brand-title">
+                Academic Analytics Portal
+                <span>Project Architecture & Feature Presentation</span>
+            </div>
+        </div>
+
+        <div class="ppt-controls">
+            <button class="btn-ctrl" onclick="prevSlide()" title="Previous Slide (← / Backspace)">◀ Prev</button>
+            <span class="slide-counter" id="slideIndicator">Slide 1 / 10</span>
+            <button class="btn-ctrl" onclick="nextSlide()" title="Next Slide (→ / Space)">Next ▶</button>
+            <button class="btn-ctrl" onclick="toggleFullScreen()" title="Fullscreen (F)">⛶ Fullscreen</button>
+            <a href="Academic_Analytics_Portal_Presentation.pptx" download class="btn-ctrl btn-accent"
+                title="Download Microsoft PowerPoint PPTX File">
+                📥 Download .PPTX
+            </a>
+            <a href="index.html" class="btn-ctrl" style="background: #047857;" title="Open Live Portal">
+                🚀 Launch App
+            </a>
+        </div>
+    </header>
+
+    <!-- Slide Timeline Progress -->
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+
+    <!-- Main Presentation Slide Area -->
+    <main class="ppt-stage">
+        <div class="slide-deck">
+
+            <!-- ====================================================
+                 SLIDE 1: TITLE & HERO
+            ==================================================== -->
+            <div class="slide-item active" id="slide1">
+                <div class="slide-header">
+                    <div>
+                        <div class="slide-category">🏛️ BHARATH INSTITUTE OF ENGINEERING & TECHNOLOGY (AUTONOMOUS)
+                        </div>
+                        <div class="slide-title">Academic Analytics & Student Marksheet Portal</div>
+                    </div>
+                    <div class="slide-badge">Modular Architecture & D3.js</div>
+                </div>
+
+                <div class="slide-body" style="justify-content: center;">
+                    <h1 class="hero-title">High-Performance Student Analytics & Official UGC Marksheet Gateway</h1>
+                    <div class="hero-subtitle">Vanilla ES6+ • Modular Language Layers • Interactive D3.js Visualizations
+                        • UGC 10-Point Scale Engine</div>
+                    <p class="hero-desc">
+                        A full-scale, modularized academic analytics suite built for autonomous institutions. Features
+                        multi-tiered Role-Based Access Control (Faculty & Student), real-time student performance
+                        simulators, department cohort comparison charts, and high-fidelity printable semester
+                        progress cards.
+                    </p>
+
+                    <div class="hero-badges">
+                        <div class="hero-badge-pill" style="border-left: 4px solid var(--primary);">
+                            <span>📁</span> Modular Folders (<code style="color:#a5b4fc;">css/</code>, <code
+                                style="color:#7dd3fc;">js/</code>, <code style="color:#a7f3d0;">data/</code>)
+                        </div>
+                        <div class="hero-badge-pill" style="border-left: 4px solid var(--secondary);">
+                            <span>📊</span> D3.js Data-Driven Visualizations (Bar, Donut, Scatter, Gauge)
+                        </div>
+                        <div class="hero-badge-pill" style="border-left: 4px solid var(--accent);">
+                            <span>🎓</span> UGC 10-Point Grading Scale & Official Marksheet Generation
+                        </div>
+                        <div class="hero-badge-pill" style="border-left: 4px solid var(--success);">
+                            <span>🔐</span> Dual-Role RBAC (Faculty Full CRUD vs Student Self-Service)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer">
+                    <span>Presented by: Lead Software Engineering Team</span>
+                    <span>Slide 1 of 10</span>
+                </div>
+            </div>
+
+            <!-- ====================================================
+                 SLIDE 2: EXECUTIVE SUMMARY & OBJECTIVES
+            ==================================================== -->
+            <div class="slide-item" id="slide2">
+                <div class="slide-header">
+                    <div>
+                        <div class="slide-category">Project Overview</div>
+                        <div class="slide-title">Executive Summary & Key Objectives</div>
+                    </div>
+                    <div class="slide-badge">Scope & Value</div>
+                </div>
+
+                <div class="slide-body">
+                    <div class="grid-4">
+                        <div class="card card-accent-indigo">
+                            <div class="card-title">📁 1. Modular Architecture</div>
+                            <div class="card-desc">
+                                Split a 4,800+ line monolithic file into dedicated subfolders organized strictly by
+                                language and technical layer (<code style="color:#818cf8;">css/</code>, <code
+                                    style="color:#38bdf8;">js/</code>, <code style="color:#4ade80;">data/</code>),
+                                boosting maintainability and team scalability.
+                            </div>
+                        </div>
+
+                        <div class="card card-accent-sky">
+                            <div class="card-title">📊 2. Institutional Analytics</div>
+                            <div class="card-desc">
+                                Empower faculty and academic deans with interactive D3.js visualizers: department
+                                performance comparison bar charts, pass/fail donuts, subject correlation scatter
+                                plots, and instant cohort KPI calculations.
+                            </div>
+                        </div>
+
+                        <div class="card card-accent-violet">
+                            <div class="card-title">🎓 3. UGC 10-Point Marksheets</div>
+                            <div class="card-desc">
+                                Automated academic evaluation aligned with official UGC and Autonomous University
+                                guidelines (O to F grading, 10 to 0 Grade Points, SGPA/CGPA formulas, and high-fidelity
+                                print stylesheets).
+                            </div>
+                        </div>
+
+                        <div class="card card-accent-success">
+                            <div class="card-title">🔐 4. Dual-Role Security & RBAC</div>
+                            <div class="card-desc">
+                                Secure role-based segmentation between Faculty Administrators (full CRUD, live simulator,
+                                CSV exports) and Students (custom progress card, personalized radar charts, and restricted
+                                admin actions).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer">
+                    <span>Bharath Institute Academic Portal</span>
+                    <span>Slide 2 of 10</span>
+                </div>
+            </div>
+
+            <!-- ====================================================
+                 SLIDE 3: SYSTEM ARCHITECTURE & DIRECTORY TREE
+            ==================================================== -->
+            <div class="slide-item" id="slide3">
+                <div class="slide-header">
+                    <div>
+                        <div class="slide-category">Technical Architecture</div>
+                        <div class="slide-title">Layered System Architecture & Folder Organization</div>
+                    </div>
+                    <div class="slide-badge">Separation of Concerns</div>
+                </div>
+
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <!-- Left: Directory Tree Box -->
+                        <div class="code-tree-box">
+<span style="color:#f59e0b;">D3project/</span>
+├── <span style="color:#4ade80;">index.html</span>         <span style="color:#64748b;"># Main entry point (clean 846 lines)</span>
+├── <span style="color:#cbd5e1;">README.md</span>          <span style="color:#64748b;"># Documentation & structure guide</span>
+├── <span style="color:#cbd5e1;">build.js</span>           <span style="color:#64748b;"># Modular build & sync utility</span>
+│
+├── <span style="color:#38bdf8;">css/</span>               <span style="color:#64748b;"># [🎨 Stylesheets Layer]</span>
+│   ├── <span style="color:#e2e8f0;">styles.css</span>     <span style="color:#64748b;"># Tokens, resets, body & UI utilities</span>
+│   ├── <span style="color:#e2e8f0;">auth.css</span>       <span style="color:#64748b;"># Login Gateway & Aurora light system</span>
+│   ├── <span style="color:#e2e8f0;">dashboard.css</span>  <span style="color:#64748b;"># Portal header, KPI cards & table</span>
+│   ├── <span style="color:#e2e8f0;">charts.css</span>     <span style="color:#64748b;"># D3.js SVG chart wrappers & legends</span>
+│   └── <span style="color:#e2e8f0;">marksheet.css</span>  <span style="color:#64748b;"># UGC Progress Card & @media print</span>
+│
+├── <span style="color:#818cf8;">js/</span>                <span style="color:#64748b;"># [⚡ Application Logic Layer]</span>
+│   ├── <span style="color:#e2e8f0;">data.js</span>        <span style="color:#64748b;"># Storage helpers & cohort array</span>
+│   ├── <span style="color:#e2e8f0;">auth.js</span>        <span style="color:#64748b;"># Session RBAC & demo login engine</span>
+│   ├── <span style="color:#e2e8f0;">marksheet.js</span>   <span style="color:#64748b;"># UGC 10-point GPA & marksheet modal</span>
+│   ├── <span style="color:#e2e8f0;">ui.js</span>          <span style="color:#64748b;"># KPIs, table renderer, sorting & toast</span>
+│   ├── <span style="color:#e2e8f0;">charts.js</span>      <span style="color:#64748b;"># D3 Visualizations (Bar, Donut, Scatter)</span>
+│   └── <span style="color:#e2e8f0;">app.js</span>         <span style="color:#64748b;"># Bootstrap, CRUD handlers & events</span>
+│
+└── <span style="color:#f43f5e;">data/</span>              <span style="color:#64748b;"># [📊 Persistent Data Layer]</span>
+    └── <span style="color:#e2e8f0;">students.json</span>  <span style="color:#64748b;"># Clean 22-student JSON dataset</span>
+                        </div>
+
+                        <!-- Right: Architectural Principles -->
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            <div class="card card-accent-sky" style="padding:14px;">
+                                <div class="card-title" style="font-size:14px;">🎨 Presentation Layer (<code
+                                        style="color:#38bdf8;">css/</code>)</div>
+                                <div class="card-desc" style="font-size:12px;">
+                                    Organized into 5 dedicated CSS stylesheets separating global design tokens,
+                                    animated aurora gateways, responsive grid layouts, SVG styling, and print rules.
+                                </div>
+                            </div>
+
+                            <div class="card card-accent-indigo" style="padding:14px;">
+                                <div class="card-title" style="font-size:14px;">⚡ Logic & Controller Layer (<code
+                                        style="color:#818cf8;">js/</code>)</div>
+                                <div class="card-desc" style="font-size:12px;">
+                                    Decoupled into 6 specialized ES6+ modules separating data persistence,
+                                    authentication flows, academic grade algorithms, D3 SVG pipelines, and DOM UI
+                                    bindings.
+                                </div>
+                            </div>
+
+                            <div class="card card-accent-success" style="padding:14px;">
+                                <div class="card-title" style="font-size:14px;">📊 Data Layer (<code
+                                        style="color:#4ade80;">data/</code>)</div>
+                                <div class="card-desc" style="font-size:12px;">
+                                    Independent JSON data source with multi-tier storage caching (LocalStorage &rarr;
+                                    SessionStorage &rarr; In-Memory Fallback) ensuring zero session data loss.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer">
+                    <span>Architecture & Modularization</span>
+                    <span>Slide 3 of 10</span>
+                </div>
+            </div>
+
+            <!-- ====================================================
+                 SLIDE 4: TECH STACK & DESIGN SYSTEM
+            ==================================================== -->
+            <div class="slide-item" id="slide4">
+                <div class="slide-header">
+                    <div>
+                        <div class="slide-category">Engineering & UI Design</div>
+                        <div class="slide-title">Technology Stack & Modern Design System</div>
+                    </div>
+                    <div class="slide-badge">Zero-Dependency Stack</div>
+                </div>
+
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <!-- Left: Tech Stack -->
+                        <div class="card card-accent-indigo">
+                            <div class="card-title">🛠️ Core Technology Stack</div>
+                            <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+                                <li style="font-size:13px;">
+                                    <strong style="color:var(--secondary);">• Vanilla JavaScript (ES6+):</strong>
+                                    <span style="color:var(--text-muted); display:block; font-size:12px;">Pure
+                                        client-side speed, instant bootstrap, and modular code execution without bulky
+                                        framework overhead.</span>
+                                </li>
+                                <li style="font-size:13px;">
+                                    <strong style="color:var(--primary-light);">• D3.js v7 (Data-Driven Documents):</strong>
+                                    <span style="color:var(--text-muted); display:block; font-size:12px;">Dynamic SVG data
+                                        joins, linear/band coordinate scaling, responsive redraws, and interactive
+                                        transitions.</span>
+                                </li>
+                                <li style="font-size:13px;">
+                                    <strong style="color:var(--accent);">• Semantic HTML5 & Modern CSS3:</strong>
+                                    <span style="color:var(--text-muted); display:block; font-size:12px;">Custom CSS
+                                        variables, glassmorphic backdrop-filter blurs, radial gradients, and responsive
+                                        flexbox/grid systems.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Right: Design System & Colors -->
+                        <div class="card card-accent-violet">
+                            <div class="card-title">🎨 Curated Color Palette & Typography</div>
+                            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin: 12px 0;">
+                                <div style="background:#4f46e5; padding:10px; border-radius:8px; text-align:center; font-size:11px; font-weight:700;">
+                                    Primary<br>#4F46E5
+                                </div>
+                                <div style="background:#0ea5e9; padding:10px; border-radius:8px; text-align:center; font-size:11px; font-weight:700;">
+                                    Secondary<br>#0EA5E9
+                                </div>
+                                <div style="background:#8b5cf6; padding:10px; border-radius:8px; text-align:center; font-size:11px; font-weight:700;">
+                                    Accent<br>#8B5CF6
+                                </div>
+                                <div style="background:#10b981; padding:10px; border-radius:8px; text-align:center; font-size:11px; font-weight:700;">
+                                    Success<br>#10B981
+                                </div>
+                                <div style="background:#f59e0b; padding:10px; border-radius:8px; text-align:center; font-size:11px; font-weight:700;">
+                                    Warning<br>#F59E0B
+                                </div>
+                                <div style="background:#090d16; border:1px solid #334155; padding:10px; border-radius:8px; text-align:center; font-size:11px; font-weight:700;">
+                                    Dark Base<br>#090D16
+                                </div>
+                            </div>
+                            <div style="font-size:12px; color:var(--text-muted); border-top:1px solid var(--border-card); padding-top:10px;">
+                                <strong style="color:#fff;">Typography Hierarchy:</strong>
+                                <span style="display:block; margin-top:3px;">• Headings: <code>Outfit</code> & <code>Space Grotesk</code></span>
+                                <span>• Body / Data: <code>Plus Jakarta Sans</code></span>
+                                <span>• Official Seal: <code>Cinzel</code></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer">
+                    <span>Design Tokens & Frameworks</span>
+                    <span>Slide 4 of 10</span>
+                </div>
+            </div>
+
+            <!-- ====================================================
+                 SLIDE 5: LIVE D3.JS BAR GRAPH & COHORT METRICS
+            ==================================================== -->
+            <div class="slide-item" id="slide5">
+                <div class="slide-header">
+                    <div>
+                        <div class="slide-category">Interactive Data Visualization</div>
+                        <div class="slide-title">Department Performance Bar Graph & D3.js Pipeline</div>
+                    </div>
+                    <div class="slide-badge">Live D3 SVG Chart</div>
+                </div>
+
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <!-- Left: Live Interactive SVG Bar Chart -->
+                        <div class="chart-stage-wrapper">
+                            <div class="chart-toolbar">
+                                <span style="font-size:12px; font-weight:700; color:var(--secondary);">📊 Department Comparison
+                                    Chart</span>
+                                <div style="display:flex; gap:6px;">
+                                    <button class="chart-toggle-btn active" id="btnAvgMarks"
+                                        onclick="renderPptChart('avg')">Avg Marks (%)</button>
+                                    <button class="chart-toggle-btn" id="btnPassRate"
+                                        onclick="renderPptChart('pass')">Pass Rate (%)</button>
+                                </div>
+                            </div>
+                            <svg id="pptBarChartSvg"></svg>
+                        </div>
+
+                        <!-- Right: D3 Pipeline Explanation -->
+                        <div class="card card-accent-sky" style="display:flex; flex-direction:column; justify-content:space-between;">
+                            <div>
+                                <div class="card-title">🔍 D3.js Bar Graph Architecture</div>
+                                <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:8px;">
+                                    <li style="font-size:12.5px;">
+                                        <strong style="color:var(--secondary);">1. Aggregate Rollup (`d3.rollup`):</strong>
+                                        <span style="color:var(--text-muted); display:block;">Calculates mean scores per
+                                            department across all 22 cohort students in real time.</span>
+                                    </li>
+                                    <li style="font-size:12.5px;">
+                                        <strong style="color:var(--primary-light);">2. Coordinate Scaling:</strong>
+                                        <span style="color:var(--text-muted); display:block;"><code>d3.scaleBand()</code>
+                                            positions department categories; <code>d3.scaleLinear()</code> scales scores [0, 100]
+                                            to SVG pixel height.</span>
+                                    </li>
+                                    <li style="font-size:12.5px;">
+                                        <strong style="color:var(--accent);">3. Gradient SVG Injection:</strong>
+                                        <span style="color:var(--text-muted); display:block;">Applies dynamic SVG gradient fills
+                                            and hover brightness animations.</span>
+                                    </li>
+                                    <li style="font-size:12.5px;">
+                                        <strong style="color:var(--success);">4. Animated Transitions:</strong>
+                                        <span style="color:var(--text-muted); display:block;">Bars rise smoothly from Y=0 with
+                                            <code>.transition().duration(750)</code> on load and filter changes.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div style="background:#020617; border:1px solid var(--border-card); padding:8px 12px; border-radius:8px; font-size:11px; color:#a5b4fc;">
+                                💡 <strong>Interactive Demo:</strong> Click the buttons above the chart to toggle between Average Marks and Pass Percentage!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer">
+                    <span>D3.js Bar Graph Visualizer</span>
+                    <span>Slide 5 of 10</span>
+                </div>
+            </div>
+
+            <!-- ====================================================
+                 SLIDE 6: AUTHENTICATION & SECURITY (RBAC)
+            ==================================================== -->
+            <div class="slide-item" id="slide6">
+                <div class="slide-header">
+                    <div>
+                        <div class="slide-category">Security & Access Control</div>
+                        <div class="slide-title">Dual-Role Authentication Gateway & RBAC Engine</div>
+                    </div>
+                    <div class="slide-badge">auth.js / auth.css</div>
+                </div>
+
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <!-- Faculty Role Box -->
+                        <div class="card card-accent-sky">
+                            <div class="card-title" style="color:#93c5fd;">👨‍🏫 Faculty / Admin Role (<code style="color:#fff;">admin</code>)</div>
+                            <p class="card-desc" style="margin-bottom:12px;">Full administrative privileges for academic coordinators and faculty deans.</p>
+                            <ul style="list-style:none; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#cbd5e1;">
+                                <li>✔ Full Student Record CRUD (Add, Edit, Delete with modal validation)</li>
+                                <li>✔ Real-Time Live Push Simulator for cohort stress testing</li>
+                                <li>✔ Batch Official Marksheet Viewer across all passing students</li>
+                                <li>✔ RFC 4180 Client-Side CSV Academic Data Export</li>
+                                <li>✔ Global Cohort Analytics across all 5 Engineering streams</li>
+                            </ul>
+                        </div>
+
+                        <!-- Student Role Box -->
+                        <div class="card card-accent-violet">
+                            <div class="card-title" style="color:#d8b4fe;">🎓 Student Role (<code style="color:#fff;">sneha</code>, <code style="color:#fff;">arun</code>)</div>
+                            <p class="card-desc" style="margin-bottom:12px;">Dedicated self-service portal tailored for individual student assessment.</p>
+                            <ul style="list-style:none; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#cbd5e1;">
+                                <li>✔ Personalized Student Welcome Banner with immediate SGPA readout</li>
+                                <li>✔ Instant One-Click Official Progress Card & Marksheet Generator</li>
+                                <li>✔ Individual 4-Subject Radar & Attendance Gauge Visualizations</li>
+                                <li>✔ Class Aggregate Comparison Benchmark</li>
+                                <li>🚫 Strict RBAC: All Faculty CRUD & Simulator buttons automatically hidden</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer">
+                    <span>Role-Based Access Control</span>
+                    <span>Slide 6 of 10</span>
+                </div>
+            </div>
+
+            <!-- ====================================================
+                 SLIDE 7: UGC 10-POINT GRADING & MARKSHEET
+            ==================================================== -->
+            <div class="slide-item" id="slide7">
+                <div class="slide-header">
+                    <div>
+                        <div class="slide-category">Grading & Evaluation Engine</div>
+                        <div class="slide-title">UGC 10-Point Academic Grading & Marksheet Engine</div>
+                    </div>
+                    <div class="slide-badge">marksheet.js / marksheet.css</div>
+                </div>
+
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <!-- Left: UGC Grading Matrix -->
+                        <div class="card" style="padding:12px;">
+                            <div class="card-title" style="font-size:14px; margin-bottom:8px;">📜 UGC 10-Point Standard Scale</div>
+                            <table class="ugc-table">
+                                <thead>
+                                    <tr>
+                                        <th>Score</th>
+                                        <th>Grade</th>
+                                        <th>Points</th>
+                                        <th>Academic Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>90 - 100</td><td style="color:#10b981; font-weight:700;">O</td><td>10</td><td>Outstanding (Distinction)</td></tr>
+                                    <tr><td>80 - 89</td><td style="color:#10b981; font-weight:700;">A+</td><td>9</td><td>Excellent (First Class)</td></tr>
+                                    <tr><td>70 - 79</td><td style="color:#0ea5e9; font-weight:700;">A</td><td>8</td><td>Very Good (First Class)</td></tr>
+                                    <tr><td>60 - 69</td><td style="color:#0ea5e9; font-weight:700;">B+</td><td>7</td><td>Good (Second Class)</td></tr>
+                                    <tr><td>50 - 59</td><td style="color:#f59e0b; font-weight:700;">B</td><td>6</td><td>Above Average</td></tr>
+                                    <tr><td>40 - 49</td><td style="color:#f59e0b; font-weight:700;">C</td><td>5</td><td>Average (Pass Class)</td></tr>
+                                    <tr><td>35 - 39</td><td style="color:#eab308; font-weight:700;">P</td><td>4</td><td>Pass Threshold (Min 35)</td></tr>
+                                    <tr><td>0 - 34</td><td style="color:#ef4444; font-weight:700;">F</td><td>0</td><td style="color:#ef4444; font-weight:700;">FAILED (Backlog)</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Right: Progress Card Modal & Print Features -->
+                        <div class="card card-accent-violet">
+                            <div class="card-title">🖨️ Official Marksheet Modal & Print Layout</div>
+                            <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:8px; font-size:12.5px;">
+                                <li>
+                                    <strong style="color:#fff;">• Autonomous Institutional Header:</strong>
+                                    <span style="color:var(--text-muted); display:block;">Embeds college emblem, serial numbers, examination session, and student metadata.</span>
+                                </li>
+                                <li>
+                                    <strong style="color:#fff;">• Subject-Wise Evaluation Matrix:</strong>
+                                    <span style="color:var(--text-muted); display:block;">Calculates Max Marks (100), Min Qualifying Marks (35), Marks Secured, and Letter Grades.</span>
+                                </li>
+                                <li>
+                                    <strong style="color:#fff;">• UGC Formula Calculation:</strong>
+                                    <span style="color:var(--text-muted); display:block;">Computes Semester Grade Point Average: <code>SGPA = Σ(C_i × GP_i) / Σ(C_i)</code></span>
+                                </li>
+                                <li>
+                                    <strong style="color:#fff;">• High-Fidelity <code>@media print</code>:</strong>
+                                    <span style="color:var(--text-muted); display:block;">Clean A4 page formatting, official border styling, controller signatures, and institute seal.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer">
+                    <span>UGC Academic Marksheet Engine</span>
+                    <span>Slide 7 of 10</span>
+                </div>
+            </div>
+
+            <!-- ====================================================
+                 SLIDE 8: D3.JS VISUALIZATION SUITE
+            ==================================================== -->
+            <div class="slide-item" id="slide8">
+                <div class="slide-header">
+                    <div>
+                        <div class="slide-category">Data Visualization Engine</div>
+                        <div class="slide-title">Interactive D3.js Visualization Suite (charts.js)</div>
+                    </div>
+                    <div class="slide-badge">charts.js / charts.css</div>
+                </div>
+
+                <div class="slide-body">
+                    <div class="grid-4">
+                        <div class="card card-accent-indigo">
+                            <div class="card-title">📊 1. Department Avg Bar Chart</div>
+                            <div class="card-desc">
+                                Highlights comparative performance across Computer Science, Electronics, Electrical,
+                                Mechanical, and Civil streams with animated bar rise and department color accents.
+                            </div>
+                        </div>
+
+                        <div class="card card-accent-success">
+                            <div class="card-title">🍩 2. Pass vs Fail Cohort Donut</div>
+                            <div class="card-desc">
+                                Real-time dynamic SVG donut arc chart detailing qualifying vs backlog student
+                                ratios, slice expansion on hover, and center percentage display.
+                            </div>
+                        </div>
+
+                        <div class="card card-accent-sky">
+                            <div class="card-title">🔵 3. Subject Correlation Scatter</div>
+                            <div class="card-desc">
+                                Plots Mathematics vs Programming scores on Cartesian coordinates to reveal
+                                cross-subject aptitude correlations with interactive student node tooltips.
+                            </div>
+                        </div>
+
+                        <div class="card card-accent-violet">
+                            <div class="card-title">🎯 4. Student Radar & Gauge Dial</div>
+                            <div class="card-desc">
+                                4-axis polygon radar showcasing individual subject strengths and a semi-circular
+                                SVG needle gauge reflecting attendance thresholds.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer">
+                    <span>D3.js Visualization Suite</span>
+                    <span>Slide 8 of 10</span>
+                </div>
+            </div>
+
+            <!-- ====================================================
+                 SLIDE 9: UI CONTROLLER & DATA TABLE
+            ==================================================== -->
+            <div class="slide-item" id="slide9">
+                <div class="slide-header">
+                    <div>
+                        <div class="slide-category">User Interface & Data Grid</div>
+                        <div class="slide-title">Dynamic UI Controllers, Filters & Live Simulator</div>
+                    </div>
+                    <div class="slide-badge">ui.js / app.js</div>
+                </div>
+
+                <div class="slide-body">
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <div class="card card-accent-sky" style="padding:14px;">
+                            <div class="card-title" style="font-size:14px;">⚡ Real-Time KPI Cards & Multi-Filter Pipeline</div>
+                            <div class="card-desc" style="font-size:12px;">
+                                Dynamic computation of Total Active Students, Class Average (%), Pass Percentage, and
+                                Highest Scorer. Integrated with real-time multi-criteria filtering by Department,
+                                Gender, Pass/Fail Status, Grade, and instant substring student search.
+                            </div>
+                        </div>
+
+                        <div class="card card-accent-indigo" style="padding:14px;">
+                            <div class="card-title" style="font-size:14px;">🔄 Multi-Column Sortable Student Data Table</div>
+                            <div class="card-desc" style="font-size:12px;">
+                                High-performance data grid with clickable sort headers (ID, Name, Dept, Gender,
+                                Individual Subjects, Total Marks, Percentage, Attendance, Grade) and quick action
+                                buttons (Edit, Delete, View Marksheet).
+                            </div>
+                        </div>
+
+                        <div class="card card-accent-success" style="padding:14px;">
+                            <div class="card-title" style="font-size:14px;">🚀 Live Push Simulation & CSV Data Export</div>
+                            <div class="card-desc" style="font-size:12px;">
+                                Simulates live score pushes with instant chart re-renders and provides a
+                                standards-compliant RFC 4180 client-side CSV export generator for institutional record
+                                keeping.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer">
+                    <span>UI Controllers & Data Grid</span>
+                    <span>Slide 9 of 10</span>
+                </div>
+            </div>
+
+            <!-- ====================================================
+                 SLIDE 10: CONCLUSION & FUTURE ROADMAP
+            ==================================================== -->
+            <div class="slide-item" id="slide10">
+                <div class="slide-header">
+                    <div>
+                        <div class="slide-category">Summary & Next Steps</div>
+                        <div class="slide-title">Project Conclusion & Future Roadmap</div>
+                    </div>
+                    <div class="slide-badge">Future Horizons</div>
+                </div>
+
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <!-- Key Accomplishments -->
+                        <div class="card card-accent-success">
+                            <div class="card-title" style="color:#6ee7b7;">🏆 Technical Accomplishments</div>
+                            <ul style="list-style:none; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#e2e8f0; margin-top:8px;">
+                                <li>✔ Clean Modular Subfolders (<code style="color:#38bdf8;">css/</code>, <code style="color:#818cf8;">js/</code>, <code style="color:#4ade80;">data/</code>)</li>
+                                <li>✔ Interactive D3.js Data Visualizations & Animated Bar Charts</li>
+                                <li>✔ UGC 10-Point Grading Scale & Official Marksheet Modal</li>
+                                <li>✔ Robust Dual-Role Access Control (Faculty vs Student)</li>
+                                <li>✔ Zero-Dependency Vanilla ES6+ Performance & Reliability</li>
+                                <li>✔ High-Fidelity Printable Semester Progress Cards</li>
+                            </ul>
+                        </div>
+
+                        <!-- Roadmap -->
+                        <div class="card card-accent-sky">
+                            <div class="card-title" style="color:#7dd3fc;">🚀 Future Enhancements Roadmap</div>
+                            <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:12px; color:#e2e8f0; margin-top:8px;">
+                                <li>
+                                    <strong style="color:#fff;">1. Relational Database Backend:</strong>
+                                    <span style="color:var(--text-muted); display:block;">Connect PostgreSQL / Firebase Data Connect for multi-campus scalability.</span>
+                                </li>
+                                <li>
+                                    <strong style="color:#fff;">2. Multi-Semester Cumulative CGPA:</strong>
+                                    <span style="color:var(--text-muted); display:block;">Expand grading across all 8 semesters for automated degree transcripts.</span>
+                                </li>
+                                <li>
+                                    <strong style="color:#fff;">3. AI Academic Early-Warning System:</strong>
+                                    <span style="color:var(--text-muted); display:block;">Predictive machine learning models flagging student backlog risks early.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer">
+                    <span>Thank You! • Q&A Session</span>
+                    <span>Slide 10 of 10</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Keyboard Shortcuts Helper Overlay -->
+    <div class="kb-help-modal">
+        <span>⌨️ Shortcuts:</span>
+        <span><span class="kb-key">←</span> / <span class="kb-key">Backspace</span> Previous</span>
+        <span><span class="kb-key">→</span> / <span class="kb-key">Space</span> Next</span>
+        <span><span class="kb-key">F</span> Fullscreen</span>
+        <span><span class="kb-key">Ctrl+P</span> Print / Export PDF</span>
+    </div>
+
+    <script>
+        // Presentation State Controller
+        let currentSlide = 1;
+        const totalSlides = 10;
+
+        function updateSlideUI() {
+            // Hide all slides, show active slide
+            for (let i = 1; i <= totalSlides; i++) {
+                const el = document.getElementById('slide' + i);
+                if (el) el.classList.toggle('active', i === currentSlide);
+            }
+
+            // Update Header Indicator & Progress Bar
+            document.getElementById('slideIndicator').textContent = `Slide ${currentSlide} / ${totalSlides}`;
+            const pct = (currentSlide / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = pct + '%';
+
+            // If Slide 5 is activated, render the live D3 bar graph
+            if (currentSlide === 5) {
+                setTimeout(() => renderPptChart('avg'), 50);
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlideUI();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlideUI();
+            }
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Keyboard Navigation Listener
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Backspace' || e.key === 'PageUp') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key.toLowerCase() === 'f') {
+                e.preventDefault();
+                toggleFullScreen();
+            } else if (e.key === 'Home') {
+                currentSlide = 1;
+                updateSlideUI();
+            } else if (e.key === 'End') {
+                currentSlide = totalSlides;
+                updateSlideUI();
+            }
+        });
+
+        // ====================================================
+        // LIVE D3.JS BAR GRAPH RENDERER FOR SLIDE 5
+        // ====================================================
+        const PPT_CHART_DATA = [
+            { dept: 'CSE', name: 'Computer Science', avgMarks: 90.2, passRate: 100, attendance: 94.6, color: '#4f46e5' },
+            { dept: 'ECE', name: 'Electronics', avgMarks: 85.8, passRate: 100, attendance: 91.0, color: '#0ea5e9' },
+            { dept: 'EEE', name: 'Electrical', avgMarks: 79.4, passRate: 100, attendance: 84.0, color: '#8b5cf6' },
+            { dept: 'CIVIL', name: 'Civil Engg', avgMarks: 73.2, passRate: 75.0, attendance: 85.0, color: '#10b981' },
+            { dept: 'MECH', name: 'Mechanical', avgMarks: 69.8, passRate: 80.0, attendance: 77.0, color: '#f59e0b' }
+        ];
+
+        function renderPptChart(mode = 'avg') {
+            const svg = d3.select('#pptBarChartSvg');
+            svg.selectAll('*').remove();
+
+            const btnAvg = document.getElementById('btnAvgMarks');
+            const btnPass = document.getElementById('btnPassRate');
+            if (btnAvg && btnPass) {
+                btnAvg.classList.toggle('active', mode === 'avg');
+                btnPass.classList.toggle('active', mode === 'pass');
+            }
+
+            const width = 540;
+            const height = 260;
+            const margin = { top: 20, right: 20, bottom: 40, left: 45 };
+
+            svg.attr('viewBox', `0 0 ${width} ${height}`);
+
+            const x = d3.scaleBand()
+                .domain(PPT_CHART_DATA.map(d => d.dept))
+                .range([margin.left, width - margin.right])
+                .padding(0.35);
+
+            const y = d3.scaleLinear()
+                .domain([0, 100])
+                .nice()
+                .range([height - margin.bottom, margin.top]);
+
+            // Grid lines
+            svg.append('g')
+                .attr('class', 'grid')
+                .attr('transform', `translate(${margin.left},0)`)
+                .call(d3.axisLeft(y).ticks(5).tickSize(-(width - margin.left - margin.right)).tickFormat(''))
+                .call(g => g.select('.domain').remove())
+                .call(g => g.selectAll('.tick line').attr('stroke', 'rgba(255,255,255,0.08)'));
+
+            // X Axis
+            svg.append('g')
+                .attr('transform', `translate(0,${height - margin.bottom})`)
+                .call(d3.axisBottom(x))
+                .call(g => g.select('.domain').attr('stroke', '#334155'))
+                .call(g => g.selectAll('.tick text').attr('fill', '#cbd5e1').attr('font-size', '11px').attr('font-weight', '700'));
+
+            // Y Axis
+            svg.append('g')
+                .attr('transform', `translate(${margin.left},0)`)
+                .call(d3.axisLeft(y).ticks(5).tickFormat(d => d + '%'))
+                .call(g => g.select('.domain').remove())
+                .call(g => g.selectAll('.tick text').attr('fill', '#94a3b8').attr('font-size', '10px'));
+
+            // Draw Bars with Animation
+            svg.selectAll('.ppt-bar')
+                .data(PPT_CHART_DATA)
+                .join('rect')
+                .attr('class', 'ppt-bar')
+                .attr('x', d => x(d.dept))
+                .attr('y', height - margin.bottom)
+                .attr('width', x.bandwidth())
+                .attr('height', 0)
+                .attr('rx', 6)
+                .attr('fill', d => d.color)
+                .transition()
+                .duration(800)
+                .attr('y', d => y(mode === 'avg' ? d.avgMarks : d.passRate))
+                .attr('height', d => (height - margin.bottom) - y(mode === 'avg' ? d.avgMarks : d.passRate));
+
+            // Value Labels on Top of Bars
+            svg.selectAll('.ppt-val-label')
+                .data(PPT_CHART_DATA)
+                .join('text')
+                .attr('class', 'ppt-val-label')
+                .attr('x', d => x(d.dept) + x.bandwidth() / 2)
+                .attr('y', height - margin.bottom)
+                .attr('text-anchor', 'middle')
+                .attr('fill', '#ffffff')
+                .attr('font-size', '11px')
+                .attr('font-weight', '700')
+                .transition()
+                .duration(800)
+                .attr('y', d => y(mode === 'avg' ? d.avgMarks : d.passRate) - 6)
+                .text(d => (mode === 'avg' ? d.avgMarks : d.passRate) + '%');
+        }
+
+        // Initialize presentation
+        updateSlideUI();
+    </script>
+</body>
+
+</html>

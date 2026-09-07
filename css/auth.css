@@ -1,0 +1,430 @@
+/* ====================================================
+   AUTHENTICATION GATEWAY & AESTHETIC LOGIN SYSTEM
+   Centered Institutional Card with Google Sign-In & Demo Access
+==================================================== */
+
+/* ----------------------------------------------------
+   FULLSCREEN BACKDROP & OVERLAY
+---------------------------------------------------- */
+#loginGateway {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #090d16;
+    background-image:
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.25) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.2) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.2) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.85) 0px, transparent 80%),
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
+}
+
+#loginGateway.authenticated {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: none !important;
+}
+
+/* Floating Iridescent Ambient Elements */
+.auth-aurora-wave {
+    position: absolute;
+    width: 120vw;
+    height: 50vh;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    opacity: 0.5;
+    animation: auroraShift 18s ease-in-out infinite alternate;
+}
+
+.auth-aurora-1 {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.6) 0%, rgba(14, 165, 233, 0.5) 100%);
+    top: -20vh;
+    left: -20vw;
+}
+
+.auth-aurora-2 {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.5) 0%, rgba(244, 63, 94, 0.4) 100%);
+    bottom: -20vh;
+    right: -20vw;
+    animation-delay: -8s;
+}
+
+@keyframes auroraShift {
+    0% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-25px) scale(1.06); }
+    100% { transform: translateY(20px) scale(0.96); }
+}
+
+/* ----------------------------------------------------
+   CENTERED STANDALONE LOGIN CARD
+---------------------------------------------------- */
+.login-standalone-card {
+    position: relative;
+    z-index: 10;
+    max-width: 440px;
+    width: 100%;
+    margin: auto;
+    background: rgba(17, 24, 39, 0.92);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    padding: 34px 30px;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 35px rgba(99, 102, 241, 0.25);
+    animation: loginCardPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes loginCardPop {
+    from {
+        transform: translateY(18px) scale(0.97);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Brand Header */
+.login-brand-header {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.login-brand-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 12px auto;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #6366f1 0%, #0ea5e9 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+}
+
+.login-brand-header h2 {
+    font-size: 21px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+}
+
+.login-brand-header p {
+    font-size: 12.5px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+/* Nav Tabs: Sign In / Create Account */
+.auth-nav-tabs {
+    display: flex;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 3px;
+    margin-bottom: 18px;
+}
+
+.auth-nav-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.auth-nav-tab:hover {
+    color: #ffffff;
+}
+
+.auth-nav-tab.active {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+/* Google Institutional Authentication Button */
+.btn-google-auth {
+    width: 100%;
+    background: #ffffff;
+    color: #1f2937;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 11px 16px;
+    font-size: 13.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 16px;
+}
+
+.btn-google-auth:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.btn-google-auth:active {
+    transform: translateY(0);
+}
+
+/* Subtle Divider */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.auth-divider span {
+    padding: 0 10px;
+}
+
+/* Form Fields */
+.auth-field-group {
+    margin-bottom: 14px;
+    text-align: left;
+}
+
+.auth-field-label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #cbd5e1;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.auth-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.auth-input-icon {
+    position: absolute;
+    left: 13px;
+    font-size: 14px;
+    color: #818cf8;
+    pointer-events: none;
+}
+
+.auth-control {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 10px 14px 10px 38px;
+    font-size: 13.5px;
+    color: #ffffff;
+    outline: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.auth-control:focus {
+    border-color: #6366f1;
+    background: rgba(15, 23, 42, 0.95);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3), 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.auth-control::placeholder {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.auth-pwd-toggle {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.auth-pwd-toggle:hover {
+    color: #ffffff;
+}
+
+/* Role Selector Grid in Auth */
+.auth-role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.auth-role-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 9px 8px;
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+}
+
+.auth-role-option input[type="radio"] {
+    display: none;
+}
+
+.auth-role-option:hover {
+    border-color: #818cf8;
+    color: #ffffff;
+}
+
+.auth-role-option.selected {
+    background: rgba(99, 102, 241, 0.22);
+    border-color: #6366f1;
+    color: #ffffff;
+    box-shadow: 0 0 14px rgba(99, 102, 241, 0.3);
+}
+
+.auth-extra-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 16px;
+}
+
+.auth-extra-row a {
+    color: #818cf8;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.auth-extra-row a:hover {
+    text-decoration: underline;
+}
+
+.btn-auth-submit {
+    width: 100%;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #7c3aed 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px -4px rgba(99, 102, 241, 0.5);
+}
+
+.btn-auth-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -4px rgba(99, 102, 241, 0.7);
+    filter: brightness(1.1);
+}
+
+.btn-auth-submit:active {
+    transform: translateY(0);
+}
+
+/* Fast 1-Click Demo Profiles */
+.quick-login-section {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.quick-login-title {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #38bdf8;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.quick-login-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.quick-login-btn {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 7px 9px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #cbd5e1;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+}
+
+.quick-login-btn:hover {
+    background: rgba(99, 102, 241, 0.22);
+    border-color: rgba(99, 102, 241, 0.4);
+    color: #ffffff;
+    transform: translateY(-1px);
+}

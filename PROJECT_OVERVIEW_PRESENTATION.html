@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Project Overview & Architecture Presentation</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #090d16;
+            --surface: #0f172a;
+            --surface-hover: #1e293b;
+            --border: #334155;
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #0ea5e9;
+            --accent: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
+            --font-mono: 'Space Grotesk', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            padding: 24px;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Top Executive Header */
+        .header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .brand-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            font-size: 28px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-title {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .brand-subtitle {
+            color: var(--secondary);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background: #1e293b;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            border-color: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+        }
+
+        /* 3-Column Key Metric Overview */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .kpi-card.sky::before {
+            background: var(--secondary);
+        }
+
+        .kpi-card.violet::before {
+            background: var(--accent);
+        }
+
+        .kpi-card.success::before {
+            background: var(--success);
+        }
+
+        .kpi-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .kpi-value {
+            font-family: var(--font-heading);
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .kpi-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* 2-Column Main Section */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Interactive Bar Chart Box */
+        .chart-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .toggle-btn {
+            background: #1e293b;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .toggle-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary-light);
+        }
+
+        #overviewBarSvg {
+            width: 100%;
+            height: 280px;
+        }
+
+        /* Architecture Tree */
+        .arch-tree {
+            background: #020617;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #38bdf8;
+            height: 280px;
+            overflow-y: auto;
+        }
+
+        /* UGC Table */
+        .ugc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .ugc-table th {
+            background: #1e1b4b;
+            color: #a5b4fc;
+            padding: 8px 12px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        .ugc-table td {
+            padding: 7px 12px;
+            border: 1px solid var(--border);
+            color: #e2e8f0;
+        }
+
+        .ugc-table tr:nth-child(even) {
+            background: rgba(30, 41, 59, 0.4);
+        }
+
+        /* 3 Pillars */
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .pillar-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .pillar-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .pillar-title {
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .pillar-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Top Header -->
+        <header class="header">
+            <div class="brand-info">
+                <div class="brand-logo">📊</div>
+                <div>
+                    <div class="brand-title">Academic Analytics & Student Marksheet Portal</div>
+                    <div class="brand-subtitle">Executive Project Overview & Architecture Presentation</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="presentation.html" class="btn btn-primary">📽️ Interactive Slides</a>
+                <a href="Academic_Analytics_Portal_Presentation.pptx" download class="btn">📥 Download PPTX</a>
+                <a href="index.html" class="btn" style="background:#047857;">🚀 Launch App</a>
+            </div>
+        </header>
+
+        <!-- KPI Grid -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">Architecture</div>
+                <div class="kpi-value" style="color:#818cf8;">3 Layers</div>
+                <div class="kpi-desc">Modular subfolders (css/, js/, data/)</div>
+            </div>
+            <div class="kpi-card sky">
+                <div class="kpi-title">Data Visualizations</div>
+                <div class="kpi-value" style="color:#38bdf8;">D3.js v7</div>
+                <div class="kpi-desc">Bar, Donut, Scatter, Radar & Gauge</div>
+            </div>
+            <div class="kpi-card violet">
+                <div class="kpi-title">Grading Scale</div>
+                <div class="kpi-value" style="color:#c084fc;">UGC 10-Pt</div>
+                <div class="kpi-desc">O (10 GP) to F (0 GP / Backlog)</div>
+            </div>
+            <div class="kpi-card success">
+                <div class="kpi-title">Security & Roles</div>
+                <div class="kpi-value" style="color:#4ade80;">Dual RBAC</div>
+                <div class="kpi-desc">Faculty Admin & Student Self-Service</div>
+            </div>
+        </section>
+
+        <!-- Main Content 2-Column -->
+        <div class="main-grid">
+
+            <!-- Left: Flagship Bar Graph -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">📊 Live Department Performance Bar Chart</div>
+                    <div class="chart-controls">
+                        <button class="toggle-btn active" id="btnAvg" onclick="drawChart('avg')">Avg Marks (%)</button>
+                        <button class="toggle-btn" id="btnPass" onclick="drawChart('pass')">Pass Rate (%)</button>
+                    </div>
+                </div>
+                <svg id="overviewBarSvg"></svg>
+            </div>
+
+            <!-- Right: System Architecture Tree -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">📁 Project Structure</div>
+                    <span style="font-size:11px; color:var(--secondary); font-family:var(--font-mono);">Zero-Dependency</span>
+                </div>
+                <div class="arch-tree">
+<span style="color:#f59e0b;">D3project/</span>
+├── <span style="color:#4ade80;">index.html</span>         <span style="color:#64748b;">(Clean HTML Shell)</span>
+├── <span style="color:#e2e8f0;">presentation.html</span>  <span style="color:#64748b;">(Interactive Slide Deck)</span>
+├── <span style="color:#e2e8f0;">Academic_...pptx</span>   <span style="color:#64748b;">(PowerPoint File)</span>
+│
+├── <span style="color:#38bdf8;">css/</span>               <span style="color:#64748b;">(🎨 Stylesheets)</span>
+│   ├── styles.css     <span style="color:#64748b;">(Tokens & Resets)</span>
+│   ├── auth.css       <span style="color:#64748b;">(Aurora Gateway)</span>
+│   ├── dashboard.css  <span style="color:#64748b;">(KPIs & Tables)</span>
+│   ├── charts.css     <span style="color:#64748b;">(D3 SVG Styles)</span>
+│   └── marksheet.css  <span style="color:#64748b;">(Print Progress Card)</span>
+│
+├── <span style="color:#818cf8;">js/</span>                <span style="color:#64748b;">(⚡ Logic Layer)</span>
+│   ├── data.js        <span style="color:#64748b;">(Cohort Store)</span>
+│   ├── auth.js        <span style="color:#64748b;">(Session RBAC)</span>
+│   ├── marksheet.js   <span style="color:#64748b;">(UGC GPA Engine)</span>
+│   ├── ui.js          <span style="color:#64748b;">(KPIs & Sorting)</span>
+│   ├── charts.js      <span style="color:#64748b;">(D3 Visualizers)</span>
+│   └── app.js         <span style="color:#64748b;">(Bootstrap & CRUD)</span>
+│
+└── <span style="color:#f43f5e;">data/</span>              <span style="color:#64748b;">(📊 Persistent Data)</span>
+    └── students.json  <span style="color:#64748b;">(22 Student Records)</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- UGC 10-Point Grading Matrix Table -->
+        <div class="section-card" style="margin-bottom: 24px;">
+            <div class="section-header">
+                <div class="section-title">🎓 UGC 10-Point Academic Grading Scale Matrix</div>
+                <span style="font-size:11px; color:#10b981; font-weight:700;">Min Pass Threshold: 35 Marks</span>
+            </div>
+            <table class="ugc-table">
+                <thead>
+                    <tr>
+                        <th>Score Range</th>
+                        <th>Grade</th>
+                        <th>Grade Points (GP)</th>
+                        <th>Qualitative Description</th>
+                        <th>Result Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>90 – 100</td><td style="color:#10b981; font-weight:700;">O</td><td>10</td><td>Outstanding</td><td>Passed (First Class with Distinction)</td></tr>
+                    <tr><td>80 – 89</td><td style="color:#10b981; font-weight:700;">A+</td><td>9</td><td>Excellent</td><td>Passed (First Class)</td></tr>
+                    <tr><td>70 – 79</td><td style="color:#0ea5e9; font-weight:700;">A</td><td>8</td><td>Very Good</td><td>Passed (First Class)</td></tr>
+                    <tr><td>60 – 69</td><td style="color:#0ea5e9; font-weight:700;">B+</td><td>7</td><td>Good</td><td>Passed (Second Class)</td></tr>
+                    <tr><td>50 – 59</td><td style="color:#f59e0b; font-weight:700;">B</td><td>6</td><td>Above Average</td><td>Passed (Second Class)</td></tr>
+                    <tr><td>40 – 49</td><td style="color:#f59e0b; font-weight:700;">C</td><td>5</td><td>Average</td><td>Passed (Pass Division)</td></tr>
+                    <tr><td>35 – 39</td><td style="color:#eab308; font-weight:700;">P</td><td>4</td><td>Pass Threshold</td><td>Passed (Pass Division)</td></tr>
+                    <tr><td>0 – 34</td><td style="color:#ef4444; font-weight:700;">F</td><td>0</td><td>Fail / Re-appear</td><td style="color:#ef4444; font-weight:700;">FAILED (Backlog)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 3 Pillars Footer -->
+        <div class="pillars-grid">
+            <div class="pillar-card" style="border-top: 3px solid var(--primary);">
+                <div class="pillar-icon">📁</div>
+                <div class="pillar-title">1. Modular Codebase</div>
+                <div class="pillar-desc">
+                    Decoupled HTML, CSS stylesheets, JavaScript business logic, and JSON datasets into clean subfolders for effortless team maintainability.
+                </div>
+            </div>
+            <div class="pillar-card" style="border-top: 3px solid var(--secondary);">
+                <div class="pillar-icon">📊</div>
+                <div class="pillar-title">2. D3.js Visual Suite</div>
+                <div class="pillar-desc">
+                    High-performance client-side data binding with responsive SVG coordinates, custom animated transitions, and interactive tooltips.
+                </div>
+            </div>
+            <div class="pillar-card" style="border-top: 3px solid var(--accent);">
+                <div class="pillar-icon">📜</div>
+                <div class="pillar-title">3. Official Progress Card</div>
+                <div class="pillar-desc">
+                    Autonomous university semester progress card generator with high-fidelity <code>@media print</code> formatting for physical certificate issuance.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Live Chart Script -->
+    <script>
+        const DEPT_DATA = [
+            { dept: 'CSE', name: 'Computer Science', avgMarks: 90.2, passRate: 100, color: '#4f46e5' },
+            { dept: 'ECE', name: 'Electronics', avgMarks: 85.8, passRate: 100, color: '#0ea5e9' },
+            { dept: 'EEE', name: 'Electrical', avgMarks: 79.4, passRate: 100, color: '#8b5cf6' },
+            { dept: 'CIVIL', name: 'Civil Engg', avgMarks: 73.2, passRate: 75.0, color: '#10b981' },
+            { dept: 'MECH', name: 'Mechanical', avgMarks: 69.8, passRate: 80.0, color: '#f59e0b' }
+        ];
+
+        function drawChart(mode = 'avg') {
+            const svg = d3.select('#overviewBarSvg');
+            svg.selectAll('*').remove();
+
+            document.getElementById('btnAvg').classList.toggle('active', mode === 'avg');
+            document.getElementById('btnPass').classList.toggle('active', mode === 'pass');
+
+            const width = 640;
+            const height = 260;
+            const margin = { top: 20, right: 20, bottom: 35, left: 45 };
+
+            svg.attr('viewBox', `0 0 ${width} ${height}`);
+
+            const x = d3.scaleBand()
+                .domain(DEPT_DATA.map(d => d.dept))
+                .range([margin.left, width - margin.right])
+                .padding(0.35);
+
+            const y = d3.scaleLinear()
+                .domain([0, 100])
+                .nice()
+                .range([height - margin.bottom, margin.top]);
+
+            // Grid lines
+            svg.append('g')
+                .attr('transform', `translate(${margin.left},0)`)
+                .call(d3.axisLeft(y).ticks(5).tickSize(-(width - margin.left - margin.right)).tickFormat(''))
+                .call(g => g.select('.domain').remove())
+                .call(g => g.selectAll('.tick line').attr('stroke', 'rgba(255,255,255,0.08)'));
+
+            // X Axis
+            svg.append('g')
+                .attr('transform', `translate(0,${height - margin.bottom})`)
+                .call(d3.axisBottom(x))
+                .call(g => g.select('.domain').attr('stroke', '#334155'))
+                .call(g => g.selectAll('.tick text').attr('fill', '#cbd5e1').attr('font-size', '11px').attr('font-weight', '700'));
+
+            // Y Axis
+            svg.append('g')
+                .attr('transform', `translate(${margin.left},0)`)
+                .call(d3.axisLeft(y).ticks(5).tickFormat(d => d + '%'))
+                .call(g => g.select('.domain').remove())
+                .call(g => g.selectAll('.tick text').attr('fill', '#94a3b8').attr('font-size', '10px'));
+
+            // Draw Bars
+            svg.selectAll('.bar')
+                .data(DEPT_DATA)
+                .join('rect')
+                .attr('class', 'bar')
+                .attr('x', d => x(d.dept))
+                .attr('y', height - margin.bottom)
+                .attr('width', x.bandwidth())
+                .attr('height', 0)
+                .attr('rx', 6)
+                .attr('fill', d => d.color)
+                .transition()
+                .duration(800)
+                .attr('y', d => y(mode === 'avg' ? d.avgMarks : d.passRate))
+                .attr('height', d => (height - margin.bottom) - y(mode === 'avg' ? d.avgMarks : d.passRate));
+
+            // Value Labels
+            svg.selectAll('.val-label')
+                .data(DEPT_DATA)
+                .join('text')
+                .attr('class', 'val-label')
+                .attr('x', d => x(d.dept) + x.bandwidth() / 2)
+                .attr('y', height - margin.bottom)
+                .attr('text-anchor', 'middle')
+                .attr('fill', '#ffffff')
+                .attr('font-size', '11px')
+                .attr('font-weight', '700')
+                .transition()
+                .duration(800)
+                .attr('y', d => y(mode === 'avg' ? d.avgMarks : d.passRate) - 6)
+                .text(d => (mode === 'avg' ? d.avgMarks : d.passRate) + '%');
+        }
+
+        // Initialize
+        drawChart('avg');
+    </script>
+</body>
+
+</html>
