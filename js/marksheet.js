@@ -123,10 +123,12 @@ function calculateSemesterEvaluation(student) {
         creditsEarned,
         totalCreditPoints,
         totalMarks,
+        average: percentage,
         percentage,
         sgpa,
         overallGrade,
         status,
+        isPass,
         division
     };
 }
@@ -231,7 +233,7 @@ function populateMarksheet(student) {
     if (!student) return;
 
     const deptFullName = DEPT_NAMES[student.department] || `${student.department} Engineering`;
-    const regNo = `22A91A05${String(student.id).padStart(2, '0')}`;
+    const regNo = student.rollNo || `22A91A05${String(student.id).padStart(2, '0')}`;
     const serial = `BIET/2026/UG/${String(student.id).padStart(4, '0')}`;
     const certHash = `BIET-DIGI-CERT-2026-${String(student.id).padStart(4, '0')}-${(student.id * 739 + 1042).toString(16).toUpperCase()}`;
     const dateStr = new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -248,7 +250,7 @@ function populateMarksheet(student) {
     d3.selectAll(".val-cardIssueDate").text(dateStr);
 
     // Render Table Rows with clean subject title, NO bottom progress line, NO max/min columns
-    const tableBodies = [d3.select("#cardMarksTableBody"), d3.select("#hubMarksTableBody")];
+    const tableBodies = [d3.select("#cardMarksTableBody"), d3.select("#hubMarksTableBody"), d3.select("#studMarksTableBody")];
     tableBodies.forEach(tbody => {
         if (tbody.empty()) return;
         const rows = tbody.selectAll("tr").data(evalRes.subjects, d => d.code).join("tr");
@@ -399,6 +401,7 @@ function updateSimulatorPreview() {
     simulatedStudent.grade = evalRes.overallGrade;
     simulatedStudent.division = evalRes.division;
     simulatedStudent.totalCreditPoints = evalRes.totalCreditPoints;
+    simulatedStudent.creditsEarned = evalRes.creditsEarned;
 
     populateMarksheet(simulatedStudent);
 }
@@ -435,7 +438,7 @@ function copyTranscriptSummary() {
 OFFICIAL ACADEMIC TRANSCRIPT & SEMESTER PROGRESS REPORT
 ------------------------------------------------------------
 Student Name: ${student.name}
-Roll Number: 22A91A05${String(student.id).padStart(2, '0')}
+Roll Number: ${student.rollNo || (`22A91A05${String(student.id).padStart(2, '0')}`)}
 Department: ${student.department} (${DEPT_NAMES[student.department] || ''})
 Date of Issue: ${new Date().toLocaleDateString()}
 ------------------------------------------------------------

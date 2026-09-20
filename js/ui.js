@@ -4,6 +4,24 @@
 
 let currentActiveViewTab = 'all'; // 'all' | 'analytics' | 'marksheet' | 'table'
 
+// Format individual subject score with visual mini indicator bar
+function formatVisualScore(val, color) {
+    const num = Number(val) || 0;
+    const isArrear = num < PASS_MARK_THRESHOLD;
+    const barWidth = Math.min(100, Math.max(0, num));
+    return `
+        <div class="visual-score-wrap" style="display:flex; flex-direction:column; gap:3px; min-width:64px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:12px; color:${isArrear ? '#ef4444' : '#f1f5f9'}; font-family:'Space Grotesk', monospace;">
+                <span>${num}</span>
+                ${isArrear ? '<span style="font-size:9.5px; color:#ef4444; font-weight:800; background:rgba(239,68,68,0.15); padding:1px 4px; border-radius:4px;">FAIL</span>' : ''}
+            </div>
+            <div style="width:100%; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;">
+                <div style="width:${barWidth}%; height:100%; background:${isArrear ? '#ef4444' : color}; border-radius:2px; box-shadow:0 0 4px ${isArrear ? '#ef4444' : color};"></div>
+            </div>
+        </div>
+    `;
+}
+
 function showTooltip(event, text) {
     let pageX = event.pageX;
     let pageY = event.pageY;
@@ -74,7 +92,7 @@ function showToast(message, type = "info") {
 function switchViewTab(tab) {
     currentActiveViewTab = tab;
 
-    d3.selectAll(".vertical-nav-btn, .nav-view-btn").classed("active", false);
+    d3.selectAll(".horizontal-nav-btn").classed("active", false);
     d3.select(`#tabView-${tab}`).classed("active", true);
 
     const analyticsSection = d3.select("#analyticsSection");
@@ -97,7 +115,9 @@ function switchViewTab(tab) {
         marksheetSection.style("display", "none");
         tableSection.style("display", "block");
         const el = document.getElementById("analyticsSection");
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (el && typeof el.scrollIntoView === 'function') {
+            try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+        }
     } else if (tab === 'marksheet') {
         analyticsSection.style("display", "none");
         marksheetSection.style("display", "block");
@@ -108,13 +128,17 @@ function switchViewTab(tab) {
             syncSimulatorInputs(student);
         }
         const el = document.getElementById("marksheetHubSection");
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (el && typeof el.scrollIntoView === 'function') {
+            try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+        }
     } else if (tab === 'table') {
         analyticsSection.style("display", "none");
         marksheetSection.style("display", "none");
         tableSection.style("display", "block");
         const el = document.getElementById("tableSection");
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (el && typeof el.scrollIntoView === 'function') {
+            try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+        }
     }
 }
 
@@ -162,7 +186,7 @@ function updateKPIs(data, isStudent) {
             { id: 3, icon: student.status === "Pass" ? "🟢" : "🔴", title: "Result & Grade", value: `${student.status.toUpperCase()} (Gr. ${student.grade})`, subtext: student.status === "Pass" ? "Passed all 4 subjects" : "Below 35 in 1+ subjects" },
             { id: 4, icon: "⏱", title: "My Attendance", value: `${student.attendance}%`, subtext: student.attendance >= 75 ? "Eligible for Exams" : "⚠️ Attendance Shortage" },
             { id: 5, icon: "🏫", title: "My Department", value: student.department, subtext: `${DEPT_NAMES[student.department] || 'Engineering'}` },
-            { id: 6, icon: "📜", title: "Credits Earned", value: `${student.status === "Pass" ? "16.0" : (student.creditsEarned || "12.0")} / 16`, subtext: "CBCS 10-point scheme" }
+            { id: 6, icon: "📜", title: "Credits Earned", value: `${student.status === "Pass" ? "16.0" : ((student.creditsEarned !== undefined ? student.creditsEarned : 12.0) + ".0")} / 16`, subtext: "CBCS 10-point scheme" }
         ];
 
         // Sidebar Snapshot
@@ -226,9 +250,14 @@ function updateTable(data, isStudent) {
         d3.select("#thActions").style("display", "");
     }
 
+    tableBody.selectAll("tr").filter(function () {
+        return !this.__data__ || this.__data__.id === undefined;
+    }).remove();
+
     if (data.length === 0) {
         tableBody.selectAll("tr").remove();
         tableBody.append("tr")
+            .attr("class", "no-records-row")
             .append("td")
             .attr("colspan", isStudent ? 14 : 15)
             .style("text-align", "center")
@@ -241,7 +270,7 @@ function updateTable(data, isStudent) {
     const maxAverage = d3.max(students, d => d.average);
 
     const rows = tableBody.selectAll("tr")
-        .data(data, d => d.id)
+        .data(data, (d, i) => (d && d.id !== undefined ? d.id : `row-${i}`))
         .join(
             enter => enter.append("tr")
                 .style("opacity", 0)
@@ -271,13 +300,16 @@ function updateTable(data, isStudent) {
 
         return `
             <td style="font-weight: 800; text-align: center; color: #818cf8;">#${d.id}</td>
-            <td style="font-weight: 700;">${d.name} ${tags}</td>
+            <td style="font-weight: 700;">
+                <div>${d.name} ${tags}</div>
+                <div style="font-size: 10.5px; color: #818cf8; font-family: 'Space Grotesk', monospace; font-weight: 600; margin-top: 1px;">${d.rollNo || ('22A91A05' + String(d.id).padStart(2,'0'))}</div>
+            </td>
             <td style="text-align: center;"><span class="badge badge-dept">${d.department}</span></td>
             <td style="text-align: center;">${d.gender}</td>
-            <td style="text-align: center; font-family: 'Space Grotesk', monospace; font-weight: 700;">${formatSubjectScore(d.maths)}</td>
-            <td style="text-align: center; font-family: 'Space Grotesk', monospace; font-weight: 700;">${formatSubjectScore(d.science)}</td>
-            <td style="text-align: center; font-family: 'Space Grotesk', monospace; font-weight: 700;">${formatSubjectScore(d.english)}</td>
-            <td style="text-align: center; font-family: 'Space Grotesk', monospace; font-weight: 700;">${formatSubjectScore(d.programming)}</td>
+            <td>${formatVisualScore(d.maths, '#6366f1')}</td>
+            <td>${formatVisualScore(d.science, '#0ea5e9')}</td>
+            <td>${formatVisualScore(d.english, '#10b981')}</td>
+            <td>${formatVisualScore(d.programming, '#a855f7')}</td>
             <td style="font-weight: 800; text-align: center; color: #e2e8f0; font-family: 'Space Grotesk', monospace;">${d.total} / 400</td>
             <td style="text-align: center;"><span class="badge-percentage">${d3.format(".2f")(d.average)}%</span></td>
             <td style="text-align: center;"><span style="color:${attColor}; font-weight:800; font-family: 'Space Grotesk', monospace;">${d.attendance}%</span></td>
@@ -300,21 +332,36 @@ function sortTable(column) {
         sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
         sortColumn = column;
-        sortDirection = 'asc';
+        sortDirection = (['maths', 'science', 'english', 'programming', 'total', 'average', 'attendance'].includes(column)) ? 'desc' : 'asc';
     }
+
+    const GRADE_RANKS = { 'O': 10, 'A': 9, 'B': 8, 'C': 7, 'D': 6, 'F': 0 };
+
+    students.sort((a, b) => {
+        let valA = a[sortColumn];
+        let valB = b[sortColumn];
+
+        if (sortColumn === 'grade') {
+            const rankA = GRADE_RANKS[valA] !== undefined ? GRADE_RANKS[valA] : -1;
+            const rankB = GRADE_RANKS[valB] !== undefined ? GRADE_RANKS[valB] : -1;
+            return sortDirection === 'asc' ? rankA - rankB : rankB - rankA;
+        }
+
+        if (typeof valA === 'string') {
+            return sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+        return sortDirection === 'asc' ? (Number(valA) || 0) - (Number(valB) || 0) : (Number(valB) || 0) - (Number(valA) || 0);
+    });
+
     updateTableHeaders();
-    updateDashboard();
+    updateTable(getFilteredData(), currentUser && currentUser.role === 'Student');
 }
 
 function updateTableHeaders() {
-    d3.selectAll("#tableHeaderRow th").classed("sorted-asc", false).classed("sorted-desc", false);
-    const headerCols = {
-        id: 0, name: 1, department: 2, gender: 3,
-        maths: 4, science: 5, english: 6, programming: 7,
-        total: 8, average: 9, percentage: 9, attendance: 10, status: 11, grade: 12
-    };
-    const idx = headerCols[sortColumn];
-    if (idx !== undefined) {
+    d3.selectAll("#tableHeaderRow th").classed("sorted-asc sorted-desc", false);
+    const cols = ['id', 'name', 'department', 'gender', 'maths', 'science', 'english', 'programming', 'total', 'average', 'attendance', 'status', 'grade'];
+    const idx = cols.indexOf(sortColumn);
+    if (idx !== -1 && idx !== undefined) {
         d3.selectAll("#tableHeaderRow th").filter((d, i) => i === idx)
             .classed(sortDirection === 'asc' ? 'sorted-asc' : 'sorted-desc', true);
     }
@@ -337,7 +384,7 @@ function getFilteredData() {
         const matchesGender = (gender === "All" || student.gender === gender);
         const matchesStatus = (status === "All" || student.status === status);
         const matchesGrade = (grade === "All" || student.grade === grade);
-        const matchesSearch = student.name.toLowerCase().includes(search) || String(student.id).includes(search);
+        const matchesSearch = student.name.toLowerCase().includes(search) || String(student.id).includes(search) || (student.rollNo && student.rollNo.toLowerCase().includes(search));
         return matchesDept && matchesGender && matchesStatus && matchesGrade && matchesSearch;
     });
 
@@ -387,13 +434,21 @@ function exportToCSV() {
 
     const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", `Academic_Students_Evaluation_${new Date().toISOString().slice(0, 10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    showToast(`Exported ${data.length} student records to CSV!`, "success");
+    if (window.URL && typeof window.URL.createObjectURL === 'function') {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Academic_Students_Evaluation_${new Date().toISOString().slice(0, 10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        if (typeof URL.revokeObjectURL === 'function') {
+            URL.revokeObjectURL(url);
+        }
+        showToast(`Exported ${data.length} student records to CSV!`, "success");
+    } else {
+        showToast(`Exported ${data.length} student records.`, "success");
+    }
 }
+
+

@@ -1,4 +1,13 @@
 {
+  "name": "d3project",
+  "version": "1.0.0",
+  "description": "Academic Analytics & Student Marksheet Portal",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "node build.js"
+  },
   "dependencies": {
     "pptxgenjs": "^4.0.1"
   }

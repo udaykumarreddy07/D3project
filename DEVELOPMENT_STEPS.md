@@ -16,6 +16,7 @@
 | STAGE 6: Dynamic Data Grid & CRUD Engine      -> js/ui.js (Search, Multi-column Sort, Filter, CSV) |
 | STAGE 7: UGC Marksheet Progress Card & Print  -> js/marksheet.js, css/marksheet.css (@media print) |
 | STAGE 8: Live Push Simulator & Feedback Engine-> js/app.js (Real-time Stream, Toast Notifications) |
+| STAGE 9: Featured Hero Cohort Flow & Orbit   -> js/charts.js, css/charts.css (Beeswarm & Orbit)   |
 +---------------------------------------------------------------------------------------------------+
 ```
 
@@ -232,3 +233,161 @@ function toggleLiveSimulation(enable) {
     }
 }
 ```
+
+---
+
+## 🌊 Stage 9: Featured Hero Cohort Trajectory Conduit & Radial Orbit Engine (`js/charts.js`, `css/charts.css`)
+
+### 9.1 Visual Architecture
+Inspired by advanced data visualization research and user screenshot benchmarks:
+1. **Mode A: Beeswarm to Alluvial Outcome Flow (Screenshot 3)**:
+   - **Left Section**: Individual student bubbles mapped across a continuous horizontal metric scale (Aggregate Marks %, Attendance %, or SGPA). Uses D3 force collision detection for organic beeswarm positioning.
+   - **Center Transition**: Demarcation line where trajectories bundle into smooth cubic Bézier splines (`M x0,y0 L xMid,y0 C ...`).
+   - **Right Sinks**: 4 official UGC academic outcome qualification nodes (**Distinction ≥85%**, **First Class 70–84%**, **Pass / 2nd Class 35–69%**, and **Arrears Alert <35%**).
+2. **Mode B: Radial Institutional Orbit & Subject Competency Tree (Screenshot 4)**:
+   - Central institutional hub (`BIET Autonomous`) radiating 5 departmental spokes (`CSE`, `ECE`, `EEE`, `MECH`, `CIVIL`).
+   - Concentric target glyphs for each student displaying multi-subject grading rings (outer: Programming, middle: Maths, core: Result status).
+
+### 9.2 Key Interactions
+- **Live Hover Highlighting**: Hovering over any student spotlights their individual trajectory and dims other conduits.
+- **Tier Quick Filtering**: Clicking outcome nodes or tier pills isolates students belonging to that specific category.
+- **Direct UGC Marksheet Integration**: Clicking any student bubble immediately opens their verified semester progress card modal with print support.
+
+---
+
+## 🔮 Stage 10: Deep-Touch Inspector & 5-Engine Cyber-HUD Visual Studio (`js/charts.js`, `js/ui.js`, `css/charts.css`)
+
+### 10.1 The 5-Engine Hero Visual Studio
+Expands the portal's hero visualizer into a 5-mode studio representing all uploaded reference benchmarks:
+1. **Conduit Streams (`flow`)**: Beeswarm to alluvial outcome flow with cubic Bézier bundles (Screenshot 3).
+2. **Ridgeline Density Waves (`ridge`)**: Overlapping Kernel Density Estimation (KDE) density ridges with gradient fills, crest lines, and peak indicators for all 4 subjects (Screenshots 1 & 2).
+3. **Parallel Subject Coordinates (`parallel`)**: Multi-dimensional student trajectories across 5 vertical axes (`Maths`, `Science`, `English`, `Coding`, `Aggregate %`) with department color-coding and brush filters (Screenshot 6).
+4. **Institutional Orbit Tree (`orbit`)**: Departmental constellation network with radiating planetary orbits and multi-ring student glyphs (Screenshot 4).
+5. **Concentric Radial HUD (`hud`)**: Futuristic telemetry radar with multi-tiered circular gauge arcs, radial crosshairs, and live benchmark readouts (Screenshot 1).
+
+### 10.2 Deep-Touch Inspector Modal Engine (`openDeepChartInspector`)
+Solves the user's primary requirement: **Touching any bar or pie/donut slice displays the total underlying information represented inside the graphic**:
+- **Triggers**: Click or touch any subject bar (`drawFacultySubjectChart`), any grade donut slice (`drawFacultyGradeChart`), or any demographic bar (`drawFacultyGenderChart`).
+- **Telemetry Header**: Displays category title, active cohort badge, record counter, and quick action buttons.
+- **4 Telemetry Stat Cards**:
+  - Constituent Cohort Count (`N` students)
+  - Cohort Average Aggregate (`%` with comparative benchmark)
+  - Mean SGPA (`/10.00`)
+  - Pass vs. Arrear Clearance Rate (`%` with total cleared count)
+- **Interactive Student Search Bar**: Live in-modal search across student names, roll numbers, and branches.
+- **Detailed Constituent Roster Table**:
+  - Student Profile (Avatar, Name, Roll No)
+  - Department Badge
+  - Gender
+  - 4 Individual Subject Marks with visual color badges (`Maths`, `Science`, `English`, `Programming`)
+  - Aggregate Percentage (`%`)
+  - UGC SGPA Score
+  - Status Badge (Pass / Arrear)
+  - One-Click Marksheet Launcher (`View Marksheet`)
+- **Portal Synchronization**: "Apply as Filter" button dynamically isolates the selected cohort across the entire dashboard.
+
+### 10.3 Ubiquitous Visual Data Representation
+- **Inline Table Micro-Bars**: Replaces raw numbers in the student data grid with animated progress micro-bars color-thresholded for academic performance (Emerald $\ge 75$, Cyan $\ge 60$, Amber $\ge 35$, Rose $< 35$).
+- **Live KPI SVG Sparklines**: Renders dynamic SVG wave contours and gradient fills on all 6 top-level KPI telemetry cards.
+
+---
+
+## 🎓 Stage 11: Strict Role Separation & Student Cyber-HUD Observatory (`index.html`, `js/charts.js`, `js/auth.js`)
+
+### 11.1 Total Batch Intelligence for Faculty (`#facultyDashboardView`)
+Faculty accounts have complete institutional oversight over every student in the cohort:
+- **Batch KPI Telemetry**: 6 cards with live SVG sparklines (Total Enrolled, Mean %, Pass Rate, Avg SGPA, Distinction %, Arrears Alert).
+- **5-Engine Visual Analytics Studio**: Alluvial Conduits, Ridgeline Waves, Parallel Coordinates, Radial Orbit Tree, and Concentric HUD Radar.
+- **Deep-Touch Inspector Modal**: Clicking any bar or pie slice opens the complete constituent student table with search, individual marks, SGPA, and direct marksheet access.
+- **Master Records Gradebook**: All 22 student records with inline visual micro-bars, sorting, search, filtering, CRUD controls, CSV export, and live push simulation.
+
+### 11.2 Exclusive Student Personal Observatory (`#studentDashboardView`)
+When students log in (e.g. `sneha`, `arun`, `priya`), they strictly see only their own individual academic performance:
+- **Cyber-HUD Standing & Identity Card**:
+  - Avatar with glowing halo, student name, roll number, and department.
+  - 4 Standing Telemetry Badges: Semester SGPA (`/10.00`), Aggregate %, Batch Rank & Percentile Standing, and Attendance Status (`% • Exam Eligible ✅`).
+- **4-Subject Quick Micro-Cards**:
+  - Individual cards for `Maths`, `Science`, `English`, and `Programming` with subject code, title, score, max, grade badge, micro-progress bar, credits, and "Touch to Inspect" trigger.
+- **4 Personal High-Aesthetic D3.js Visualizations**:
+  1. 🕸️ **D3 Subject Competency Spider / Radar Web** (`#studentRadarChart`): 4-axis web comparing student's glowing neon cyan polygon against the amber dashed Class Average benchmark.
+  2. 📊 **D3 Benchmark Bullet Visualizer** (`#studentBulletChart`): Horizontal bullet bars comparing Student Score vs Class Average target pin vs Batch Highest diamond marker.
+  3. ⏱️ **D3 Concentric Attendance & Exam Clearance Dial** (`#studentAttendanceDial`): Concentric cyber-gauge displaying 75% exam clearance line, attendance progress arc, and lecture counters.
+  4. 📈 **D3 Multi-Semester SGPA Trajectory Curve** (`#studentTrajectoryChart`): Sem 1 through Sem 6 academic progression curve with smooth cardinal spline, glowing nodes, and gradient area fill.
+- **Student Subject Deep-Touch Drawer** (`openStudentSubjectModal`):
+  - Clicking any subject card, radar node, or bullet bar opens an internal marks breakdown (Theory 70M + Lab 30M), grade points, credits, and qualitative faculty feedback notes.
+- **Embedded Official Marksheet**:
+  - The official accredited CBCS transcript progress card is embedded directly on the student's page with 1-click A4 PDF print support.---
+
+## 🚀 Stage 12: 100-Student Cohort Scaling & In-Graph Direct Touch Inspector Engine (`js/data.js`, `js/charts.js`, `css/charts.css`, `index.html`)
+
+### 12.1 100-Student Multi-Department Cohort Scaling (`js/data.js`)
+To provide large-scale, institutional-grade analytics for faculty members:
+- **Cohort Expansion**: Expanded from 22 records to **100 fully detailed students** evenly distributed across 5 key engineering branches:
+  - **CSE (Computer Science & Engineering)**: 20 students (`22A91A0501` - `22A91A0520`)
+  - **ECE (Electronics & Communication)**: 20 students (`22A91A0401` - `22A91A0420`)
+  - **EEE (Electrical & Electronics)**: 20 students (`22A91A0201` - `22A91A0220`)
+  - **MECH (Mechanical Engineering)**: 20 students (`22A91A0301` - `22A91A0320`)
+  - **CIVIL (Civil Engineering)**: 20 students (`22A91A0101` - `22A91A0120`)
+- **Realistic Academic Distribution**:
+  - Top performers (e.g. Sneha Devi SGPA 9.73, Arun Kumar SGPA 9.07, Ananya Sen SGPA 9.47, Divya Pillai SGPA 9.27).
+  - Normal grade distribution across Outstanding (O), Excellent (A+), Very Good (A), Good (B+), and Arrear alerts.
+  - Realistic attendance numbers ranging from 45% (chronic absenteeism) to 98% (impeccable attendance).
+- **Auto-Migrating Safe Storage Key**: Migrated to `student_dashboard_data_v6_100` so users immediately receive all 100 students without manual cache clearing.
+
+### 12.2 Direct In-Graph Touch Intelligence (`.in-graph-tray`)
+Eliminates intrusive separate modal popups by embedding interactive diagnostic trays **directly inside each chart card container**:
+1. **Interactive Center Donut Core (`#donutCenterVal`, `#donutCenterLbl`)**:
+   - Hovering or touching any donut slice dynamically updates the center count, percentage, and grade badge in neon color.
+   - Clicking the center core resets the visualization.
+2. **In-Graph Grade Drawer (`#trayGradeChart`)**:
+   - Touching any grade slice (O, A+, A, B+, B, C, F) or legend pill slides an obsidian glassmorphic tray into `#cardGradeChart`.
+   - Displays 4 quick metrics: Constituent Students, Cohort Mean %, Highest Marks, and Attendance Avg.
+   - Scrollable constituent roster with student name, roll number, department, aggregate %, and one-click marksheet inspection.
+   - Includes a top-right `[✕ Back to Donut]` dismiss button.
+3. **In-Graph Subject Breakdown Tray (`#traySubjectChart`)**:
+   - Touching any subject bar (`Maths`, `Science`, `English`, `Programming`) renders the subject average, pass rate %, highest score, and ranked student score list directly over the chart.
+4. **In-Graph Gender Demographics Tray (`#trayGenderChart`)**:
+   - Touching Male or Female demographic bars reveals cohort headcount, mean aggregate, attendance rate, and student roster.
+5. **In-Graph Biometric Attendance Tray (`#trayAttendanceChart`)**:
+   - Touching any scatter plot dot renders personal biometric diagnostics, attendance risk tier, and subject performance inside the scatter card.
+
+### 12.3 Master Gradebook Roll Number & Batch Search (`js/ui.js`, `index.html`)
+- **Quick Branch Filters**: Added one-click batch filter pills: `All Cohort (100)`, `CSE (20)`, `ECE (20)`, `EEE (20)`, `MECH (20)`, `CIVIL (20)`.
+- **Search by Roll Number**: The live search bar in the faculty table instantly filters across both student names and roll numbers (`22A91A...`).
+- **Smooth Virtualized Scrolling**: Compact, high-performance table styling ensures 100 rows render with zero lag.
+
+---
+
+## 📑 Stage 13: Academic Hardcopy Project Report & Automated Print-to-PDF Engine (`hardcopy.html`, `PROJECT_REPORT_HARDCOPY.md`, `generate_hardcopy_pdf.js`, `server.js`)
+
+### 13.1 University-Grade Hardcopy Report Document (`hardcopy.html`)
+Engineered an autonomous, print-optimized A4 academic project submission document:
+- **Academic Standard Front-Matter**:
+  - Institutional Cover Page: Bharat Institute of Engineering & Technology (Autonomous), NAAC 'A+' Grade, UGC approved.
+  - Official Certificate of Bonafide Work signed by Internal Guide, HOD, and External University Examiner.
+  - Student Declaration & Institutional Acknowledgements.
+  - Project Abstract & Executive Summary covering problem definition and technical contributions.
+  - Complete Table of Contents with precise page numbering.
+- **9 Core Technical Chapters**:
+  1. *Introduction & Problem Definition*: Limitations of legacy ERPs and project vision.
+  2. *System Analysis & Requirements*: Functional/Non-functional matrix and technology stack.
+  3. *System Architecture & Design*: Layered architecture diagram, state management, and defensive storage wrapper.
+  4. *100-Student Data Modeling*: Comprehensive schema and 20-student allocation across CSE, ECE, EEE, MECH, and CIVIL.
+  5. *UGC-CBCS SGPA Mathematical Engine*: 10-point scale equations and credit-weighted formulations.
+  6. *Visual Analytics Engineering*: 5-engine D3.js studio and direct in-graph touch drawers (`.in-graph-tray`).
+  7. *Role-Based Access Control (RBAC)*: Faculty vs. Student privacy matrix.
+  8. *System Testing & Verification*: Automated Chrome CDP verification matrix.
+  9. *Conclusion & Future Work*: Educational data mining roadmap.
+- **Complete 100-Student Master Roster Appendix**:
+  - Full tabular records of all 100 students dynamically loaded into Appendices Part 1 & Part 2.
+- **Interactive Floating Action Bar**:
+  - `[🖨️ Print / Save as PDF]` with `@media print` styling (page-break-after: always, 0 margins, printBackground).
+  - Quick Chapter Jump dropdown.
+  - Direct 1-click return to live dashboard.
+
+### 13.2 Automated Headless Chrome PDF Compiler (`generate_hardcopy_pdf.js`)
+- Uses Chrome DevTools Protocol (`Page.printToPDF`) with headless Chrome.
+- Programmatically renders `hardcopy.html` and exports a standalone, vector-crisp PDF file:
+  - **Output**: `Academic_Analytics_Portal_Final_Project_Report.pdf` (1.66 MB).
+- Added `.pdf` MIME type to `server.js` (`application/pdf`) and integrated a direct `"📑 Hardcopy Report"` button in the sticky application header in `index.html`.
+

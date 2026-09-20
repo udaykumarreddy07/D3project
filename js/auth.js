@@ -106,8 +106,12 @@ let currentUserRole = "Faculty";
                     linkedStudentId = existingMatch.id;
                 } else {
                     const nextId = students.length > 0 ? (d3.max(students, s => s.id) + 1) : 1;
+                    const deptCodes = { "CSE": "05", "ECE": "04", "EEE": "02", "MECH": "03", "CIVIL": "01" };
+                    const deptCode = deptCodes[dept] || "05";
+                    const rollNo = `22A91A${deptCode}${String(nextId).padStart(2, '0')}`;
                     const newStudent = {
                         id: nextId,
+                        rollNo: rollNo,
                         name: fullName,
                         department: dept,
                         gender: "Male",
@@ -120,6 +124,7 @@ let currentUserRole = "Faculty";
                     recalculateStudent(newStudent);
                     students.push(newStudent);
                     saveDataToStorage();
+                    if (typeof initStudentSelector === 'function') initStudentSelector();
                     linkedStudentId = nextId;
                 }
             }
@@ -184,13 +189,27 @@ let currentUserRole = "Faculty";
         function quickSwitchRole(role) {
             if (role === 'Faculty') {
                 currentUser = DEFAULT_AUTH_USERS[0];
+                window.location.hash = '#faculty';
             } else {
                 currentUser = DEFAULT_AUTH_USERS[1]; // Sneha Devi
+                window.location.hash = '#student';
             }
             safeSetItem('portal_current_session_v2', JSON.stringify(currentUser));
             applyRoleBasedUI();
             showToast(`Switched to ${currentUser.role} mode (${currentUser.name})`, "info");
         }
+
+        window.addEventListener('hashchange', () => {
+            if (window.location.hash === '#student') {
+                if (!currentUser || currentUser.role !== 'Student') {
+                    quickSwitchRole('Student');
+                }
+            } else if (window.location.hash === '#faculty' || window.location.hash === '#admin') {
+                if (!currentUser || currentUser.role !== 'Faculty') {
+                    quickSwitchRole('Faculty');
+                }
+            }
+        });
 
         function authenticateSession(userObj, remember = true) {
             currentUser = userObj;
@@ -240,16 +259,14 @@ let currentUserRole = "Faculty";
                     }
                 } catch (e) { }
             }
-            // Auto-login into Faculty view if opened with #demo or #admin
-            if (window.location.hash === '#faculty' || window.location.hash === '#admin') {
-                quickLogin('admin');
-                return;
-            } else if (window.location.hash === '#student' || window.location.hash === '#demo') {
+            // Auto-login into Faculty or Student view based on hash or default to Faculty
+            if (window.location.hash === '#student') {
                 quickLogin('sneha');
                 return;
             }
 
-            d3.select("#loginGateway").classed("authenticated", false).style("display", "flex");
+            // Default auto-login to Faculty view so the complete dashboard and all D3 visualizations render immediately
+            quickLogin('admin');
         }
 
         function applyRoleBasedUI() {
@@ -269,37 +286,31 @@ let currentUserRole = "Faculty";
 
             if (isFaculty) {
                 d3.select("#portalHeaderTitle").html(`
-                    Academic Analytics & Grading Control
+                    Academic Analytics & Batch Grading Control
                     <span class="badge-version" style="background: rgba(255,255,255,0.25);">👨‍🏫 Faculty Dashboard</span>
                 `);
                 d3.select("#portalHeaderSub").text("Full Cohort Analytics, D3.js Charts, Student Marksheet Management & Batch Evaluation");
+                d3.select("#facultyDashboardView").style("display", "block");
+                d3.select("#studentDashboardView").style("display", "none");
             } else {
                 d3.select("#portalHeaderTitle").html(`
-                    Student Academic Portal
+                    Student Academic Observatory
                     <span class="badge-version" style="background: rgba(16, 185, 129, 0.35); border-color: #34d399;">🎓 Student Marksheet</span>
                 `);
                 d3.select("#portalHeaderSub").text("Verified Academic Transcript, Subject-wise Grades & Semester Performance Overview");
+                d3.select("#facultyDashboardView").style("display", "none");
+                d3.select("#studentDashboardView").style("display", "block");
             }
 
             d3.selectAll(".faculty-control").style("display", isFaculty ? "" : "none");
             d3.selectAll(".student-control").style("display", isStudent ? "" : "none");
 
-            if (isStudent) {
-                const studentObj = getStudentForUser(currentUser);
-                const sName = studentObj ? studentObj.name : currentUser.name;
-                const rollId = studentObj ? studentObj.id : 4;
-                d3.select("#studentBannerGreeting").text(`Welcome, ${sName}! 👋`);
-                d3.select("#studentBannerSub").text(`Roll No: 22A91A05${String(rollId).padStart(2, '0')} | B.Tech (${currentUser.department}) • Semester VI CBCS Evaluation`);
-                if (studentObj) {
-                    d3.select("#bannerTotalPct").text(`${d3.format(".2f")(studentObj.average)}%`);
-                    d3.select("#bannerGrandTotal").text(`${studentObj.total} / 400`);
-                    currentSelectedStudentId = studentObj.id;
-                    populateMarksheet(studentObj);
-                }
-            }
-
             updateDashboard();
-            switchViewTab('all');
+            if (isFaculty) {
+                switchViewTab('all');
+            } else {
+                if (typeof switchStudentTab === 'function') switchStudentTab('overview');
+            }
         }
 
         function getStudentForUser(user) {

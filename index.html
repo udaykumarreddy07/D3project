@@ -230,6 +230,13 @@
                     </div>
                 </div>
 
+                <!-- Hardcopy Project Report -->
+                <a href="hardcopy.html" target="_blank" class="btn btn-outline-white"
+                    style="border-color: rgba(16, 185, 129, 0.5); color: #34d399; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; font-weight: 600;"
+                    title="View & Print Official University Project Hardcopy Report">
+                    📑 Hardcopy Report
+                </a>
+
                 <!-- Sign Out -->
                 <button class="btn btn-outline-white" onclick="logoutUser()"
                     style="border-color: rgba(244, 63, 94, 0.4); color: #fb7185;"
@@ -245,122 +252,105 @@
     ==================================================== -->
     <div class="container">
 
-        <!-- 1. Horizontal Top Navigation & Actions Bar -->
-        <div class="dashboard-horizontal-nav">
-            <nav class="horizontal-nav-tabs">
-                <button type="button" class="horizontal-nav-btn active" id="tabView-all" onclick="switchViewTab('all')">
-                    <span>🌟</span>
-                    <span>Full Dashboard Overview</span>
-                </button>
-                <button type="button" class="horizontal-nav-btn" id="tabView-analytics" onclick="switchViewTab('analytics')">
-                    <span>📊</span>
-                    <span>Live Analytics & Charts</span>
-                </button>
-                <button type="button" class="horizontal-nav-btn" id="tabView-marksheet" onclick="switchViewTab('marksheet')">
-                    <span>🎓</span>
-                    <span>Student Marksheet Hub</span>
-                </button>
-                <button type="button" class="horizontal-nav-btn" id="tabView-table" onclick="switchViewTab('table')">
-                    <span>📋</span>
-                    <span>Master Records Gradebook</span>
-                </button>
-            </nav>
+        <!-- ====================================================
+             FACULTY DASHBOARD VIEW: BATCH COHORT INTELLIGENCE
+             (Total Information of Every Student's Performance)
+        ==================================================== -->
+        <div id="facultyDashboardView">
+            <!-- 1. Horizontal Top Navigation & Actions Bar -->
+            <div class="dashboard-horizontal-nav">
+                <nav class="horizontal-nav-tabs">
+                    <button type="button" class="horizontal-nav-btn active" id="tabView-all" onclick="switchViewTab('all')">
+                        <span>🌟</span>
+                        <span>Full Dashboard Overview</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="tabView-analytics" onclick="switchViewTab('analytics')">
+                        <span>📊</span>
+                        <span>Live Analytics & Charts</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="tabView-marksheet" onclick="switchViewTab('marksheet')">
+                        <span>🎓</span>
+                        <span>Student Marksheet Hub</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="tabView-table" onclick="switchViewTab('table')">
+                        <span>📋</span>
+                        <span>Master Records Gradebook</span>
+                    </button>
+                </nav>
 
-            <div class="horizontal-action-buttons faculty-control">
-                <button class="btn btn-primary" id="addStudentBtn" onclick="openAddStudentModal()">
-                    + Add New Student
-                </button>
-                <button class="btn btn-primary" id="livePushBtn" onclick="simulateRealtimePush()"
-                    style="background: #f59e0b; color: #1e1b4b; font-weight: 700;"
-                    title="Simulate real-time grade update via D3.js">
-                    ⚡ Live Push
-                </button>
-                <button class="btn btn-outline" id="exportCsvBtn" onclick="exportToCSV()">
-                    ⬇ CSV Export
-                </button>
-                <button class="btn btn-outline" id="resetBtn" onclick="resetToDefaultData()">
-                    ↺ Reset
-                </button>
-            </div>
-        </div>
-
-        <!-- 2. Horizontal Quick Filters & Cohort Snapshot Bar -->
-        <div class="dashboard-horizontal-filters faculty-control">
-            <div class="horizontal-filters-left">
-                <span class="horizontal-filter-label">⚡ Quick Filters:</span>
-                <div class="horizontal-filters-stack">
-                    <button type="button" class="quick-filter-pill active" id="pill-all" onclick="applyQuickFilter('all')">
-                        <span>👥 All Cohort</span>
-                        <b>(22)</b>
+                <div class="horizontal-action-buttons faculty-control">
+                    <button class="btn btn-primary" id="addStudentBtn" onclick="openAddStudentModal()">
+                        + Add New Student
                     </button>
-                    <button type="button" class="quick-filter-pill" id="pill-toppers" onclick="applyQuickFilter('topper')">
-                        <span>🌟 Grade O Toppers</span>
+                    <button class="btn btn-primary" id="livePushBtn" onclick="simulateRealtimePush()"
+                        style="background: #f59e0b; color: #1e1b4b; font-weight: 700;"
+                        title="Simulate real-time grade update via D3.js">
+                        ⚡ Live Push
                     </button>
-                    <button type="button" class="quick-filter-pill" id="pill-status-pass" onclick="applyQuickFilter('status', 'Pass')">
-                        <span>🟢 Passed</span>
+                    <button class="btn btn-outline" id="exportCsvBtn" onclick="exportToCSV()">
+                        ⬇ CSV Export
                     </button>
-                    <button type="button" class="quick-filter-pill" id="pill-status-fail" onclick="applyQuickFilter('status', 'Fail')">
-                        <span>🔴 Arrears (&lt;35)</span>
+                    <button class="btn btn-outline" id="resetBtn" onclick="resetToDefaultData()">
+                        ↺ Reset
                     </button>
-                    <button type="button" class="quick-filter-pill" id="pill-low-att" onclick="applyQuickFilter('attendance')">
-                        <span>⚠️ Low Attendance</span>
-                    </button>
-                </div>
-
-                <div class="horizontal-dept-divider"></div>
-
-                <div class="horizontal-dept-pills">
-                    <button type="button" class="quick-filter-pill" id="pill-dept-CSE" onclick="applyQuickFilter('dept', 'CSE')">CSE</button>
-                    <button type="button" class="quick-filter-pill" id="pill-dept-ECE" onclick="applyQuickFilter('dept', 'ECE')">ECE</button>
-                    <button type="button" class="quick-filter-pill" id="pill-dept-EEE" onclick="applyQuickFilter('dept', 'EEE')">EEE</button>
-                    <button type="button" class="quick-filter-pill" id="pill-dept-MECH" onclick="applyQuickFilter('dept', 'MECH')">MECH</button>
-                    <button type="button" class="quick-filter-pill" id="pill-dept-CIVIL" onclick="applyQuickFilter('dept', 'CIVIL')">CIVIL</button>
                 </div>
             </div>
 
-            <div class="horizontal-cohort-snapshot">
-                <div class="cohort-snap-pill">
-                    <span>👥 Total:</span>
-                    <b id="sidebarTotalEnrolled">22 Students</b>
-                </div>
-                <div class="cohort-snap-pill">
-                    <span>📊 Mean:</span>
-                    <b id="sidebarClassMean">76.5%</b>
-                </div>
-                <div class="cohort-snap-pill">
-                    <span>Pass:</span>
-                    <b id="sidebarPassClearance" style="color: #34d399;">20/22 (91%)</b>
-                </div>
-                <div class="cohort-snap-pill">
-                    <span>Avg Att:</span>
-                    <b id="sidebarAvgAttendance" style="color: #38bdf8;">84.8%</b>
-                </div>
-            </div>
-        </div>
-
-                <!-- Student Personalized Banner -->
-                <section class="student-portal-banner student-control" id="studentBanner" style="display: none;">
-                    <div>
-                        <h2 id="studentBannerGreeting">Welcome, Student! 👋</h2>
-                        <p id="studentBannerSub">Here is your verified academic evaluation, subject marks breakdown, and official semester progress card.</p>
-                        <div id="studentBannerMetrics" style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
-                            <span class="badge"
-                                style="background: rgba(255,255,255,0.2); color: #fff; font-size: 13px; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.35);">
-                                📊 Aggregate Percentage: <b id="bannerTotalPct" style="margin-left: 4px; color: #34d399; font-size: 14px;">0.00%</b>
-                            </span>
-                            <span class="badge"
-                                style="background: rgba(255,255,255,0.15); color: #e2e8f0; font-size: 13px; padding: 6px 12px;">
-                                🏆 Grand Total: <b id="bannerGrandTotal" style="margin-left: 4px; color: #fef08a;">0 / 400</b>
-                            </span>
-                        </div>
-                    </div>
-                    <div>
-                        <button class="btn btn-success" onclick="switchViewTab('marksheet')" style="font-weight: 700;">
-                            🎓 View Official Marksheet Card
+            <!-- 2. Horizontal Quick Filters & Cohort Snapshot Bar -->
+            <div class="dashboard-horizontal-filters faculty-control">
+                <div class="horizontal-filters-left">
+                    <span class="horizontal-filter-label">⚡ Quick Filters:</span>
+                    <div class="horizontal-filters-stack">
+                        <button type="button" class="quick-filter-pill active" id="pill-all" onclick="applyQuickFilter('all')">
+                            <span>👥 All Cohort</span>
+                            <b id="pillAllCount">(100)</b>
+                        </button>
+                        <button type="button" class="quick-filter-pill" id="pill-toppers" onclick="applyQuickFilter('topper')">
+                            <span>🌟 Grade O Toppers</span>
+                        </button>
+                        <button type="button" class="quick-filter-pill" id="pill-status-pass" onclick="applyQuickFilter('status', 'Pass')">
+                            <span>🟢 Passed</span>
+                        </button>
+                        <button type="button" class="quick-filter-pill" id="pill-status-fail" onclick="applyQuickFilter('status', 'Fail')">
+                            <span>🔴 Arrears (&lt;35)</span>
+                        </button>
+                        <button type="button" class="quick-filter-pill" id="pill-low-att" onclick="applyQuickFilter('attendance')">
+                            <span>⚠️ Low Attendance</span>
                         </button>
                     </div>
-                </section>
 
+                    <div class="horizontal-dept-divider"></div>
+
+                    <div class="horizontal-dept-pills">
+                        <button type="button" class="quick-filter-pill" id="pill-dept-CSE" onclick="applyQuickFilter('dept', 'CSE')">CSE (20)</button>
+                        <button type="button" class="quick-filter-pill" id="pill-dept-ECE" onclick="applyQuickFilter('dept', 'ECE')">ECE (20)</button>
+                        <button type="button" class="quick-filter-pill" id="pill-dept-EEE" onclick="applyQuickFilter('dept', 'EEE')">EEE (20)</button>
+                        <button type="button" class="quick-filter-pill" id="pill-dept-MECH" onclick="applyQuickFilter('dept', 'MECH')">MECH (20)</button>
+                        <button type="button" class="quick-filter-pill" id="pill-dept-CIVIL" onclick="applyQuickFilter('dept', 'CIVIL')">CIVIL (20)</button>
+                    </div>
+                </div>
+
+                <div class="horizontal-cohort-snapshot">
+                    <div class="cohort-snap-pill">
+                        <span>👥 Total:</span>
+                        <b id="sidebarTotalEnrolled">100 Students</b>
+                    </div>
+                    <div class="cohort-snap-pill">
+                        <span>📊 Mean:</span>
+                        <b id="sidebarClassMean">76.5%</b>
+                    </div>
+                    <div class="cohort-snap-pill">
+                        <span>Pass:</span>
+                        <b id="sidebarPassClearance" style="color: #34d399;">20/22 (91%)</b>
+                    </div>
+                    <div class="cohort-snap-pill">
+                        <span>Avg Att:</span>
+                        <b id="sidebarAvgAttendance" style="color: #38bdf8;">84.8%</b>
+                    </div>
+                </div>
+            </div>
+
+                <!-- KPI Metrics Overview Grid (6 Comprehensive Institutional Metrics) -->
                 <!-- KPI Metrics Overview Grid (6 Comprehensive Institutional Metrics) -->
                 <section class="kpi-container">
                     <div class="kpi-card">
@@ -370,6 +360,7 @@
                             <div class="value" id="kpiValue1">0</div>
                             <div class="subtext" id="kpiSubtext1">Active records</div>
                         </div>
+                        <svg class="kpi-sparkline" id="kpiSparkline1"></svg>
                     </div>
 
                     <div class="kpi-card kpi-blue">
@@ -379,6 +370,7 @@
                             <div class="value" id="kpiValue2">0.00%</div>
                             <div class="subtext" id="kpiSubtext2">Across subjects</div>
                         </div>
+                        <svg class="kpi-sparkline" id="kpiSparkline2"></svg>
                     </div>
 
                     <div class="kpi-card kpi-green">
@@ -388,6 +380,7 @@
                             <div class="value" id="kpiValue3">0%</div>
                             <div class="subtext" id="kpiSubtext3">Min 35 in all subjects</div>
                         </div>
+                        <svg class="kpi-sparkline" id="kpiSparkline3"></svg>
                     </div>
 
                     <div class="kpi-card kpi-amber">
@@ -397,6 +390,7 @@
                             <div class="value" id="kpiValue4">0%</div>
                             <div class="subtext" id="kpiSubtext4">Eligibility cutoff: 75%</div>
                         </div>
+                        <svg class="kpi-sparkline" id="kpiSparkline4"></svg>
                     </div>
 
                     <div class="kpi-card kpi-purple">
@@ -406,6 +400,7 @@
                             <div class="value" id="kpiValue5" style="font-size: 15px;">-</div>
                             <div class="subtext" id="kpiSubtext5">-</div>
                         </div>
+                        <svg class="kpi-sparkline" id="kpiSparkline5"></svg>
                     </div>
                     <div class="kpi-card kpi-rose">
                         <div class="kpi-icon" id="kpiIcon6">⚠️</div>
@@ -414,6 +409,7 @@
                             <div class="value" id="kpiValue6">0 Students</div>
                             <div class="subtext" id="kpiSubtext6">Academic alerts</div>
                         </div>
+                        <svg class="kpi-sparkline" id="kpiSparkline6"></svg>
                     </div>
                 </section>
 
@@ -494,6 +490,84 @@
                         </div>
                     </section>
 
+                    <!-- ====================================================
+                         FEATURED HERO D3 VISUALIZATION STUDIO (5 ENGINES)
+                         (Alluvial Conduits, Ridgelines, Parallel Flow, Orbit Tree, HUD Rings)
+                    ==================================================== -->
+                    <section class="hero-chart-card" id="heroCohortSection">
+                        <div class="hero-chart-header">
+                            <div class="hero-header-left">
+                                <div class="hero-tag-pill">
+                                    <span class="hero-live-dot"></span>
+                                    <span>5-ENGINE VISUAL ANALYTICS STUDIO</span>
+                                </div>
+                                <h2 id="heroChartHeading">🌊 Student Grade Conduits & Academic Outcome Flow</h2>
+                                <p id="heroChartSub">Interactive Beeswarm-to-Alluvial conduit flow connecting individual student achievement to institutional qualification tiers</p>
+                            </div>
+
+                            <div class="hero-controls-bar">
+                                <!-- 5-Engine Mode Switcher -->
+                                <div class="hero-btn-group" role="group" aria-label="Chart View Mode">
+                                    <button type="button" class="hero-view-btn active" id="btnModeFlow" onclick="setHeroChartMode('flow')" title="Beeswarm to Outcome Alluvial Conduit Flow">
+                                        🌊 Alluvial Conduits
+                                    </button>
+                                    <button type="button" class="hero-view-btn" id="btnModeRidge" onclick="setHeroChartMode('ridge')" title="Department Score Ridgeline Density Waves">
+                                        ⛰️ Ridgeline Waves
+                                    </button>
+                                    <button type="button" class="hero-view-btn" id="btnModeParallel" onclick="setHeroChartMode('parallel')" title="5-Axis Subject Parallel Coordinates">
+                                        ⚡ Parallel Flow
+                                    </button>
+                                    <button type="button" class="hero-view-btn" id="btnModeOrbit" onclick="setHeroChartMode('orbit')" title="Radial Institutional Orbit Tree">
+                                        🌌 Radial Orbit
+                                    </button>
+                                    <button type="button" class="hero-view-btn" id="btnModeHud" onclick="setHeroChartMode('hud')" title="Concentric HUD Radial Multi-Ring Gauge">
+                                        🍩 HUD Rings
+                                    </button>
+                                </div>
+
+                                <!-- Axis Metric Selector -->
+                                <div class="hero-metric-select-wrap" id="heroMetricWrap">
+                                    <label for="heroMetricSelect" class="hero-select-label">Metric:</label>
+                                    <select id="heroMetricSelect" class="hero-metric-select" onchange="setHeroChartMetric(this.value)">
+                                        <option value="percentage">Aggregate Marks %</option>
+                                        <option value="attendance">Attendance %</option>
+                                        <option value="sgpa">SGPA (0-10)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Tier Highlight Buttons -->
+                                <div class="hero-tier-pills" id="heroTierPillsWrap">
+                                    <button type="button" class="hero-tier-pill active" id="tierPill-All" onclick="filterHeroTier('All')">All Cohort</button>
+                                    <button type="button" class="hero-tier-pill" id="tierPill-Distinction" onclick="filterHeroTier('Distinction')">🌟 Distinction</button>
+                                    <button type="button" class="hero-tier-pill" id="tierPill-First" onclick="filterHeroTier('First')">🥇 First Class</button>
+                                    <button type="button" class="hero-tier-pill" id="tierPill-Second" onclick="filterHeroTier('Second')">📗 Pass / 2nd</button>
+                                    <button type="button" class="hero-tier-pill" id="tierPill-Arrears" onclick="filterHeroTier('Arrears')">🔴 Arrears Alert</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hero SVG Canvas Wrapper -->
+                        <div class="hero-svg-wrapper">
+                            <svg id="heroCohortSvg"></svg>
+                        </div>
+
+                        <!-- Interactive Status / Inspect Banner -->
+                        <div class="hero-interactive-footer" id="heroInteractiveFooter">
+                            <div class="hero-footer-status">
+                                <span class="hero-footer-icon" id="heroFooterIcon">💡</span>
+                                <span id="heroFooterText"><b>Hover over any student bubble</b> to trace their conduit flow into their graduation outcome tier. <b>Click on a student</b> to inspect and print their official UGC marksheet.</span>
+                            </div>
+                            <div class="hero-footer-actions" id="heroFooterActions" style="display: none;">
+                                <button type="button" class="btn btn-primary btn-xs" id="heroViewMarksheetBtn" onclick="openHeroSelectedMarksheet()">
+                                    🎓 View Marksheet
+                                </button>
+                                <button type="button" class="btn btn-outline btn-xs" onclick="clearHeroHighlight()">
+                                    ✕ Clear Highlight
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- D3 Visualizations Grid -->
                     <section class="charts">
                         <div class="chart-card" id="cardSubjectChart">
@@ -502,6 +576,8 @@
                             </div>
                             <svg id="subjectChart"></svg>
                             <div class="chart-legend-bar" id="legendSubjectChart"></div>
+                            <!-- In-Graph Direct Touch Tray -->
+                            <div class="in-graph-tray" id="traySubjectChart"></div>
                         </div>
 
                         <div class="chart-card" id="cardGradeChart">
@@ -510,6 +586,8 @@
                             </div>
                             <svg id="gradeChart"></svg>
                             <div class="chart-legend-bar" id="legendGradeChart"></div>
+                            <!-- In-Graph Direct Touch Tray -->
+                            <div class="in-graph-tray" id="trayGradeChart"></div>
                         </div>
 
                         <div class="chart-card" id="cardAttendanceChart">
@@ -518,6 +596,8 @@
                             </div>
                             <svg id="attendanceChart"></svg>
                             <div class="chart-legend-bar" id="legendAttendanceChart"></div>
+                            <!-- In-Graph Direct Touch Tray -->
+                            <div class="in-graph-tray" id="trayAttendanceChart"></div>
                         </div>
 
                         <div class="chart-card" id="cardGenderChart">
@@ -526,6 +606,8 @@
                             </div>
                             <svg id="genderChart"></svg>
                             <div class="chart-legend-bar" id="legendGenderChart"></div>
+                            <!-- In-Graph Direct Touch Tray -->
+                            <div class="in-graph-tray" id="trayGenderChart"></div>
                         </div>
                     </section>
                 </div>
@@ -784,7 +866,412 @@
                         </div>
                     </section>
                 </div>
-    </div>
+        </div> <!-- ==================== END FACULTY DASHBOARD VIEW ==================== -->
+    </div> <!-- end .container -->
+
+        <!-- ====================================================
+             STUDENT DASHBOARD VIEW: EXCLUSIVE PERSONAL OBSERVATORY
+             (Strictly accesses and sees only the logged-in student's records)
+        ==================================================== -->
+        <div id="studentDashboardView" class="container" style="display: none;">
+            <!-- Student Top Navigation Bar -->
+            <div class="dashboard-horizontal-nav" style="margin-bottom: 20px;">
+                <nav class="horizontal-nav-tabs">
+                    <button type="button" class="horizontal-nav-btn active" id="studTab-overview" onclick="switchStudentTab('overview')">
+                        <span>🌟</span>
+                        <span>My Academic Overview</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="studTab-visuals" onclick="switchStudentTab('visuals')">
+                        <span>📊</span>
+                        <span>My D3 Visualizations</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="studTab-marksheet" onclick="switchStudentTab('marksheet')">
+                        <span>🎓</span>
+                        <span>My Semester Marksheet</span>
+                    </button>
+                </nav>
+
+                <div class="horizontal-action-buttons">
+                    <button type="button" class="btn btn-accent btn-sm" onclick="window.print()">
+                        🖨️ Print Marksheet (PDF)
+                    </button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="copyTranscriptSummary()">
+                        📋 Copy Transcript
+                    </button>
+                </div>
+            </div>
+
+            <!-- 1. Student Personal Cyber-HUD Identity & Standing Card -->
+            <div class="student-hud-card" id="studentHudCard">
+                <div class="student-hud-identity">
+                    <div class="student-hud-avatar-wrap">
+                        <div class="student-hud-avatar" id="studHudAvatar">SD</div>
+                        <div class="student-hud-status-dot" title="Active Verified Enrolled Student"></div>
+                    </div>
+                    <div class="student-hud-details">
+                        <div class="student-hud-role-pill">
+                            <span class="hero-live-dot"></span>
+                            <span>STUDENT VERIFIED ACADEMIC PROFILE</span>
+                        </div>
+                        <h1 class="student-hud-name" id="studHudName">Sneha Devi</h1>
+                        <div class="student-hud-meta">
+                            <span id="studHudRoll" style="color: #38bdf8; font-weight: 700;">Roll No: 22A91A0504</span> •
+                            <span id="studHudDept">Dept: CSE (Computer Science & Engg)</span> •
+                            <span style="color: #cbd5e1;">B.Tech Semester VI (CBCS Autonomous)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="student-hud-telemetry-grid">
+                    <div class="stud-hud-stat stud-stat-cyan">
+                        <div class="stud-stat-label">SEMESTER SGPA</div>
+                        <div class="stud-stat-value" id="studStatSgpa">9.75 <span class="stud-stat-denom">/ 10</span></div>
+                        <div class="stud-stat-sub" id="studStatGrade">Grade O • Outstanding</div>
+                    </div>
+                    <div class="stud-hud-stat stud-stat-purple">
+                        <div class="stud-stat-label">AGGREGATE PERCENTAGE</div>
+                        <div class="stud-stat-value" id="studStatPct">92.25%</div>
+                        <div class="stud-stat-sub" id="studStatTotal">369 / 400 Total Marks</div>
+                    </div>
+                    <div class="stud-hud-stat stud-stat-green">
+                        <div class="stud-stat-label">BATCH STANDING</div>
+                        <div class="stud-stat-value" id="studStatRank">Rank #1</div>
+                        <div class="stud-stat-sub" id="studStatPercentile">Top 5% Cohort Percentile</div>
+                    </div>
+                    <div class="stud-hud-stat stud-stat-amber">
+                        <div class="stud-stat-label">ATTENDANCE STATUS</div>
+                        <div class="stud-stat-value" id="studStatAtt">94%</div>
+                        <div class="stud-stat-sub" id="studStatEligibility">Exam Eligible ✅</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Student 4-Subject Quick Micro-Cards (Clickable Deep-Touch) -->
+            <div class="student-subject-cards-grid" id="studSubjectCardsGrid">
+                <div class="stud-sub-card sub-card-maths" onclick="openStudentSubjectModal('maths')">
+                    <div class="stud-sub-header">
+                        <span class="stud-sub-tag">CS501</span>
+                        <span class="stud-sub-touch-hint">👆 Touch to Inspect</span>
+                    </div>
+                    <div class="stud-sub-title">Engineering Mathematics - III</div>
+                    <div class="stud-sub-score-row">
+                        <span class="stud-sub-score" id="studScoreMaths">92</span>
+                        <span class="stud-sub-score-max">/ 100</span>
+                        <span class="stud-sub-badge badge-grade-o" id="studBadgeMaths">Grade O</span>
+                    </div>
+                    <div class="stud-sub-bar-track">
+                        <div class="stud-sub-bar-fill" id="studBarMaths" style="width: 92%; background: #6366f1;"></div>
+                    </div>
+                    <div class="stud-sub-meta">Credits: 4.0 &bull; Faculty: Prof. R. K. Sharma</div>
+                </div>
+
+                <div class="stud-sub-card sub-card-science" onclick="openStudentSubjectModal('science')">
+                    <div class="stud-sub-header">
+                        <span class="stud-sub-tag">CS502</span>
+                        <span class="stud-sub-touch-hint">👆 Touch to Inspect</span>
+                    </div>
+                    <div class="stud-sub-title">Database Management Systems</div>
+                    <div class="stud-sub-score-row">
+                        <span class="stud-sub-score" id="studScoreScience">89</span>
+                        <span class="stud-sub-score-max">/ 100</span>
+                        <span class="stud-sub-badge badge-grade-a" id="studBadgeScience">Grade A</span>
+                    </div>
+                    <div class="stud-sub-bar-track">
+                        <div class="stud-sub-bar-fill" id="studBarScience" style="width: 89%; background: #0ea5e9;"></div>
+                    </div>
+                    <div class="stud-sub-meta">Credits: 4.0 &bull; Faculty: Dr. P. Venkat</div>
+                </div>
+
+                <div class="stud-sub-card sub-card-english" onclick="openStudentSubjectModal('english')">
+                    <div class="stud-sub-header">
+                        <span class="stud-sub-tag">CS503</span>
+                        <span class="stud-sub-touch-hint">👆 Touch to Inspect</span>
+                    </div>
+                    <div class="stud-sub-title">Design & Analysis of Algorithms</div>
+                    <div class="stud-sub-score-row">
+                        <span class="stud-sub-score" id="studScoreEnglish">90</span>
+                        <span class="stud-sub-score-max">/ 100</span>
+                        <span class="stud-sub-badge badge-grade-o" id="studBadgeEnglish">Grade O</span>
+                    </div>
+                    <div class="stud-sub-bar-track">
+                        <div class="stud-sub-bar-fill" id="studBarEnglish" style="width: 90%; background: #10b981;"></div>
+                    </div>
+                    <div class="stud-sub-meta">Credits: 4.0 &bull; Faculty: Dr. M. Anitha</div>
+                </div>
+
+                <div class="stud-sub-card sub-card-prog" onclick="openStudentSubjectModal('programming')">
+                    <div class="stud-sub-header">
+                        <span class="stud-sub-tag">CS504</span>
+                        <span class="stud-sub-touch-hint">👆 Touch to Inspect</span>
+                    </div>
+                    <div class="stud-sub-title">Web Technologies & Programming</div>
+                    <div class="stud-sub-score-row">
+                        <span class="stud-sub-score" id="studScoreProg">98</span>
+                        <span class="stud-sub-score-max">/ 100</span>
+                        <span class="stud-sub-badge badge-grade-o" id="studBadgeProg">Grade O</span>
+                    </div>
+                    <div class="stud-sub-bar-track">
+                        <div class="stud-sub-bar-fill" id="studBarProg" style="width: 98%; background: #a855f7;"></div>
+                    </div>
+                    <div class="stud-sub-meta">Credits: 4.0 &bull; Faculty: Prof. T. Rajesh</div>
+                </div>
+            </div>
+
+            <!-- 3. Student 4 High-Aesthetic Personal D3.js Visualizations Grid -->
+            <div class="student-visualizations-section" id="studentVisualizationsSection">
+                <div class="section-horizontal-heading-card" style="margin-bottom: 20px;">
+                    <div class="horizontal-heading-content">
+                        <div class="horizontal-heading-tag">MY PERSONAL D3.JS PERFORMANCE SUITE</div>
+                        <div class="horizontal-heading-title">📊 Multi-Dimensional Competency & Academic Observatories</div>
+                        <div class="horizontal-heading-sub">Interactive visual diagnostics of your individual subject strengths, class benchmarks, and semester growth</div>
+                    </div>
+                </div>
+
+                <div class="student-charts-grid">
+                    <!-- Chart 1: Spider / Radar Competency Web -->
+                    <div class="chart-card student-chart-card">
+                        <div class="chart-header">
+                            <h2>🕸️ Subject Competency Radar Web</h2>
+                            <span class="chart-tag-pill">Personal Mastery</span>
+                        </div>
+                        <p class="chart-subtext">Multi-axial spider web showing your scores across all 4 subjects compared with Class Average</p>
+                        <div class="student-svg-wrap">
+                            <svg id="studentRadarChart"></svg>
+                        </div>
+                        <div class="chart-legend-bar" id="legendStudentRadar"></div>
+                    </div>
+
+                    <!-- Chart 2: Benchmark Comparison Bullet Visualizer -->
+                    <div class="chart-card student-chart-card">
+                        <div class="chart-header">
+                            <h2>📊 My Score vs Class Average & Topper</h2>
+                            <span class="chart-tag-pill">Benchmark Delta</span>
+                        </div>
+                        <p class="chart-subtext">Subject-by-subject bullet comparative visualizer against the institutional cohort</p>
+                        <div class="student-svg-wrap">
+                            <svg id="studentBulletChart"></svg>
+                        </div>
+                        <div class="chart-legend-bar" id="legendStudentBullet"></div>
+                    </div>
+
+                    <!-- Chart 3: Concentric Attendance & Exam Eligibility Dial -->
+                    <div class="chart-card student-chart-card">
+                        <div class="chart-header">
+                            <h2>⏱️ Biometric Attendance & Exam Clearance</h2>
+                            <span class="chart-tag-pill">Statutory Rule</span>
+                        </div>
+                        <p class="chart-subtext">Concentric cyber-dial indicating your 75% examination clearance threshold and lecture attendance</p>
+                        <div class="student-svg-wrap">
+                            <svg id="studentAttendanceDial"></svg>
+                        </div>
+                        <div class="chart-legend-bar" id="legendStudentAttendance"></div>
+                    </div>
+
+                    <!-- Chart 4: Multi-Semester SGPA Progression Trajectory Curve -->
+                    <div class="chart-card student-chart-card">
+                        <div class="chart-header">
+                            <h2>📈 Academic Trajectory & SGPA Evolution</h2>
+                            <span class="chart-tag-pill">Growth Curve</span>
+                        </div>
+                        <p class="chart-subtext">Semester-by-semester academic progression curve (Sem 1 through Sem 6) showing grade velocity</p>
+                        <div class="student-svg-wrap">
+                            <svg id="studentTrajectoryChart"></svg>
+                        </div>
+                        <div class="chart-legend-bar" id="legendStudentTrajectory"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Student Embedded Official Marksheet Card -->
+            <div id="studentEmbeddedMarksheet" style="margin-top: 30px; margin-bottom: 40px;">
+                <div class="section-horizontal-heading-card">
+                    <div class="horizontal-heading-content">
+                        <div class="horizontal-heading-tag">MY VERIFIED TRANSCRIPT</div>
+                        <div class="horizontal-heading-title">🎓 Official Semester Marksheet Progress Card</div>
+                        <div class="horizontal-heading-sub">Choice Based Credit System (CBCS) verified 10-point academic transcript</div>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-accent btn-sm" onclick="window.print()">🖨️ Print A4 Marksheet</button>
+                    </div>
+                </div>
+
+                <!-- Single-Page Complete Official Progress Card Certificate -->
+                <div class="progress-card-modal" style="box-shadow: 0 16px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15);">
+                    <div class="college-letterhead">
+                        <div class="college-header-top">
+                            <svg class="college-emblem-svg" viewBox="0 0 100 100" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="48" fill="#1e1b4b" stroke="#f59e0b" stroke-width="4" />
+                                <circle cx="50" cy="50" r="40" stroke="#cbd5e1" stroke-dasharray="3,3" stroke-width="1.5" />
+                                <path d="M50 18 L76 34 L76 66 L50 82 L24 66 L24 34 Z" fill="rgba(245, 158, 11, 0.2)"
+                                    stroke="#f59e0b" stroke-width="2.5" />
+                                <path d="M50 26 L50 74 M32 38 L68 62 M32 62 L68 38" stroke="#fef08a" stroke-width="2" />
+                                <circle cx="50" cy="50" r="14" fill="#f59e0b" />
+                                <text x="50" y="55" font-family="'Cinzel', serif" font-size="12" font-weight="900"
+                                    fill="#1e1b4b" text-anchor="middle">BIET</text>
+                            </svg>
+
+                            <div class="college-title-block">
+                                <div class="college-name-primary">BHARATH INSTITUTE OF ENGINEERING & TECHNOLOGY</div>
+                                <div class="college-autonomous-badge">UGC AUTONOMOUS INSTITUTION &bull; ESTD. 1998</div>
+                            </div>
+                        </div>
+
+                        <div class="college-affiliation-text">
+                            Approved by AICTE, New Delhi &bull; Affiliated to State Technological University (JNTUH)<br>
+                            Accredited by NAAC with <b>'A++' Grade</b> &bull; NBA Accredited UG Programmes &bull; Hyderabad - 501510
+                        </div>
+
+                        <div class="marksheet-title-ribbon">
+                            OFFICIAL SEMESTER GRADE REPORT & ACADEMIC TRANSCRIPT (CBCS)
+                        </div>
+                    </div>
+
+                    <div class="progress-card-body">
+                        <div class="progress-watermark">BIET OFFICIAL TRANSCRIPT</div>
+
+                        <div class="marksheet-serial-row">
+                            <div>
+                                <span>CERTIFICATE SL. NO: </span>
+                                <span class="serial-badge val-cardSerialNo">BIET/2026/UG/0004</span>
+                            </div>
+                            <div>
+                                <span>EXAMINATION: </span>
+                                <span style="color: #0f172a; font-weight: 800;">B.Tech Semester VI (Annual Exams 2026)</span>
+                            </div>
+                            <div>
+                                <span>STATUS: </span>
+                                <span style="color: #166534; font-weight: 800;">OFFICIAL & VERIFIED</span>
+                            </div>
+                        </div>
+
+                        <!-- Student Basic Information Panel -->
+                        <div class="student-details-panel">
+                            <div class="detail-item">
+                                <span class="lbl">Student Name</span>
+                                <span class="val val-cardStudentName">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="lbl">Roll No / Reg No</span>
+                                <span class="val val-cardStudentID">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="lbl">Branch / Department</span>
+                                <span class="val val-cardStudentDept">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="lbl">Degree Program</span>
+                                <span class="val">B.Tech</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="lbl">Semester & Academic Year</span>
+                                <span class="val">Semester VI (2025-2026)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="lbl">Examination Status</span>
+                                <span class="val" style="color: #166534; font-weight: 800;">REGULAR (MAY 2026)</span>
+                            </div>
+                        </div>
+
+                        <!-- Subject Names, Marks, Credits, Grade Table -->
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 14%; text-align: center;">Course Code</th>
+                                    <th style="width: 32%;">Course Title</th>
+                                    <th style="width: 9%; text-align: center;">Credits</th>
+                                    <th style="width: 9%; text-align: center;">Marks</th>
+                                    <th style="width: 9%; text-align: center;">Grade</th>
+                                    <th style="width: 9%; text-align: center;">Grade Point</th>
+                                    <th style="width: 9%; text-align: center;">Credit Points</th>
+                                    <th style="width: 9%; text-align: center;">Result</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studMarksTableBody"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" style="text-align: right; font-weight: 800;">CUMULATIVE EVALUATION:</td>
+                                    <td style="text-align: center; font-weight: 800;">16.0</td>
+                                    <td class="val-cardGrandTotal" style="text-align: center; font-weight: 900; font-size: 13px; color: var(--primary);">0</td>
+                                    <td class="val-cardOverallGradeCell" style="text-align: center; font-weight: 800;">-</td>
+                                    <td style="text-align: center; font-weight: 800;">-</td>
+                                    <td class="val-cardTotalCreditPoints" style="text-align: center; font-weight: 800; color: #4f46e5;">-</td>
+                                    <td class="val-cardOverallStatusCell" style="text-align: center; font-weight: 800;">-</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <!-- Summary Single Row -->
+                        <div class="report-summary-grid">
+                            <div class="summary-block">
+                                <div class="num val-cardAverage">0.0%</div>
+                                <div class="lbl">Aggregate Percentage</div>
+                            </div>
+                            <div class="summary-block">
+                                <div class="num val-cardGPA">0.0 / 10</div>
+                                <div class="lbl">Semester SGPA (CBCS)</div>
+                            </div>
+                            <div class="summary-block">
+                                <div class="num val-cardGrade">-</div>
+                                <div class="lbl">Letter Grade</div>
+                            </div>
+                            <div class="summary-block">
+                                <div class="num val-cardDivision">-</div>
+                                <div class="lbl">Academic Classification</div>
+                            </div>
+                        </div>
+
+                        <!-- Official Stamp & Signatures -->
+                        <div class="result-stamp-panel">
+                            <div class="stamp-and-security">
+                                <div class="val-cardStampContainer"></div>
+                                <div class="security-cert-hash">
+                                    <span class="cert-dot"></span>
+                                    <span class="val-cardCertHash">BIET-DIGI-CERT-2026-0004</span>
+                                </div>
+                            </div>
+
+                            <div class="university-official-seal" onclick="showSealVerification()" title="Official Institutional Seal • Click to verify Accreditation">
+                                <svg class="seal-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="40" cy="40" r="38" stroke="#1e3a8a" stroke-width="2" stroke-dasharray="4,2"/>
+                                    <circle cx="40" cy="40" r="33" stroke="#1e3a8a" stroke-width="1.2"/>
+                                    <circle cx="40" cy="40" r="14" fill="rgba(30, 58, 138, 0.08)" stroke="#1e3a8a" stroke-width="1"/>
+                                    <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">BIET AUTONOMOUS</text>
+                                    <text x="40" y="42.5" font-size="7.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" font-family="'Cinzel', serif">SEAL</text>
+                                    <text x="40" y="60" font-size="4.5" font-weight="800" fill="#1e3a8a" text-anchor="middle" letter-spacing="0.5">★ EXAM BRANCH ★</text>
+                                </svg>
+                            </div>
+
+                            <div class="signatures-wrapper">
+                                <div class="signature-col val-cardSigFaculty" onclick="showSignatoryVerification('faculty')" title="Click to verify Department HOD digital signature">
+                                    <div class="sig-image-box val-cardSigFacultySvg"></div>
+                                    <div class="sig-line"></div>
+                                    <div class="sig-officer-name val-cardSigFacultyName">Prof. R. K. Sharma</div>
+                                    <div class="sig-text val-cardSigFacultyRole">Faculty In-Charge</div>
+                                    <div class="sig-cert-tag">✓ Digitally Signed</div>
+                                </div>
+
+                                <div class="signature-col val-cardSigCoe" onclick="showSignatoryVerification('coe')" title="Click to verify Controller of Examinations signature">
+                                    <div class="sig-image-box val-cardSigCoeSvg"></div>
+                                    <div class="sig-line"></div>
+                                    <div class="sig-officer-name">Dr. K. Ramanathan</div>
+                                    <div class="sig-text">Controller of Exams</div>
+                                    <div class="sig-cert-tag">✓ Digitally Signed</div>
+                                </div>
+
+                                <div class="signature-col val-cardSigPrincipal" onclick="showSignatoryVerification('principal')" title="Click to verify Principal signature">
+                                    <div class="sig-image-box val-cardSigPrincipalSvg"></div>
+                                    <div class="sig-line"></div>
+                                    <div class="sig-officer-name">Dr. S. N. V. Prasad</div>
+                                    <div class="sig-text">Principal / Dean</div>
+                                    <div class="sig-cert-tag">✓ Digitally Signed</div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div> <!-- end #studentEmbeddedMarksheet -->
+        </div> <!-- ==================== END STUDENT DASHBOARD VIEW ==================== -->
+    </div> <!-- end .container -->
 
     <!-- ====================================================
          POPUP OFFICIAL PROGRESS CARD / MARKSHEET MODAL
@@ -1184,6 +1671,65 @@
     </div>
 
     <!-- ====================================================
+         DEEP-TOUCH CHART INSPECTOR MODAL & DATA ROSTER
+         (Opens on touching/clicking any bar or pie slice)
+    ==================================================== -->
+    <div class="modal-backdrop" id="chartDeepInspectModal">
+        <div class="modal-content deep-inspect-modal-content">
+            <div class="modal-header">
+                <div class="deep-inspect-head-left">
+                    <div class="deep-inspect-indicator-badge">
+                        <span class="deep-inspect-dot" id="deepInspectDot"></span>
+                        <span id="deepInspectCategoryTag">BAR / SLICE DATA INSPECTOR</span>
+                    </div>
+                    <h3 id="deepInspectTitle">📚 Programming: Cohort Performance Breakdown</h3>
+                    <p id="deepInspectSubtitle">Complete constituent metrics, student roster, and official grade records</p>
+                </div>
+                <button class="modal-close" onclick="closeDeepChartInspector()">&times;</button>
+            </div>
+
+            <div class="modal-body" style="padding: 18px 22px;">
+                <!-- 4 Quick Telemetry KPI Badges -->
+                <div class="deep-inspect-metrics-grid" id="deepInspectMetricsGrid">
+                    <!-- Populated dynamically via openDeepChartInspector -->
+                </div>
+
+                <!-- Search inside this slice/bar -->
+                <div class="deep-inspect-search-bar">
+                    <span class="deep-search-icon">🔍</span>
+                    <input type="text" id="deepInspectSearchInput" placeholder="Filter students in this slice/bar..." oninput="filterDeepInspectRoster(this.value)">
+                    <span class="deep-inspect-roster-count" id="deepInspectRosterCount">22 Students</span>
+                </div>
+
+                <!-- Complete Student Roster Table for this slice/bar -->
+                <div class="deep-inspect-table-wrap">
+                    <table class="deep-inspect-table">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Dept</th>
+                                <th>Subject Score</th>
+                                <th>Aggregate %</th>
+                                <th>SGPA</th>
+                                <th>Result Grade</th>
+                                <th style="text-align: right;">Marksheet</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deepInspectRosterBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="btnDeepInspectFilter" onclick="applyDeepInspectToFilter()">🎯 Filter Portal to this Group</button>
+                <button type="button" class="btn btn-primary" onclick="closeDeepChartInspector()">Close Inspector</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
          INTERACTIVE SIGNATORY & DIGITAL SEAL VERIFICATION MODAL
     ==================================================== -->
     <div class="modal-backdrop" id="sigVerifyModal">
@@ -1205,6 +1751,57 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline" id="btnCopySigKey" onclick="copySigCertCode()">📋 Copy Cert Key</button>
                 <button type="button" class="btn btn-primary" onclick="closeSigVerifyModal()">Close Verification</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         STUDENT SUBJECT DEEP-TOUCH INSPECTOR MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="studentSubjectModal">
+        <div class="modal-content deep-inspect-modal-content" style="max-width: 650px;">
+            <div class="deep-inspect-modal-header">
+                <div class="deep-inspect-title-wrap">
+                    <span class="deep-inspect-badge" id="studModalSubCode">CS501</span>
+                    <h3 id="studModalSubTitle">Engineering Mathematics - III</h3>
+                    <div class="deep-inspect-sub" id="studModalSubDesc">Autonomous CBCS 4.0 Credit Core Engineering Course</div>
+                </div>
+                <button class="modal-close" onclick="closeStudentSubjectModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 22px;">
+                <div class="deep-inspect-stats-grid">
+                    <div class="deep-inspect-stat-card">
+                        <div class="stat-card-label">TOTAL SCORE</div>
+                        <div class="stat-card-val" id="studModalScore">92 <span style="font-size: 13px; color: #94a3b8;">/ 100</span></div>
+                        <div class="stat-card-sub" id="studModalGrade">Grade O • Outstanding</div>
+                    </div>
+                    <div class="deep-inspect-stat-card">
+                        <div class="stat-card-label">THEORY EXAM (70M)</div>
+                        <div class="stat-card-val" id="studModalTheory">65 <span style="font-size: 13px; color: #94a3b8;">/ 70</span></div>
+                        <div class="stat-card-sub">Semester End Examination</div>
+                    </div>
+                    <div class="deep-inspect-stat-card">
+                        <div class="stat-card-label">INTERNAL & LAB (30M)</div>
+                        <div class="stat-card-val" id="studModalLab">27 <span style="font-size: 13px; color: #94a3b8;">/ 30</span></div>
+                        <div class="stat-card-sub">Continuous Internal Evaluation</div>
+                    </div>
+                    <div class="deep-inspect-stat-card">
+                        <div class="stat-card-label">GRADE POINT</div>
+                        <div class="stat-card-val" id="studModalGP">10.0</div>
+                        <div class="stat-card-sub">40.0 Credit Points Earned</div>
+                    </div>
+                </div>
+
+                <div class="stud-modal-faculty-feedback" id="studModalFeedbackBox">
+                    <div class="feedback-header">
+                        <span class="feedback-icon">👨‍🏫</span>
+                        <b>Faculty In-Charge Evaluation & Notes:</b>
+                    </div>
+                    <p id="studModalFeedbackText">Demonstrated superior analytical mastery in differential calculus and linear algebra concepts. Active participation in problem-solving tutorials.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeStudentSubjectModal()">Close Inspector</button>
             </div>
         </div>
     </div>

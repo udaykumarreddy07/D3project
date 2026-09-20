@@ -61,7 +61,11 @@ function deleteStudent(id) {
 
     if (confirm(`Permanently delete student record #${student.id} (${student.name})?`)) {
         students = students.filter(s => s.id !== id);
+        if (typeof currentSelectedStudentId !== 'undefined' && currentSelectedStudentId === id) {
+            currentSelectedStudentId = students.length > 0 ? students[0].id : null;
+        }
         saveDataToStorage();
+        if (typeof initStudentSelector === 'function') initStudentSelector();
         updateDashboard();
         showToast(`Deleted student #${id}`, "danger");
     }
@@ -129,8 +133,12 @@ function handleSaveStudent(e) {
         }
     } else {
         const nextId = students.length > 0 ? (d3.max(students, d => d.id) + 1) : 1;
+        const deptCodes = { "CSE": "05", "ECE": "04", "EEE": "02", "MECH": "03", "CIVIL": "01" };
+        const deptCode = deptCodes[department] || "05";
+        const rollNo = `22A91A${deptCode}${String(nextId).padStart(2, '0')}`;
         const newStudent = {
             id: nextId,
+            rollNo: rollNo,
             name,
             department,
             gender,
@@ -146,6 +154,7 @@ function handleSaveStudent(e) {
     }
 
     saveDataToStorage();
+    if (typeof initStudentSelector === 'function') initStudentSelector();
     closeStudentModal();
     updateDashboard();
 }
@@ -177,15 +186,23 @@ function simulateRealtimePush() {
 }
 
 function updateDashboard() {
-    const data = getFilteredData();
     const isStudent = currentUser && currentUser.role === 'Student';
 
-    updateKPIs(data, isStudent);
-    updateTable(data, isStudent);
-
     if (isStudent) {
-        renderStudentVisualizations(data[0]);
+        d3.select("#facultyDashboardView").style("display", "none");
+        d3.select("#studentDashboardView").style("display", "block");
+        const studentObj = (typeof getStudentForUser === 'function') ? getStudentForUser(currentUser) : (students.find(s => s.id === 4) || students[0]);
+        if (studentObj) {
+            if (typeof renderStudentDashboard === 'function') {
+                renderStudentDashboard(studentObj);
+            }
+        }
     } else {
+        d3.select("#facultyDashboardView").style("display", "block");
+        d3.select("#studentDashboardView").style("display", "none");
+        const data = getFilteredData();
+        updateKPIs(data, false);
+        updateTable(data, false);
         renderFacultyVisualizations(data);
     }
 }
