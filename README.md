@@ -60,23 +60,23 @@ D3project/
 ### 🎨 A. The Stylesheet Subfolder (`css/`)
 | File | Responsibility |
 |---|---|
-| **[styles.css](file:///c:/Users/udayk/OneDrive/Desktop/D3project/css/styles.css)** | Defines CSS custom properties (`:root` colors: `#4f46e5` Indigo, `#0ea5e9` Sky, `#8b5cf6` Violet), universal box resets, typography, common button styles (`.btn`, `.btn-primary`), tooltips, and floating toast notifications. |
-| **[auth.css](file:///c:/Users/udayk/OneDrive/Desktop/D3project/css/auth.css)** | Styles the full-screen glowing **Aurora** login gateway overlay, animated light sweeps, floating particles, glassmorphic login card, and quick-login demo chips. |
-| **[dashboard.css](file:///c:/Users/udayk/OneDrive/Desktop/D3project/css/dashboard.css)** | Styles the top portal header, faculty/student role switch badges, 4 KPI metric cards, filter search bar, and the interactive sortable table grid. |
-| **[charts.css](file:///c:/Users/udayk/OneDrive/Desktop/D3project/css/charts.css)** | Formats D3.js SVG containers, grid lines, axis tick labels, hover glow effects, and responsive chart card wrappers. |
-| **[marksheet.css](file:///c:/Users/udayk/OneDrive/Desktop/D3project/css/marksheet.css)** | Renders the official autonomous progress card modal (college seal, subject scorecard, semester GPA summary, controller signatures) and provides `@media print` rules for clean A4 printing. |
+| **[styles.css](css/styles.css)** | Defines CSS custom properties (`:root` colors: `#4f46e5` Indigo, `#0ea5e9` Sky, `#8b5cf6` Violet), universal box resets, typography, common button styles (`.btn`, `.btn-primary`), tooltips, and floating toast notifications. |
+| **[auth.css](css/auth.css)** | Styles the full-screen glowing **Aurora** login gateway overlay, animated light sweeps, floating particles, glassmorphic login card, and quick-login demo chips. |
+| **[dashboard.css](css/dashboard.css)** | Styles the top portal header, faculty/student role switch badges, 4 KPI metric cards, filter search bar, touch inspector dock, and the interactive sortable table grid. |
+| **[charts.css](css/charts.css)** | Formats D3.js SVG containers, grid lines, axis tick labels, hover glow effects, and responsive chart card wrappers. |
+| **[marksheet.css](css/marksheet.css)** | Renders the official autonomous progress card modal (college seal, subject scorecard, semester GPA summary, controller signatures) and provides `@media print` rules for clean A4 printing. |
 
 ---
 
 ### ⚡ B. The JavaScript Subfolder (`js/`)
 | File | Responsibility |
 |---|---|
-| **[data.js](file:///c:/Users/udayk/OneDrive/Desktop/D3project/js/data.js)** | Holds the default 22-student cohort dataset, pre-seeded demo user credentials (`admin`, `sneha`, `arun`), department maps, and a multi-tiered storage helper (`safeSetItem` / `safeGetItem`) that cascades from `localStorage` &rarr; `sessionStorage` &rarr; memory fallback. |
-| **[auth.js](file:///c:/Users/udayk/OneDrive/Desktop/D3project/js/auth.js)** | Handles user authentication, demo fast-logins (`quickLogin('admin')`), role switching (`quickSwitchRole('Student')`), session tokens, and dynamic Role-Based UI switching (`applyRoleBasedUI()`). |
-| **[marksheet.js](file:///c:/Users/udayk/OneDrive/Desktop/D3project/js/marksheet.js)** | Contains academic evaluation algorithms: calculates individual subject grades, overall percentage, division remarks, and renders the official progress card modal (`openProgressCard()`). |
-| **[ui.js](file:///c:/Users/udayk/OneDrive/Desktop/D3project/js/ui.js)** | Manages dynamic KPI stats calculation (Total Students, Class Avg %, Pass Rate %, Top Performer), multi-column table sorting (`sortTable()`), multi-criteria filtering, toast alerts (`showToast()`), and CSV export. |
-| **[charts.js](file:///c:/Users/udayk/OneDrive/Desktop/D3project/js/charts.js)** | Houses all D3.js SVG visualizations: Department Average Bar Chart, Pass/Fail Donut, Subject Correlation Scatter Plot, and Student Radar/Gauge Charts. |
-| **[app.js](file:///c:/Users/udayk/OneDrive/Desktop/D3project/js/app.js)** | Central hub that bootstraps the app (`initializeData()`), binds modal CRUD events (Add/Edit/Delete student records), handles real-time live score push simulations, and orchestrates dashboard updates. |
+| **[data.js](js/data.js)** | Holds the default 22-student cohort dataset, pre-seeded demo user credentials (`admin`, `sneha`, `arun`), department maps, and a multi-tiered storage helper (`safeSetItem` / `safeGetItem`) that cascades from `localStorage` &rarr; `sessionStorage` &rarr; memory fallback. |
+| **[auth.js](js/auth.js)** | Handles user authentication, demo fast-logins (`quickLogin('admin')`), role switching (`quickSwitchRole('Student')`), session tokens, and dynamic Role-Based UI switching (`applyRoleBasedUI()`). |
+| **[marksheet.js](js/marksheet.js)** | Contains academic evaluation algorithms: calculates individual subject grades, overall percentage, division remarks, and renders the official progress card modal (`openProgressCard()`). |
+| **[ui.js](js/ui.js)** | Manages dynamic KPI stats calculation, multi-column table sorting (`sortTable()`), multi-criteria filtering, toast alerts (`showToast()`), touch inspection dock, and executive dossier modal. |
+| **[charts.js](js/charts.js)** | Houses all D3.js SVG visualizations: Department Average Bar Chart, Pass/Fail Donut, Subject Correlation Scatter Plot, and Student Radar/Gauge Charts. |
+| **[app.js](js/app.js)** | Central hub that bootstraps the app (`initializeData()`), binds modal CRUD events (Add/Edit/Delete student records), handles real-time live score push simulations, and orchestrates dashboard updates. |
 
 ---
 
@@ -126,10 +126,22 @@ flowchart TD
 
 ---
 
-## 🚀 6. Getting Started & Demo Logins
+## 🚀 6. Getting Started & Running Options
 
-### How to Run:
-No server setup, `npm install`, or build step required! Simply double-click **[index.html](file:///c:/Users/udayk/OneDrive/Desktop/D3project/index.html)** in any browser.
+### Option 1: Fast Terminal CLI Audit (Instant Report)
+```powershell
+npm run report
+```
+Or with custom flags:
+* By Department: `node report.js --dept CSE`
+* Only Arrears: `node report.js --arrears`
+* Only Toppers: `node report.js --toppers`
+
+### Option 2: Live Local Server & Web App
+```powershell
+npm run dev
+```
+Open your browser at `http://localhost:3001` (or run `npm run open`).
 
 ### 🔑 Instant Demo Accounts:
 | Role | Username | Password | Purpose |
@@ -144,12 +156,12 @@ No server setup, `npm install`, or build step required! Simply double-click **[i
 
 To present and explain this project in meetings, seminars, or viva reviews:
 
-1. 🌐 **[presentation.html](file:///c:/Users/udayk/OneDrive/Desktop/D3project/presentation.html)**:
+1. 🌐 **[presentation.html](presentation.html)**:
    - Interactive slide deck that opens in any browser.
    - Includes a **live D3.js animated bar graph** on Slide 5 (toggle between Average Marks % and Pass Rate %).
    - Keyboard controls: `←` / `→` or `Space`, press `F` for Fullscreen, `Ctrl+P` to export slides to PDF.
 
-2. 📥 **[Academic_Analytics_Portal_Presentation.pptx](file:///c:/Users/udayk/OneDrive/Desktop/D3project/Academic_Analytics_Portal_Presentation.pptx)**:
+2. 📥 **[Academic_Analytics_Portal_Presentation.pptx](Academic_Analytics_Portal_Presentation.pptx)**:
    - 10-slide 16:9 widescreen Microsoft PowerPoint deck with native embedded editable bar charts, architecture diagrams, and UGC grading tables.
 
 ---

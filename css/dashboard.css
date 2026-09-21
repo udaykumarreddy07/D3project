@@ -57,6 +57,74 @@
     letter-spacing: 0.02em;
 }
 
+.header-accreditation-strip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 5px;
+}
+
+.accred-pill {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.accred-gold {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: #fef08a;
+}
+
+.accred-emerald {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.35);
+    color: #34d399;
+}
+
+.accred-cyan {
+    background: rgba(14, 165, 233, 0.15);
+    border-color: rgba(14, 165, 233, 0.35);
+    color: #38bdf8;
+}
+
+.accred-purple {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.35);
+    color: #c084fc;
+}
+
+.btn-chart-export {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-chart-export:hover {
+    background: rgba(99, 102, 241, 0.25);
+    border-color: rgba(99, 102, 241, 0.5);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
+
 .header-actions {
     display: flex;
     align-items: center;
@@ -1037,4 +1105,296 @@ tbody tr:hover {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* ====================================================
+   INTERACTIVE TOUCH & HOVER INSPECTOR STYLES
+   Minimalist Default View + Rich Detail on Touch
+==================================================== */
+
+.kpi-card {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.kpi-card:hover,
+.kpi-card:focus,
+.kpi-card.touch-active {
+    transform: translateY(-4px) scale(1.015);
+    border-color: rgba(99, 102, 241, 0.45);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 25px rgba(99, 102, 241, 0.28);
+}
+
+.kpi-touch-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #a5b4fc;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px dashed rgba(99, 102, 241, 0.35);
+    padding: 2px 7px;
+    border-radius: 6px;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+}
+
+.kpi-card:hover .kpi-touch-indicator,
+.kpi-card.touch-active .kpi-touch-indicator {
+    background: rgba(99, 102, 241, 0.3);
+    color: #ffffff;
+    border-style: solid;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+}
+
+/* Touch on Quick Filter Pills & Cohort Snapshots */
+.quick-filter-pill,
+.cohort-snap-pill {
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.quick-filter-pill:hover,
+.cohort-snap-pill:hover,
+.quick-filter-pill.touch-active,
+.cohort-snap-pill.touch-active {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), 0 0 12px rgba(99, 102, 241, 0.3);
+    border-color: rgba(99, 102, 241, 0.5);
+}
+
+/* Touch on Student Table Rows */
+#studentTable tr {
+    cursor: pointer;
+    transition: background 0.18s ease, transform 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#studentTable tr:hover,
+#studentTable tr.touch-active {
+    background: rgba(99, 102, 241, 0.12) !important;
+    box-shadow: inset 3px 0 0 #6366f1;
+}
+
+/* Touch on Chart Cards */
+.chart-card {
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chart-card:hover,
+.chart-card.touch-active {
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65), 0 0 28px rgba(99, 102, 241, 0.25);
+}
+
+/* Dedicated Bottom Floating Touch Inspector Dock */
+.touch-inspector-dock {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99990;
+    background: rgba(15, 23, 42, 0.94);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    border-radius: 16px;
+    padding: 10px 20px;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.75), 0 0 30px rgba(99, 102, 241, 0.25);
+    color: #ffffff;
+    max-width: 92vw;
+    width: 720px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: auto;
+}
+
+.touch-inspector-dock.idle {
+    width: auto;
+    opacity: 0.85;
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.touch-inspector-dock:hover {
+    opacity: 1;
+    border-color: rgba(99, 102, 241, 0.6);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.35);
+}
+
+.touch-dock-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+}
+
+.touch-dock-icon {
+    font-size: 22px;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+}
+
+.touch-dock-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.touch-dock-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.touch-dock-desc {
+    font-size: 11.5px;
+    color: #cbd5e1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+.touch-dock-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.touch-dock-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: rgba(99, 102, 241, 0.25);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+    .touch-inspector-dock {
+        bottom: 12px;
+        width: 95vw;
+        padding: 8px 14px;
+    }
+    .touch-dock-desc {
+        font-size: 10.5px;
+    }
+}
+
+/* ====================================================
+   CHART SVG EXPORT & EXECUTIVE DOSSIER MODAL STYLES
+==================================================== */
+.btn-chart-export {
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    color: #a5b4fc;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-chart-export:hover {
+    background: rgba(99, 102, 241, 0.3);
+    color: #ffffff;
+    border-color: #818cf8;
+    transform: translateY(-1px);
+}
+
+.dossier-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+.dossier-card-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 8px;
+}
+.dossier-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.dossier-stat-box {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+}
+.dossier-stat-box .val {
+    font-size: 20px;
+    font-weight: 900;
+    color: #818cf8;
+    font-family: 'Space Grotesk', monospace;
+}
+.dossier-stat-box .lbl {
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+}
+.dossier-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.dossier-table th {
+    text-align: left;
+    padding: 8px 10px;
+    background: rgba(15, 23, 42, 0.8);
+    color: #94a3b8;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dossier-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+}
+
+
 

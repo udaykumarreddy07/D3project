@@ -59,13 +59,73 @@ const server = http.createServer((req, res) => {
     });
 });
 
+const { exec } = require('child_process');
+
+function printConsoleSummary(activePort) {
+    console.log('\n' + '='.repeat(68));
+    console.log('       🎓 ACADEMIC ANALYTICS & STUDENT MARKSHEET PORTAL');
+    console.log('='.repeat(68));
+
+    try {
+        const dataPath = path.join(__dirname, 'data', 'students.json');
+        if (fs.existsSync(dataPath)) {
+            const raw = fs.readFileSync(dataPath, 'utf-8');
+            const list = JSON.parse(raw);
+            const total = list.length;
+            const passed = list.filter(s => s.maths >= 35 && s.science >= 35 && s.english >= 35 && s.programming >= 35).length;
+            const passPct = ((passed / total) * 100).toFixed(1);
+            const avgs = list.map(s => (s.maths + s.science + s.english + s.programming) / 4);
+            const classAvg = (avgs.reduce((a, b) => a + b, 0) / total).toFixed(1);
+            
+            let topStudent = list[0];
+            let topAvg = 0;
+            list.forEach(s => {
+                const a = (s.maths + s.science + s.english + s.programming) / 4;
+                if (a > topAvg) { topAvg = a; topStudent = s; }
+            });
+
+            console.log(`📊 Cohort Analytics Summary:`);
+            console.log(`   • Total Students : ${total}`);
+            console.log(`   • Pass Rate      : ${passPct}% (${passed}/${total} passed)`);
+            console.log(`   • Class Average  : ${classAvg}%`);
+            console.log(`   • Top Performer  : ${topStudent.name} (${topStudent.department}) - ${topAvg.toFixed(2)}%`);
+            console.log('-'.repeat(68));
+            
+            console.log(`📋 Student Roster Sample:`);
+            const preview = list.slice(0, 6).map(s => {
+                const avg = ((s.maths + s.science + s.english + s.programming) / 4).toFixed(1);
+                const status = (s.maths >= 35 && s.science >= 35 && s.english >= 35 && s.programming >= 35) ? 'PASS' : 'FAIL';
+                return {
+                    ID: s.id,
+                    Name: s.name,
+                    Dept: s.department,
+                    Avg: `${avg}%`,
+                    Attendance: `${s.attendance}%`,
+                    Status: status
+                };
+            });
+            console.table(preview);
+        }
+    } catch (e) { }
+
+    console.log('='.repeat(68));
+    console.log(`🚀 Web Application Live at : http://localhost:${activePort}`);
+    console.log(`📽️ Interactive Slides at   : http://localhost:${activePort}/presentation.html`);
+    console.log(`✨ Launching your web browser automatically...`);
+    console.log('='.repeat(68) + '\n');
+
+    // Automatically launch default browser on Windows / Mac / Linux
+    const url = `http://localhost:${activePort}`;
+    const startCmd = process.platform === 'win32' ? `start "" "${url}"` : (process.platform === 'darwin' ? `open "${url}"` : `xdg-open "${url}"`);
+    exec(startCmd, () => {});
+}
+
 server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
         const nextPort = Number(PORT) + 1;
         console.log(`⚠️ Port ${PORT} is currently in use, automatically trying http://localhost:${nextPort}...`);
         server.listen(nextPort, () => {
-            console.log(`🚀 Academic Analytics Portal running live at http://localhost:${nextPort}`);
-            console.log(`📽️ Interactive presentation running at http://localhost:${nextPort}/presentation.html`);
+            printConsoleSummary(nextPort);
         });
     } else {
         console.error('Server error:', err);
@@ -73,6 +133,5 @@ server.on('error', (err) => {
 });
 
 server.listen(PORT, () => {
-    console.log(`🚀 Academic Analytics Portal running live at http://localhost:${PORT}`);
-    console.log(`📽️ Interactive presentation running at http://localhost:${PORT}/presentation.html`);
+    printConsoleSummary(PORT);
 });

@@ -13,11 +13,11 @@
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- D3.js with fallback -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- D3.js Local First (Guaranteed Offline & Instant) with Fallback -->
+    <script src="d3.v7.min.js"></script>
     <script>
         if (typeof d3 === 'undefined') {
-            document.write('<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"><\/script>');
+            document.write('<script src="https://d3js.org/d3.v7.min.js"><\/script>');
         }
     </script>
 
@@ -208,6 +208,12 @@
                     <span class="badge-version" id="portalRoleBadge">Faculty Portal</span>
                 </h1>
                 <p id="portalHeaderSub">Comprehensive Student Marksheet, D3.js Visualizations & Official Progress Cards</p>
+                <div class="header-accreditation-strip">
+                    <span class="accred-pill accred-gold">🏛️ BIET Autonomous</span>
+                    <span class="accred-pill accred-emerald">⭐ NAAC 'A+' Grade</span>
+                    <span class="accred-pill accred-cyan">✓ NBA Tier-1</span>
+                    <span class="accred-pill accred-purple">📜 UGC CBCS Scheme</span>
+                </div>
             </div>
 
             <div class="header-actions">
@@ -229,6 +235,13 @@
                         <span class="user-info-role" id="userDisplayRole">Faculty / Admin</span>
                     </div>
                 </div>
+
+                <!-- Interactive Presentation Slides -->
+                <a href="presentation.html" target="_blank" class="btn btn-outline-white"
+                    style="border-color: rgba(99, 102, 241, 0.5); color: #a5b4fc; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; font-weight: 600;"
+                    title="Launch Interactive D3 Presentation Slides">
+                    📽️ Presentation
+                </a>
 
                 <!-- Hardcopy Project Report -->
                 <a href="hardcopy.html" target="_blank" class="btn btn-outline-white"
@@ -281,6 +294,9 @@
                 <div class="horizontal-action-buttons faculty-control">
                     <button class="btn btn-primary" id="addStudentBtn" onclick="openAddStudentModal()">
                         + Add New Student
+                    </button>
+                    <button class="btn btn-outline" id="execDossierBtn" onclick="openExecutiveReportModal()" title="View Complete Institutional Executive Audit Dossier">
+                        📊 Executive Dossier
                     </button>
                     <button class="btn btn-primary" id="livePushBtn" onclick="simulateRealtimePush()"
                         style="background: #f59e0b; color: #1e1b4b; font-weight: 700;"
@@ -573,6 +589,7 @@
                         <div class="chart-card" id="cardSubjectChart">
                             <div class="chart-header">
                                 <h2 id="chartTitle1">📚 Cohort Subject Average Marks</h2>
+                                <button type="button" class="btn-chart-export" onclick="exportChartSvg('subjectChart', 'Subject_Average_Marks')">📸 SVG Export</button>
                             </div>
                             <svg id="subjectChart"></svg>
                             <div class="chart-legend-bar" id="legendSubjectChart"></div>
@@ -583,6 +600,7 @@
                         <div class="chart-card" id="cardGradeChart">
                             <div class="chart-header">
                                 <h2 id="chartTitle2">🍩 Grade & Result Distribution</h2>
+                                <button type="button" class="btn-chart-export" onclick="exportChartSvg('gradeChart', 'Grade_Distribution')">📸 SVG Export</button>
                             </div>
                             <svg id="gradeChart"></svg>
                             <div class="chart-legend-bar" id="legendGradeChart"></div>
@@ -593,6 +611,7 @@
                         <div class="chart-card" id="cardAttendanceChart">
                             <div class="chart-header">
                                 <h2 id="chartTitle3">📈 Attendance vs Performance Scatter</h2>
+                                <button type="button" class="btn-chart-export" onclick="exportChartSvg('attendanceChart', 'Attendance_Scatter')">📸 SVG Export</button>
                             </div>
                             <svg id="attendanceChart"></svg>
                             <div class="chart-legend-bar" id="legendAttendanceChart"></div>
@@ -603,6 +622,7 @@
                         <div class="chart-card" id="cardGenderChart">
                             <div class="chart-header">
                                 <h2 id="chartTitle4">⚖️ Gender-wise Performance</h2>
+                                <button type="button" class="btn-chart-export" onclick="exportChartSvg('genderChart', 'Gender_Performance')">📸 SVG Export</button>
                             </div>
                             <svg id="genderChart"></svg>
                             <div class="chart-legend-bar" id="legendGenderChart"></div>
@@ -1806,9 +1826,52 @@
         </div>
     </div>
 
+    <!-- ====================================================
+         EXECUTIVE DOSSIER & INSTITUTIONAL AUDIT MODAL
+    ==================================================== -->
+    <div class="modal" id="executiveReportModal">
+        <div class="modal-content" style="max-width: 920px; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(99,102,241,0.25);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 16px;">
+                <div>
+                    <h2 style="display: flex; align-items: center; gap: 10px; font-size: 18px; color: #ffffff;">
+                        <span>🏛️</span>
+                        <span>Institutional Performance Dossier & CBCS Audit</span>
+                        <span class="badge-version" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: #34d399;">Accredited NAAC 'A+'</span>
+                    </h2>
+                    <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Bharath Institute of Engineering & Technology (Autonomous) • Academic Year 2025-2026 Audit</p>
+                </div>
+                <button type="button" class="modal-close" onclick="closeExecutiveReportModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 22px; max-height: 72vh; overflow-y: auto;" id="execDossierBody">
+                <!-- Dynamically rendered by ui.js -->
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+                <span style="font-size: 11px; color: #94a3b8;">Official Autonomous Academic Record • Choice Based Credit System</span>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-outline" onclick="window.print()">🖨️ Print Audit Dossier</button>
+                    <button type="button" class="btn btn-primary" onclick="closeExecutiveReportModal()">Close Dossier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Tooltip & Toast Containers -->
     <div class="tooltip" id="tooltip"></div>
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Interactive Universal Touch Inspector Dock -->
+    <div class="touch-inspector-dock idle" id="touchInspectorDock">
+        <div class="touch-dock-content">
+            <div class="touch-dock-icon" id="touchDockIcon">👆</div>
+            <div class="touch-dock-info">
+                <div class="touch-dock-title" id="touchDockTitle">Interactive Touch Inspector Active</div>
+                <div class="touch-dock-desc" id="touchDockDesc">Touch or hover over any KPI card, chart element, filter pill, or student row to inspect full details.</div>
+            </div>
+        </div>
+        <div class="touch-dock-actions">
+            <span class="touch-dock-badge" id="touchDockBadge">TOUCH READY</span>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer>
