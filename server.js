@@ -120,18 +120,24 @@ function printConsoleSummary(activePort) {
     exec(startCmd, () => {});
 }
 
+let currentPort = Number(PORT);
+
 server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
-        const nextPort = Number(PORT) + 1;
-        console.log(`⚠️ Port ${PORT} is currently in use, automatically trying http://localhost:${nextPort}...`);
-        server.listen(nextPort, () => {
-            printConsoleSummary(nextPort);
-        });
+        const busyPort = currentPort;
+        currentPort++;
+        console.log(`⚠️ Port ${busyPort} is in use, automatically trying http://localhost:${currentPort}...`);
+        setTimeout(() => {
+            try { server.close(); } catch (e) {}
+            server.listen(currentPort, () => {
+                printConsoleSummary(currentPort);
+            });
+        }, 150);
     } else {
         console.error('Server error:', err);
     }
 });
 
-server.listen(PORT, () => {
-    printConsoleSummary(PORT);
+server.listen(currentPort, () => {
+    printConsoleSummary(currentPort);
 });

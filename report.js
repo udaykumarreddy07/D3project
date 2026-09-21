@@ -313,5 +313,5 @@ console.log(
     `CLI Flags: ${c.cyan}--dept <CSE|ECE|EEE|MECH|CIVIL>${c.slate} │ ${c.rose}--arrears${c.slate} │ ${c.amber}--toppers${c.reset}`
 );
 console.log(
-    `  ${c.emerald}🌐 Live Web Dashboard : ${c.brightWhite}http://localhost:3001${c.reset}\n`
+    `  ${c.emerald}🌐 Live Web Dashboard : ${c.brightWhite}http://localhost:3000${c.reset}\n`
 );

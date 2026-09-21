@@ -8696,9 +8696,9 @@ function copySigCertCode() {
 ==================================================== */
 
 let currentActiveViewTab = 'all'; // 'all' | 'analytics' | 'marksheet' | 'table'
-// Note: sortColumn and sortDirection are declared in data.js
-sortColumn = sortColumn || 'id';
-sortDirection = sortDirection || 'asc';
+// Note: sortColumn and sortDirection can be initialized from data.js or defaulted safely
+var sortColumn = (typeof sortColumn !== 'undefined') ? sortColumn : 'id';
+var sortDirection = (typeof sortDirection !== 'undefined') ? sortDirection : 'asc';
 
 // ----------------------------------------------------
 // 1. TOOLTIP & DOCKED TOUCH INSPECTOR CONTROLLERS

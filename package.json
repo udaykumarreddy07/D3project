@@ -7,7 +7,7 @@
     "dev": "node server.js",
     "start": "node server.js",
     "report": "node report.js",
-    "open": "start http://localhost:3001",
+    "open": "start http://localhost:3000",
     "build": "node build.js"
   },
   "dependencies": {
