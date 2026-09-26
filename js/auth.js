@@ -286,18 +286,18 @@ let currentUserRole = "Faculty";
 
             if (isFaculty) {
                 d3.select("#portalHeaderTitle").html(`
-                    Academic Analytics & Batch Grading Control
-                    <span class="badge-version" style="background: rgba(255,255,255,0.25);">👨‍🏫 Faculty Dashboard</span>
+                    <span style="color: #38bdf8; font-family: 'Space Grotesk', sans-serif; font-weight: 800; letter-spacing: -0.5px;">⚡ EduPulse</span> &bull; Faculty Intelligence & Marksheets
+                    <span class="badge-version" style="background: rgba(255,255,255,0.25);">👨‍🏫 Faculty Portal</span>
                 `);
-                d3.select("#portalHeaderSub").text("Full Cohort Analytics, D3.js Charts, Student Marksheet Management & Batch Evaluation");
+                d3.select("#portalHeaderSub").text("EduPulse Intelligent Campus Analytics • Full Cohort Tracking, D3.js Charts, Assignments & Marksheet Management");
                 d3.select("#facultyDashboardView").style("display", "block");
                 d3.select("#studentDashboardView").style("display", "none");
             } else {
                 d3.select("#portalHeaderTitle").html(`
-                    Student Academic Observatory
-                    <span class="badge-version" style="background: rgba(16, 185, 129, 0.35); border-color: #34d399;">🎓 Student Marksheet</span>
+                    <span style="color: #38bdf8; font-family: 'Space Grotesk', sans-serif; font-weight: 800; letter-spacing: -0.5px;">⚡ EduPulse</span> &bull; Student Academic Observatory
+                    <span class="badge-version" style="background: rgba(16, 185, 129, 0.35); border-color: #34d399;">🎓 Student Portal</span>
                 `);
-                d3.select("#portalHeaderSub").text("Verified Academic Transcript, Subject-wise Grades & Semester Performance Overview");
+                d3.select("#portalHeaderSub").text("EduPulse Intelligent Campus Analytics • Verified Academic Transcript, Assignments, Fee Records & Progress Cards");
                 d3.select("#facultyDashboardView").style("display", "none");
                 d3.select("#studentDashboardView").style("display", "block");
             }

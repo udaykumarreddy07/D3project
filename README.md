@@ -1,4 +1,4 @@
-# 🎓 Academic Analytics, Assignment Hub & Student Fee Portal
+# ⚡ EduPulse — Intelligent Campus Analytics & Marksheet Portal
 > **A high-performance, modular autonomous college portal featuring D3.js Visualizations, UGC 10-Point Grading, Faculty Assignment Grading, AI Academic Explainer, and Institutional Fee Tracking.**
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-udaykumarreddy07%2FD3project-blue?logo=github)](https://github.com/udaykumarreddy07/D3project)
