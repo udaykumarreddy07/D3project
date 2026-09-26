@@ -4,9 +4,9 @@
 ==================================================== */
 
 let currentActiveViewTab = 'all'; // 'all' | 'analytics' | 'marksheet' | 'table'
-// Note: sortColumn and sortDirection can be initialized from data.js or defaulted safely
-var sortColumn = (typeof sortColumn !== 'undefined') ? sortColumn : 'id';
-var sortDirection = (typeof sortDirection !== 'undefined') ? sortDirection : 'asc';
+// Note: sortColumn and sortDirection are defined in data.js
+if (typeof sortColumn === 'undefined') window.sortColumn = 'id';
+if (typeof sortDirection === 'undefined') window.sortDirection = 'asc';
 
 // ----------------------------------------------------
 // 1. TOOLTIP & DOCKED TOUCH INSPECTOR CONTROLLERS
@@ -578,6 +578,10 @@ function switchViewTab(tab) {
     const analyticsSection = d3.select("#analyticsSection");
     const marksheetSection = d3.select("#marksheetHubSection");
     const tableSection = d3.select("#tableSection");
+    const feeSection = d3.select("#facultyFeeSection");
+    const broadcastSection = d3.select("#facultyBroadcastSection");
+    const assignmentSection = d3.select("#facultyAssignmentSection");
+    const aiSection = d3.select("#facultyAiExplainerSection");
 
     const student = students.find(s => s.id === currentSelectedStudentId) || students[0];
 
@@ -585,6 +589,10 @@ function switchViewTab(tab) {
         analyticsSection.style("display", "block");
         marksheetSection.style("display", "block");
         tableSection.style("display", "block");
+        feeSection.style("display", "none");
+        broadcastSection.style("display", "none");
+        assignmentSection.style("display", "none");
+        aiSection.style("display", "none");
         if (student) {
             initStudentSelector();
             populateMarksheet(student);
@@ -594,6 +602,10 @@ function switchViewTab(tab) {
         analyticsSection.style("display", "block");
         marksheetSection.style("display", "none");
         tableSection.style("display", "block");
+        feeSection.style("display", "none");
+        broadcastSection.style("display", "none");
+        assignmentSection.style("display", "none");
+        aiSection.style("display", "none");
         const el = document.getElementById("analyticsSection");
         if (el && typeof el.scrollIntoView === 'function') {
             try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
@@ -602,6 +614,10 @@ function switchViewTab(tab) {
         analyticsSection.style("display", "none");
         marksheetSection.style("display", "block");
         tableSection.style("display", "none");
+        feeSection.style("display", "none");
+        broadcastSection.style("display", "none");
+        assignmentSection.style("display", "none");
+        aiSection.style("display", "none");
         if (student) {
             initStudentSelector();
             populateMarksheet(student);
@@ -615,7 +631,63 @@ function switchViewTab(tab) {
         analyticsSection.style("display", "none");
         marksheetSection.style("display", "none");
         tableSection.style("display", "block");
+        feeSection.style("display", "none");
+        broadcastSection.style("display", "none");
+        assignmentSection.style("display", "none");
+        aiSection.style("display", "none");
         const el = document.getElementById("tableSection");
+        if (el && typeof el.scrollIntoView === 'function') {
+            try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+        }
+    } else if (tab === 'fees') {
+        analyticsSection.style("display", "none");
+        marksheetSection.style("display", "none");
+        tableSection.style("display", "none");
+        feeSection.style("display", "block");
+        broadcastSection.style("display", "none");
+        assignmentSection.style("display", "none");
+        aiSection.style("display", "none");
+        if (typeof renderFacultyFeeMonitor === 'function') renderFacultyFeeMonitor();
+        const el = document.getElementById("facultyFeeSection");
+        if (el && typeof el.scrollIntoView === 'function') {
+            try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+        }
+    } else if (tab === 'broadcast') {
+        analyticsSection.style("display", "none");
+        marksheetSection.style("display", "none");
+        tableSection.style("display", "none");
+        feeSection.style("display", "none");
+        broadcastSection.style("display", "block");
+        assignmentSection.style("display", "none");
+        aiSection.style("display", "none");
+        if (typeof renderNoticesGrid === 'function') renderNoticesGrid();
+        const el = document.getElementById("facultyBroadcastSection");
+        if (el && typeof el.scrollIntoView === 'function') {
+            try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+        }
+    } else if (tab === 'assignments') {
+        analyticsSection.style("display", "none");
+        marksheetSection.style("display", "none");
+        tableSection.style("display", "none");
+        feeSection.style("display", "none");
+        broadcastSection.style("display", "none");
+        assignmentSection.style("display", "block");
+        aiSection.style("display", "none");
+        if (typeof renderFacultyAssignments === 'function') renderFacultyAssignments();
+        const el = document.getElementById("facultyAssignmentSection");
+        if (el && typeof el.scrollIntoView === 'function') {
+            try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+        }
+    } else if (tab === 'aiexplainer') {
+        analyticsSection.style("display", "none");
+        marksheetSection.style("display", "none");
+        tableSection.style("display", "none");
+        feeSection.style("display", "none");
+        broadcastSection.style("display", "none");
+        assignmentSection.style("display", "none");
+        aiSection.style("display", "block");
+        if (typeof updateAiRoleUI === 'function') updateAiRoleUI();
+        const el = document.getElementById("facultyAiExplainerSection");
         if (el && typeof el.scrollIntoView === 'function') {
             try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
         }

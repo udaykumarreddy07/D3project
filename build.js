@@ -7,12 +7,18 @@ const authCss = fs.readFileSync(path.join(__dirname, 'css', 'auth.css'), 'utf8')
 const dashboardCss = fs.readFileSync(path.join(__dirname, 'css', 'dashboard.css'), 'utf8');
 const chartsCss = fs.readFileSync(path.join(__dirname, 'css', 'charts.css'), 'utf8');
 const marksheetCss = fs.readFileSync(path.join(__dirname, 'css', 'marksheet.css'), 'utf8');
+const feesNoticesCss = fs.readFileSync(path.join(__dirname, 'css', 'fees-notices.css'), 'utf8');
+const assignmentsCss = fs.readFileSync(path.join(__dirname, 'css', 'assignments.css'), 'utf8');
+const aiExplainerCss = fs.readFileSync(path.join(__dirname, 'css', 'ai-explainer.css'), 'utf8');
 
 const dataJs = fs.readFileSync(path.join(__dirname, 'js', 'data.js'), 'utf8');
 const authJs = fs.readFileSync(path.join(__dirname, 'js', 'auth.js'), 'utf8');
 const marksheetJs = fs.readFileSync(path.join(__dirname, 'js', 'marksheet.js'), 'utf8');
 const uiJs = fs.readFileSync(path.join(__dirname, 'js', 'ui.js'), 'utf8');
 const chartsJs = fs.readFileSync(path.join(__dirname, 'js', 'charts.js'), 'utf8');
+const feesNoticesJs = fs.readFileSync(path.join(__dirname, 'js', 'fees-notices.js'), 'utf8');
+const assignmentsJs = fs.readFileSync(path.join(__dirname, 'js', 'assignments.js'), 'utf8');
+const aiExplainerJs = fs.readFileSync(path.join(__dirname, 'js', 'ai-explainer.js'), 'utf8');
 const appJs = fs.readFileSync(path.join(__dirname, 'js', 'app.js'), 'utf8');
 
 const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
@@ -55,6 +61,12 @@ ${dashboardCss}
 ${chartsCss}
 
 ${marksheetCss}
+
+${feesNoticesCss}
+
+${assignmentsCss}
+
+${aiExplainerCss}
 </style>
 </head>
 
@@ -72,6 +84,12 @@ ${marksheetJs}
 ${uiJs}
 
 ${chartsJs}
+
+${feesNoticesJs}
+
+${assignmentsJs}
+
+${aiExplainerJs}
 
 ${appJs}
 </script>

@@ -3628,12 +3628,22 @@ function switchStudentTab(tab) {
     const subGridEl = document.getElementById("studSubjectCardsGrid");
     const visualsEl = document.getElementById("studentVisualizationsSection");
     const marksheetEl = document.getElementById("studentEmbeddedMarksheet");
+    const feesEl = document.getElementById("studentFeesSection");
+    const noticesEl = document.getElementById("studentNoticesSection");
+    const asgEl = document.getElementById("studentAssignmentSection");
+    const aiEl = document.getElementById("studentAiExplainerSection");
+
+    const student = currentInspectedStudent || (typeof getStudentForUser === 'function' && typeof currentUser !== 'undefined' && currentUser && currentUser.role === 'Student' ? getStudentForUser(currentUser) : null) || (typeof students !== 'undefined' ? (students.find(s => s.id === 4) || students[0]) : null);
 
     if (tab === 'overview') {
         if (hudEl) hudEl.style.display = "block";
         if (subGridEl) subGridEl.style.display = "grid";
         if (visualsEl) visualsEl.style.display = "block";
         if (marksheetEl) marksheetEl.style.display = "block";
+        if (feesEl) feesEl.style.display = "none";
+        if (noticesEl) noticesEl.style.display = "none";
+        if (asgEl) asgEl.style.display = "none";
+        if (aiEl) aiEl.style.display = "none";
         if (typeof window.scrollTo === 'function') {
             try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { try { window.scrollTo(0, 0); } catch (err) {} }
         }
@@ -3642,6 +3652,10 @@ function switchStudentTab(tab) {
         if (subGridEl) subGridEl.style.display = "grid";
         if (visualsEl) visualsEl.style.display = "block";
         if (marksheetEl) marksheetEl.style.display = "none";
+        if (feesEl) feesEl.style.display = "none";
+        if (noticesEl) noticesEl.style.display = "none";
+        if (asgEl) asgEl.style.display = "none";
+        if (aiEl) aiEl.style.display = "none";
         if (visualsEl && typeof visualsEl.scrollIntoView === 'function') {
             try { visualsEl.scrollIntoView({ behavior: 'smooth' }); } catch (e) { visualsEl.scrollIntoView(); }
         }
@@ -3650,8 +3664,70 @@ function switchStudentTab(tab) {
         if (subGridEl) subGridEl.style.display = "none";
         if (visualsEl) visualsEl.style.display = "none";
         if (marksheetEl) marksheetEl.style.display = "block";
+        if (feesEl) feesEl.style.display = "none";
+        if (noticesEl) noticesEl.style.display = "none";
+        if (asgEl) asgEl.style.display = "none";
+        if (aiEl) aiEl.style.display = "none";
         if (marksheetEl && typeof marksheetEl.scrollIntoView === 'function') {
             try { marksheetEl.scrollIntoView({ behavior: 'smooth' }); } catch (e) { marksheetEl.scrollIntoView(); }
+        }
+    } else if (tab === 'fees') {
+        if (hudEl) hudEl.style.display = "none";
+        if (subGridEl) subGridEl.style.display = "none";
+        if (visualsEl) visualsEl.style.display = "none";
+        if (marksheetEl) marksheetEl.style.display = "none";
+        if (feesEl) feesEl.style.display = "block";
+        if (noticesEl) noticesEl.style.display = "none";
+        if (asgEl) asgEl.style.display = "none";
+        if (aiEl) aiEl.style.display = "none";
+        if (typeof renderStudentFeesView === 'function' && student) {
+            renderStudentFeesView(student);
+        }
+        if (typeof window.scrollTo === 'function') {
+            try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { try { window.scrollTo(0, 0); } catch (err) {} }
+        }
+    } else if (tab === 'notices') {
+        if (hudEl) hudEl.style.display = "none";
+        if (subGridEl) subGridEl.style.display = "none";
+        if (visualsEl) visualsEl.style.display = "none";
+        if (marksheetEl) marksheetEl.style.display = "none";
+        if (feesEl) feesEl.style.display = "none";
+        if (noticesEl) noticesEl.style.display = "block";
+        if (asgEl) asgEl.style.display = "none";
+        if (aiEl) aiEl.style.display = "none";
+        if (typeof renderNoticesGrid === 'function') {
+            renderNoticesGrid();
+        }
+        if (noticesEl && typeof noticesEl.scrollIntoView === 'function') {
+            try { noticesEl.scrollIntoView({ behavior: 'smooth' }); } catch (e) { noticesEl.scrollIntoView(); }
+        }
+    } else if (tab === 'assignments') {
+        if (hudEl) hudEl.style.display = "none";
+        if (subGridEl) subGridEl.style.display = "none";
+        if (visualsEl) visualsEl.style.display = "none";
+        if (marksheetEl) marksheetEl.style.display = "none";
+        if (feesEl) feesEl.style.display = "none";
+        if (noticesEl) noticesEl.style.display = "none";
+        if (asgEl) asgEl.style.display = "block";
+        if (aiEl) aiEl.style.display = "none";
+        if (typeof renderStudentAssignments === 'function' && student) {
+            renderStudentAssignments(student);
+        }
+        if (asgEl && typeof asgEl.scrollIntoView === 'function') {
+            try { asgEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { asgEl.scrollIntoView(); }
+        }
+    } else if (tab === 'aiexplainer') {
+        if (hudEl) hudEl.style.display = "none";
+        if (subGridEl) subGridEl.style.display = "none";
+        if (visualsEl) visualsEl.style.display = "none";
+        if (marksheetEl) marksheetEl.style.display = "none";
+        if (feesEl) feesEl.style.display = "none";
+        if (noticesEl) noticesEl.style.display = "none";
+        if (asgEl) asgEl.style.display = "none";
+        if (aiEl) aiEl.style.display = "block";
+        if (typeof updateAiRoleUI === 'function') updateAiRoleUI();
+        if (aiEl && typeof aiEl.scrollIntoView === 'function') {
+            try { aiEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { aiEl.scrollIntoView(); }
         }
     }
 }

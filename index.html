@@ -27,6 +27,9 @@
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/charts.css">
     <link rel="stylesheet" href="css/marksheet.css">
+    <link rel="stylesheet" href="css/fees-notices.css">
+    <link rel="stylesheet" href="css/assignments.css">
+    <link rel="stylesheet" href="css/ai-explainer.css">
 </head>
 
 <body>
@@ -250,6 +253,12 @@
                     📑 Hardcopy Report
                 </a>
 
+                <!-- Institutional Notices & Broadcasts -->
+                <button type="button" class="header-notice-btn" onclick="openNoticesModalOrTab()" title="View Announcements & Broadcasts">
+                    <span>📢 Notices</span>
+                    <span class="notice-badge-count" id="headerNoticeBadge">3</span>
+                </button>
+
                 <!-- Sign Out -->
                 <button class="btn btn-outline-white" onclick="logoutUser()"
                     style="border-color: rgba(244, 63, 94, 0.4); color: #fb7185;"
@@ -259,6 +268,18 @@
             </div>
         </div>
     </header>
+
+    <!-- Real-Time Institutional Announcement Ticker Strip -->
+    <div class="portal-ticker-strip">
+        <div class="ticker-label-badge">⚡ LIVE ANNOUNCEMENT</div>
+        <div class="ticker-text" id="portalTickerText">
+            <b>[URGENT]</b> Autonomous Semester-End Exam Hall Ticket & Registration portal open.
+        </div>
+        <div class="ticker-actions">
+            <button type="button" class="btn btn-outline btn-sm faculty-control" onclick="openBroadcastModal()">📢 Broadcast Notice</button>
+            <button type="button" class="btn btn-outline btn-sm student-control" onclick="switchStudentTab('fees')">💳 Fee Ledger</button>
+        </div>
+    </div>
 
     <!-- ====================================================
          MAIN DASHBOARD: HORIZONTAL NAVIGATION & WORKSPACE
@@ -289,9 +310,34 @@
                         <span>📋</span>
                         <span>Master Records Gradebook</span>
                     </button>
+                    <button type="button" class="horizontal-nav-btn" id="tabView-fees" onclick="switchViewTab('fees')">
+                        <span>💳</span>
+                        <span>Fee Collection Monitor</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="tabView-broadcast" onclick="switchViewTab('broadcast')">
+                        <span>📢</span>
+                        <span>Broadcasts & Notices</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="tabView-assignments" onclick="switchViewTab('assignments')">
+                        <span>📝</span>
+                        <span>Assignments & Grading</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="tabView-aiexplainer" onclick="switchViewTab('aiexplainer')">
+                        <span>✨</span>
+                        <span>AI Explainer Copilot</span>
+                    </button>
                 </nav>
 
                 <div class="horizontal-action-buttons faculty-control">
+                    <button class="btn btn-accent" id="btnQuickAiFaculty" onclick="toggleAiExplainer(true)" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; font-weight: 800; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);">
+                        ✨ Ask AI Explainer
+                    </button>
+                    <button class="btn btn-primary" id="btnQuickCreateAsg" onclick="openCreateAssignmentModal()" style="background: linear-gradient(135deg, #6366f1, #4f46e5); font-weight: 700;">
+                        📝 + New Assignment
+                    </button>
+                    <button class="btn btn-accent" id="postNoticeBtn" onclick="openBroadcastModal()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 700;">
+                        📢 Post Notice
+                    </button>
                     <button class="btn btn-primary" id="addStudentBtn" onclick="openAddStudentModal()">
                         + Add New Student
                     </button>
@@ -886,6 +932,243 @@
                         </div>
                     </section>
                 </div>
+
+                <!-- ====================================================
+                     SECTION 4: COHORT FEE COLLECTION & STATUTORY CLEARANCE MONITOR
+                ==================================================== -->
+                <div id="facultyFeeSection" style="display: none; margin-top: 24px; margin-bottom: 35px;">
+                    <div class="section-horizontal-heading-card">
+                        <div class="horizontal-heading-content">
+                            <div class="horizontal-heading-tag">FINANCIAL CLEARANCE & INSTITUTIONAL ACCOUNTS</div>
+                            <div class="horizontal-heading-title">💳 Cohort Fee Collection & Statutory Dues Monitor</div>
+                            <div class="horizontal-heading-sub">Institutional fee tracking across Semesters, Autonomous Examination fees & Lab clearance</div>
+                        </div>
+                        <div class="horizontal-heading-actions">
+                            <button type="button" class="btn btn-primary btn-sm" onclick="sendBulkFeeReminders()">
+                                📩 Broadcast Dues Reminder
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Fee Collection KPIs -->
+                    <div class="fees-summary-hero" style="margin-top: 15px;">
+                        <div class="fees-hero-left">
+                            <div class="fee-dial-graphic" style="background: conic-gradient(#34d399 0% 92%, #fb7185 92% 100%);">
+                                <div class="fee-dial-inner">
+                                    <span style="font-size: 16px;">92%</span>
+                                    <span style="font-size: 8px; color: #94a3b8;">CLEARED</span>
+                                </div>
+                            </div>
+                            <div class="fees-hero-info">
+                                <h2>Autonomous Institutional Accounts Telemetry</h2>
+                                <p>Track student tuition receipts, exam admission clearances, and financial holds</p>
+                            </div>
+                        </div>
+                        <div class="fees-metric-pills">
+                            <div class="fee-metric-pill">
+                                <div class="fee-pill-lbl">TOTAL DEMAND</div>
+                                <div class="fee-pill-val val-cyan" id="facFeeDemand">₹73.00 Lakhs</div>
+                            </div>
+                            <div class="fee-metric-pill">
+                                <div class="fee-pill-lbl">TOTAL COLLECTED</div>
+                                <div class="fee-pill-val val-green" id="facFeeCollected">₹67.50 Lakhs</div>
+                            </div>
+                            <div class="fee-metric-pill">
+                                <div class="fee-pill-lbl">PENDING DUES</div>
+                                <div class="fee-pill-val val-amber" id="facFeePending">₹5.50 Lakhs</div>
+                            </div>
+                            <div class="fee-metric-pill">
+                                <div class="fee-pill-lbl">100% CLEARED</div>
+                                <div class="fee-pill-val val-green" id="facFeeClearedCount">92 / 100 (92%)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Faculty Fee Filter & Search Bar -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; background: rgba(15, 23, 42, 0.6); padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.06);">
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Filter Status:</span>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="filterFacultyFeeCohort('all')" style="font-size: 11px; padding: 4px 10px;">All Students</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="filterFacultyFeeCohort('due')" style="font-size: 11px; padding: 4px 10px; color: #fb7185; border-color: rgba(244,63,94,0.4);">⚠️ Dues Pending</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="filterFacultyFeeCohort('cleared')" style="font-size: 11px; padding: 4px 10px; color: #34d399; border-color: rgba(16,185,129,0.4);">✓ 100% Cleared</button>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input type="text" placeholder="🔍 Search Roll No or Student..." oninput="searchFacultyFeeCohort(this.value)" class="auth-control" style="font-size: 12px; padding: 6px 12px; width: 220px; background: rgba(30, 41, 59, 0.8);">
+                        </div>
+                    </div>
+
+                    <!-- Fee Cohort Table -->
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Roll No</th>
+                                    <th>Student Name</th>
+                                    <th>Department</th>
+                                    <th>Academic Avg</th>
+                                    <th>Total Fee</th>
+                                    <th>Amount Paid</th>
+                                    <th>Pending Dues</th>
+                                    <th>Clearance Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="facultyFeeCohortTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ====================================================
+                     SECTION 5: FACULTY ANNOUNCEMENT BROADCAST TERMINAL
+                ==================================================== -->
+                <div id="facultyBroadcastSection" style="display: none; margin-top: 24px; margin-bottom: 35px;">
+                    <div class="section-horizontal-heading-card">
+                        <div class="horizontal-heading-content">
+                            <div class="horizontal-heading-tag">CAMPUS COMMUNICATIONS & REAL-TIME ALERTS</div>
+                            <div class="horizontal-heading-title">📢 Institutional Notice Board & Broadcast Terminal</div>
+                            <div class="horizontal-heading-sub">Compose and dispatch instant notifications to all enrolled students with live sync</div>
+                        </div>
+                        <div class="horizontal-heading-actions">
+                            <button type="button" class="btn btn-accent btn-sm" onclick="openBroadcastModal()">
+                                + Compose Broadcast
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="notices-grid" id="facultyNoticesGrid"></div>
+                </div>
+
+                <!-- ====================================================
+                     SECTION 6: FACULTY ASSIGNMENT CREATION & EVALUATION MONITOR
+                ==================================================== -->
+                <div id="facultyAssignmentSection" style="display: none; margin-top: 24px; margin-bottom: 35px;">
+                    <div class="section-horizontal-heading-card">
+                        <div class="horizontal-heading-content">
+                            <div class="horizontal-heading-tag">CONTINUOUS EVALUATION & COURSEWORK MANAGEMENT</div>
+                            <div class="horizontal-heading-title">📝 Faculty Assignment Central & Student Gradebook</div>
+                            <div class="horizontal-heading-sub">Assign coursework with start & end dates, inspect student file submissions, and enter assignment marks with qualitative feedback</div>
+                        </div>
+                        <div class="horizontal-heading-actions">
+                            <button type="button" class="btn btn-primary btn-sm" onclick="openCreateAssignmentModal()" style="background: linear-gradient(135deg, #6366f1, #4f46e5); font-weight: 800; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);">
+                                + Create New Assignment
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Telemetry KPI Summary -->
+                    <div class="asg-summary-hero">
+                        <div class="asg-hero-title-group">
+                            <h2><span>⚡</span> Cohort Coursework Telemetry</h2>
+                            <p>Real-time submission monitoring, evaluation status, and batch performance metrics</p>
+                        </div>
+                        <div class="asg-kpi-grid">
+                            <div class="asg-kpi-card">
+                                <span class="asg-kpi-label">Total Assigned</span>
+                                <span class="asg-kpi-val asg-val-cyan" id="facTotalAsg">4</span>
+                            </div>
+                            <div class="asg-kpi-card">
+                                <span class="asg-kpi-label">Submissions</span>
+                                <span class="asg-kpi-val asg-val-purple" id="facTotalSub">4</span>
+                            </div>
+                            <div class="asg-kpi-card">
+                                <span class="asg-kpi-label">Graded</span>
+                                <span class="asg-kpi-val asg-val-green" id="facGradedCount">2</span>
+                            </div>
+                            <div class="asg-kpi-card">
+                                <span class="asg-kpi-label">Pending Review</span>
+                                <span class="asg-kpi-val asg-val-amber" id="facPendingReview">2</span>
+                            </div>
+                            <div class="asg-kpi-card">
+                                <span class="asg-kpi-label">Avg Marks %</span>
+                                <span class="asg-kpi-val asg-val-cyan" id="facAvgScore">94%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Toolbar -->
+                    <div class="asg-toolbar">
+                        <div class="asg-filter-group">
+                            <label style="font-size: 12px; color: #94a3b8; font-weight: 700;">Filter by Subject:</label>
+                            <select class="asg-select" onchange="filterFacultyAssignmentsBySubject(this.value)">
+                                <option value="All">All Subjects</option>
+                                <option value="Programming">Programming</option>
+                                <option value="Maths">Maths</option>
+                                <option value="Science">Science</option>
+                                <option value="English">English</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; max-width: 320px;">
+                            <input type="text" class="asg-select" style="width: 100%;" placeholder="🔍 Search assignments by title or topic..." oninput="handleFacultyAssignmentSearch(this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Assignments Grid -->
+                    <div class="asg-grid" id="facultyAssignmentsGrid"></div>
+                </div>
+
+                <!-- ====================================================
+                     SECTION 7: FACULTY AI EXPLAINER & COHORT COPILOT
+                ==================================================== -->
+                <div id="facultyAiExplainerSection" style="display: none; margin-top: 24px; margin-bottom: 35px;">
+                    <div class="section-horizontal-heading-card" style="background: linear-gradient(135deg, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(168, 85, 247, 0.4);">
+                        <div class="horizontal-heading-content">
+                            <div class="horizontal-heading-tag" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">AI ACADEMIC INTELLIGENCE & ADVISORY SYSTEM</div>
+                            <div class="horizontal-heading-title">✨ Faculty AI Explainer & Cohort Diagnostic Copilot</div>
+                            <div class="horizontal-heading-sub">Ask doubts regarding cohort diagnostics, grade distributions, remedial intervention plans, and statutory pass/fail regulations</div>
+                        </div>
+                        <div class="horizontal-heading-actions">
+                            <button type="button" class="btn btn-accent btn-sm" onclick="toggleAiExplainer(true)" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; font-weight: 800;">
+                                💬 Open Floating Chat Copilot
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Hub Curated Topics Grid -->
+                    <div class="ai-hub-topics-grid" style="margin-top: 18px;">
+                        <div class="ai-topic-card" onclick="handleAiChipClick('Summarize overall cohort performance and grade distribution'); toggleAiExplainer(true);">
+                            <div class="ai-topic-icon">📊</div>
+                            <div>
+                                <div class="ai-topic-title">Cohort Diagnostic Audit</div>
+                                <div class="ai-topic-sub">Break down subject-wise pass rates, top scoring percentiles, and batch averages.</div>
+                            </div>
+                        </div>
+                        <div class="ai-topic-card" onclick="handleAiChipClick('Which students are at academic risk or need remedial attention?'); toggleAiExplainer(true);">
+                            <div class="ai-topic-icon">⚠️</div>
+                            <div>
+                                <div class="ai-topic-title">At-Risk Student Identification</div>
+                                <div class="ai-topic-sub">Pinpoint students scoring below 50% or with critical attendance deficits.</div>
+                            </div>
+                        </div>
+                        <div class="ai-topic-card" onclick="handleAiChipClick('Suggest evaluation rubrics for D3.js programming project'); toggleAiExplainer(true);">
+                            <div class="ai-topic-icon">📝</div>
+                            <div>
+                                <div class="ai-topic-title">Assignment Rubric Builder</div>
+                                <div class="ai-topic-sub">Generate objective grading criteria, score distributions, and learning objectives.</div>
+                            </div>
+                        </div>
+                        <div class="ai-topic-card" onclick="handleAiChipClick('Explain CBCS SGPA grading criteria and pass marks threshold'); toggleAiExplainer(true);">
+                            <div class="ai-topic-icon">⚖️</div>
+                            <div>
+                                <div class="ai-topic-title">Statutory Autonomous Rules</div>
+                                <div class="ai-topic-sub">Review credit weighting equations, 35-mark pass minimums, and hall ticket gates.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fast Doubt Solver Console on Page -->
+                    <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px;">
+                        <h3 style="font-size: 16px; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <span>💡</span> Instant Faculty Academic Query Terminal
+                        </h3>
+                        <p style="font-size: 13px; color: #94a3b8; margin: 0 0 16px 0;">Type any faculty question or doubt below to receive instant contextual analysis from the AI engine.</p>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="facOnPageAiInput" class="auth-control" style="flex: 1;" placeholder="e.g. Which students scored highest in Programming? or Explain CBCS formula" onkeydown="if(event.key==='Enter') { handleAiChipClick(this.value); toggleAiExplainer(true); }">
+                            <button type="button" class="btn btn-primary" onclick="const val = document.getElementById('facOnPageAiInput').value; if(val){ handleAiChipClick(val); toggleAiExplainer(true); }" style="background: linear-gradient(135deg, #a855f7, #6366f1); font-weight: 800;">
+                                🚀 Analyze Query
+                            </button>
+                        </div>
+                    </div>
+                </div>
         </div> <!-- ==================== END FACULTY DASHBOARD VIEW ==================== -->
     </div> <!-- end .container -->
 
@@ -909,9 +1192,31 @@
                         <span>🎓</span>
                         <span>My Semester Marksheet</span>
                     </button>
+                    <button type="button" class="horizontal-nav-btn" id="studTab-fees" onclick="switchStudentTab('fees')">
+                        <span>💳</span>
+                        <span>Fee Payment & Dues</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="studTab-notices" onclick="switchStudentTab('notices')">
+                        <span>📢</span>
+                        <span>Notice Board <span class="notice-badge-count" id="studUnreadNoticesBadge">3</span></span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="studTab-assignments" onclick="switchStudentTab('assignments')">
+                        <span>📝</span>
+                        <span>My Assignments & Marks <span class="notice-badge-count" id="studPendingAssignmentsBadge">1</span></span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="studTab-aiexplainer" onclick="switchStudentTab('aiexplainer')">
+                        <span>✨</span>
+                        <span>AI Explainer Mentor</span>
+                    </button>
                 </nav>
 
                 <div class="horizontal-action-buttons">
+                    <button type="button" class="btn btn-accent btn-sm" id="btnQuickAiStudent" onclick="toggleAiExplainer(true)" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; font-weight: 800; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);">
+                        ✨ Ask AI Explainer
+                    </button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="switchStudentTab('assignments')" style="border-color: #818cf8; color: #c7d2fe; font-weight: 700;">
+                        📝 My Assignments
+                    </button>
                     <button type="button" class="btn btn-accent btn-sm" onclick="window.print()">
                         🖨️ Print Marksheet (PDF)
                     </button>
@@ -1290,6 +1595,455 @@
                     </div>
                 </div>
             </div> <!-- end #studentEmbeddedMarksheet -->
+
+            <!-- ====================================================
+                 5. STUDENT ONLINE FEE PAYMENT & CLEARANCE CENTER
+            ==================================================== -->
+            <div id="studentFeesSection" style="display: none; margin-top: 15px; margin-bottom: 40px;">
+                <div class="section-horizontal-heading-card" style="background: linear-gradient(135deg, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(99, 102, 241, 0.35);">
+                    <div class="horizontal-heading-content">
+                        <div class="horizontal-heading-tag" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3);">FINANCIAL CLEARANCE & SEMESTER DUES HUB</div>
+                        <div class="horizontal-heading-title" style="font-size: 20px;">💳 Student Online Fee Payment Portal & Clearance Center</div>
+                        <div class="horizontal-heading-sub">Instant online payment gateway, self-reporting for offline fee receipts, and verified digital receipt generation for hall ticket clearance</div>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="openAddCustomFeeModal()" style="border-color: #38bdf8; color: #38bdf8; font-weight: 800; background: rgba(56, 189, 248, 0.12); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.2);">
+                            ➕ Record / Add Paid Fee
+                        </button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="openConsolidatedFeeModal()" style="border-color: #a855f7; color: #c084fc; font-weight: 700; background: rgba(168, 85, 247, 0.12);">
+                            📑 Consolidated Statement
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Fees Summary Hero Card -->
+                <div class="fees-summary-hero" style="margin-top: 18px;">
+                    <div class="fees-hero-left">
+                        <div class="fee-dial-graphic" id="studFeeDial" style="background: conic-gradient(#10b981 0% 96%, rgba(239, 68, 68, 0.4) 96% 100%);">
+                            <div class="fee-dial-inner">
+                                <span class="fee-dial-pct" style="font-size: 16px;">96%</span>
+                                <span style="font-size: 8px; color: #94a3b8;">PAID</span>
+                            </div>
+                        </div>
+                        <div class="fees-hero-info">
+                            <h2>Semester VI Fee Clearance & Hall Ticket Status</h2>
+                            <p id="studFeeClearanceStatus">
+                                <span class="fee-status-badge status-due" style="font-size: 13px; padding: 6px 12px;">⚠️ ₹2,500 OUTSTANDING • CLEAR EXAM FEE TO UNLOCK HALL TICKET</span>
+                            </p>
+                            <div style="font-size: 12px; color: #94a3b8; margin-top: 6px;" id="studFeeHeroCandidateInfo">
+                                Candidate: <b style="color: #fff;">Sneha Devi</b> &bull; Roll: <b style="color: #38bdf8;">22A91A0504</b> &bull; Dept: <b style="color: #fff;">CSE</b> &bull; Due Date: <span style="color: #fbbf24; font-weight: 700;">25 Mar 2026 (No Late Fine)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fees-metric-pills">
+                        <div class="fee-metric-pill">
+                            <div class="fee-pill-lbl">TOTAL FEE DEMAND</div>
+                            <div class="fee-pill-val val-cyan" id="studFeeTotal">₹74,000</div>
+                        </div>
+                        <div class="fee-metric-pill">
+                            <div class="fee-pill-lbl">AMOUNT PAID</div>
+                            <div class="fee-pill-val val-green" id="studFeePaid">₹71,500</div>
+                        </div>
+                        <div class="fee-metric-pill">
+                            <div class="fee-pill-lbl">PENDING DUES</div>
+                            <div class="fee-pill-val val-amber" id="studFeeDue">₹2,500</div>
+                        </div>
+                        <div class="fee-metric-pill">
+                            <div class="fee-pill-lbl">MERIT SCHOLARSHIP</div>
+                            <div class="fee-pill-val" style="color: #c084fc;">₹15,000 (Credited)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fee Items Schedule & Filter Tabs -->
+                <div style="margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h3 style="font-size: 16px; color: #f8fafc; margin: 0; display: flex; align-items: center; gap: 8px;">
+                                <span>📋</span> Itemized Semester VI Statutory & Additional Fee Schedule
+                            </h3>
+                            <div style="font-size: 12px; color: #94a3b8; margin-top: 3px;">Full institutional accounts breakdown &bull; Real-time settlement ledger</div>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="openAddCustomFeeModal()" style="border-color: #38bdf8; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.1);">
+                            ➕ Add Fee You Paid
+                        </button>
+                    </div>
+
+                    <!-- Filter Bar for Fees -->
+                    <div class="fee-filter-bar">
+                        <button type="button" class="fee-filter-btn active" id="feeFilter-all" onclick="filterStudentFeeSchedule('all')">
+                            📋 All Fees (<span id="countFeeAll">5</span>)
+                        </button>
+                        <button type="button" class="fee-filter-btn" id="feeFilter-due" onclick="filterStudentFeeSchedule('due')" style="color: #fb7185;">
+                            ⚠️ Due Now (<span id="countFeeDue">1</span>)
+                        </button>
+                        <button type="button" class="fee-filter-btn" id="feeFilter-paid" onclick="filterStudentFeeSchedule('paid')" style="color: #34d399;">
+                            ✅ Paid & Cleared (<span id="countFeePaid">4</span>)
+                        </button>
+                    </div>
+
+                    <div class="fee-table-wrap">
+                        <div id="studFeeItemsList">
+                            <!-- 1. Tuition -->
+                            <div class="fee-item-row">
+                                <div class="fee-item-left">
+                                    <div class="fee-item-icon">🏛️</div>
+                                    <div>
+                                        <div class="fee-item-name">Semester VI Tuition & Academic Instruction Fee</div>
+                                        <div class="fee-item-sub">Domain: Academic &bull; Ref: BIET/FEES/2026-TUITION &bull; Paid on 15 Jan 2026</div>
+                                    </div>
+                                </div>
+                                <div class="fee-item-right">
+                                    <div class="fee-amount-block">
+                                        <div class="fee-amount-val">₹65,000</div>
+                                        <div><span class="fee-status-badge status-paid">✓ PAID</span></div>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-outline btn-sm" onclick="openOfficialReceiptModal(4, 'tuition')">📄 Receipt</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Exam Fee (DUE) -->
+                            <div class="fee-item-row" style="background: rgba(244, 63, 94, 0.08); border-left: 4px solid #fb7185;">
+                                <div class="fee-item-left">
+                                    <div class="fee-item-icon" style="background: rgba(244, 63, 94, 0.2); border-color: #fb7185;">📝</div>
+                                    <div>
+                                        <div class="fee-item-name" style="color: #fff; font-weight: 800;">Autonomous Examination & Grade Sheet Valuation Fee</div>
+                                        <div class="fee-item-sub" style="color: #fbbf24;">⚠️ Hall Ticket Clearance Mandatory &bull; Due Date: 25 Mar 2026</div>
+                                    </div>
+                                </div>
+                                <div class="fee-item-right">
+                                    <div class="fee-amount-block">
+                                        <div class="fee-amount-val" style="color: #fb7185; font-size: 17px;">₹2,500</div>
+                                        <div><span class="fee-status-badge status-due">● DUE NOW</span></div>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-outline btn-sm" onclick="openAddCustomFeeModal()" style="border-color: #38bdf8; color: #38bdf8; font-weight: 700;">
+                                            ➕ Record Paid
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Lab Fee -->
+                            <div class="fee-item-row">
+                                <div class="fee-item-left">
+                                    <div class="fee-item-icon">💻</div>
+                                    <div>
+                                        <div class="fee-item-name">Autonomous Computing & High-Perf AI Lab Fee</div>
+                                        <div class="fee-item-sub">Domain: Laboratories &bull; Ref: BIET/FEES/2026-LAB &bull; Paid on 18 Jan 2026</div>
+                                    </div>
+                                </div>
+                                <div class="fee-item-right">
+                                    <div class="fee-amount-block">
+                                        <div class="fee-amount-val">₹4,000</div>
+                                        <div><span class="fee-status-badge status-paid">✓ PAID</span></div>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-outline btn-sm" onclick="openOfficialReceiptModal(4, 'lab')">📄 Receipt</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. Library -->
+                            <div class="fee-item-row">
+                                <div class="fee-item-left">
+                                    <div class="fee-item-icon">📚</div>
+                                    <div>
+                                        <div class="fee-item-name">IEEE Digital Consortium & Library Membership</div>
+                                        <div class="fee-item-sub">Domain: Facilities &bull; Ref: BIET/FEES/2026-LIB &bull; Paid on 12 Jan 2026</div>
+                                    </div>
+                                </div>
+                                <div class="fee-item-right">
+                                    <div class="fee-amount-block">
+                                        <div class="fee-amount-val">₹1,500</div>
+                                        <div><span class="fee-status-badge status-paid">✓ PAID</span></div>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-outline btn-sm" onclick="openOfficialReceiptModal(4, 'library')">📄 Receipt</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 5. Placement & Career -->
+                            <div class="fee-item-row">
+                                <div class="fee-item-left">
+                                    <div class="fee-item-icon">🚀</div>
+                                    <div>
+                                        <div class="fee-item-name">Campus Placement & Corporate Readiness Training</div>
+                                        <div class="fee-item-sub">Domain: Career Development &bull; Ref: BIET/FEES/2026-CRT &bull; Paid on 10 Jan 2026</div>
+                                    </div>
+                                </div>
+                                <div class="fee-item-right">
+                                    <div class="fee-amount-block">
+                                        <div class="fee-amount-val">₹1,000</div>
+                                        <div><span class="fee-status-badge status-paid">✓ PAID</span></div>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-outline btn-sm" onclick="openOfficialReceiptModal(4, 'placement')">📄 Receipt</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital Hall Ticket Clearance & Examination Admit Card Pass -->
+                <div style="margin-top: 30px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 16px; padding: 22px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px;">
+                        <div>
+                            <div style="font-size: 11px; font-weight: 800; color: #818cf8; text-transform: uppercase; letter-spacing: 0.5px;">EXAMINATIONS BRANCH &bull; AUTONOMOUS REGISTRATION</div>
+                            <h3 style="font-size: 17px; color: #fff; margin: 3px 0 0 0; display: flex; align-items: center; gap: 8px;">
+                                <span>🎟️</span> Semester-End Examination Hall Ticket Status
+                            </h3>
+                        </div>
+                        <div>
+                            <span id="studHallTicketStatusPill" class="fee-status-badge status-due" style="font-size: 12px; padding: 6px 12px;">
+                                ⚠️ WITHHELD (FEE DUES PENDING)
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 18px;">
+                        <div style="background: rgba(30, 41, 59, 0.6); padding: 12px 16px; border-radius: 10px;">
+                            <div style="font-size: 11px; color: #94a3b8;">EXAM CENTER</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #f8fafc; margin-top: 2px;">BIET Campus &bull; Block-3</div>
+                        </div>
+                        <div style="background: rgba(30, 41, 59, 0.6); padding: 12px 16px; border-radius: 10px;">
+                            <div style="font-size: 11px; color: #94a3b8;">ALLOCATED SEAT</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #38bdf8; margin-top: 2px;">Room 304 &bull; Desk CS-B-24</div>
+                        </div>
+                        <div style="background: rgba(30, 41, 59, 0.6); padding: 12px 16px; border-radius: 10px;">
+                            <div style="font-size: 11px; color: #94a3b8;">BIOMETRIC ATTENDANCE</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #34d399; margin-top: 2px;">94% (Eligible &bull; > 75%)</div>
+                        </div>
+                        <div style="background: rgba(30, 41, 59, 0.6); padding: 12px 16px; border-radius: 10px;">
+                            <div style="font-size: 11px; color: #94a3b8;">STATUTORY CLEARANCE</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #fbbf24; margin-top: 2px;">Exam Fee Pending ₹2,500</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="button" class="btn btn-primary" id="studHallTicketActionBtn" onclick="openAddCustomFeeModal()" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 800; background: linear-gradient(135deg, #38bdf8, #0284c7);">
+                            <span>➕ Record Exam Fee Payment to Unlock Hall Ticket</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Financial Passbook & Transaction Ledger -->
+                <div style="margin-top: 30px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="font-size: 16px; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <span>📜</span> Official Fee Payment Passbook & Verified Transaction History
+                        </h3>
+                        <span style="font-size: 12px; color: #94a3b8;">Real-Time Institutional Settlement</span>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px; color: #e2e8f0;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: #94a3b8; text-align: left; font-size: 11px; text-transform: uppercase;">
+                                    <th style="padding: 10px;">Date</th>
+                                    <th style="padding: 10px;">Transaction ID</th>
+                                    <th style="padding: 10px;">Fee Head</th>
+                                    <th style="padding: 10px;">Payment Mode</th>
+                                    <th style="padding: 10px; text-align: right;">Amount</th>
+                                    <th style="padding: 10px; text-align: center;">Status</th>
+                                    <th style="padding: 10px; text-align: right;">Receipt</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studFeePassbookBody">
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 12px 10px; color: #cbd5e1;">15 Jan 2026</td>
+                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">BIET-TXN-100004</td>
+                                    <td style="padding: 12px 10px; font-weight: 600;">Semester VI Tuition Fee</td>
+                                    <td style="padding: 12px 10px; color: #94a3b8;">Net Banking (Axis)</td>
+                                    <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: #34d399;">₹65,000</td>
+                                    <td style="padding: 12px 10px; text-align: center;"><span class="fee-status-badge status-paid">✓ SUCCESS</span></td>
+                                    <td style="padding: 12px 10px; text-align: right;"><button type="button" class="btn btn-outline btn-sm" onclick="openOfficialReceiptModal(4, 'tuition')">📄 Receipt</button></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 12px 10px; color: #cbd5e1;">18 Jan 2026</td>
+                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">BIET-TXN-300004</td>
+                                    <td style="padding: 12px 10px; font-weight: 600;">Autonomous Computing Lab Fee</td>
+                                    <td style="padding: 12px 10px; color: #94a3b8;">UPI (Google Pay)</td>
+                                    <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: #34d399;">₹4,000</td>
+                                    <td style="padding: 12px 10px; text-align: center;"><span class="fee-status-badge status-paid">✓ SUCCESS</span></td>
+                                    <td style="padding: 12px 10px; text-align: right;"><button type="button" class="btn btn-outline btn-sm" onclick="openOfficialReceiptModal(4, 'lab')">📄 Receipt</button></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 12px 10px; color: #cbd5e1;">12 Jan 2026</td>
+                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">BIET-TXN-400004</td>
+                                    <td style="padding: 12px 10px; font-weight: 600;">IEEE Digital Library & Consortium</td>
+                                    <td style="padding: 12px 10px; color: #94a3b8;">Debit Card (HDFC)</td>
+                                    <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: #34d399;">₹1,500</td>
+                                    <td style="padding: 12px 10px; text-align: center;"><span class="fee-status-badge status-paid">✓ SUCCESS</span></td>
+                                    <td style="padding: 12px 10px; text-align: right;"><button type="button" class="btn btn-outline btn-sm" onclick="openOfficialReceiptModal(4, 'library')">📄 Receipt</button></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 12px 10px; color: #cbd5e1;">10 Jan 2026</td>
+                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">BIET-TXN-500004</td>
+                                    <td style="padding: 12px 10px; font-weight: 600;">Campus Placement & Readiness Training</td>
+                                    <td style="padding: 12px 10px; color: #94a3b8;">UPI (PhonePe)</td>
+                                    <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: #34d399;">₹1,000</td>
+                                    <td style="padding: 12px 10px; text-align: center;"><span class="fee-status-badge status-paid">✓ SUCCESS</span></td>
+                                    <td style="padding: 12px 10px; text-align: right;"><button type="button" class="btn btn-outline btn-sm" onclick="openOfficialReceiptModal(4, 'placement')">📄 Receipt</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Institutional Banking & Offline Challan Desk -->
+                <div style="margin-top: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
+                    <div style="background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(255,255,255,0.12); border-radius: 12px; padding: 18px;">
+                        <div style="font-size: 11px; color: #38bdf8; font-weight: 700; text-transform: uppercase;">INSTITUTIONAL RTGS / NEFT SETTLEMENT</div>
+                        <div style="font-size: 13px; color: #f8fafc; font-weight: 600; margin-top: 6px;">Virtual Account: <span style="font-family: monospace; color: #34d399;">BIET2026CSE004</span></div>
+                        <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Bank: Axis Bank Ltd &bull; IFSC: <span style="font-family: monospace; color: #fff;">UTIB0001842</span></div>
+                        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Beneficiary: Bharat Institute of Engineering & Technology Autonomous Fee Account</div>
+                    </div>
+                    <div style="background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(255,255,255,0.12); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="font-size: 11px; color: #a5b4fc; font-weight: 700; text-transform: uppercase;">OFFLINE BANK CHALLAN DESK</div>
+                            <div style="font-size: 12px; color: #cbd5e1; margin-top: 4px;">Prefer offline branch deposit? Generate pre-filled three-part university fee challan for cash counter deposit.</div>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="showToast('📥 3-Part Bank Challan Generated (PDF). Take to any Axis Bank Branch.', 'info')" style="margin-top: 10px; width: fit-content;">
+                            📥 Download 3-Part Bank Challan (PDF)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====================================================
+                 6. STUDENT INSTITUTIONAL NOTICE BOARD
+            ==================================================== -->
+            <div id="studentNoticesSection" style="display: none; margin-top: 30px; margin-bottom: 40px;">
+                <div class="section-horizontal-heading-card">
+                    <div class="horizontal-heading-content">
+                        <div class="horizontal-heading-tag">CAMPUS NOTICES & CIRCULARS</div>
+                        <div class="horizontal-heading-title">📢 Institutional Notice Board & Live Faculty Circulars</div>
+                        <div class="horizontal-heading-sub">Direct official announcements regarding examinations, schedules, fee deadlines, and circulars</div>
+                    </div>
+                    <div class="horizontal-heading-actions">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="renderNoticesGrid('all')">All Notices</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="renderNoticesGrid('exam')">Exams</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="renderNoticesGrid('fee')">Fee Notices</button>
+                    </div>
+                </div>
+
+                <div class="notices-grid" id="studentNoticesGrid"></div>
+            </div>
+
+            <!-- ====================================================
+                 7. STUDENT ASSIGNMENTS & MARKS OBSERVATORY
+            ==================================================== -->
+            <div id="studentAssignmentSection" style="display: none; margin-top: 25px; margin-bottom: 40px;">
+                <div class="section-horizontal-heading-card" style="background: linear-gradient(135deg, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(129, 140, 248, 0.35);">
+                    <div class="horizontal-heading-content">
+                        <div class="horizontal-heading-tag" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3);">COURSEWORK SUBMISSIONS & EVALUATION RECORD</div>
+                        <div class="horizontal-heading-title" style="font-size: 20px;">📝 Student Continuous Assessment & Assignment Gradebook</div>
+                        <div class="horizontal-heading-sub">View published assignments with start and submission deadlines, upload solutions, and inspect faculty evaluation scores & comments</div>
+                    </div>
+                </div>
+
+                <!-- Student KPI Telemetry -->
+                <div class="asg-summary-hero" style="margin-top: 18px;">
+                    <div class="asg-hero-title-group">
+                        <h2><span>🎓</span> My Continuous Evaluation Telemetry</h2>
+                        <p>Track your completed coursework, verified scores, and pending submission deadlines</p>
+                    </div>
+                    <div class="asg-kpi-grid">
+                        <div class="asg-kpi-card">
+                            <span class="asg-kpi-label">Assigned Work</span>
+                            <span class="asg-kpi-val asg-val-cyan" id="studTotalAsg">4</span>
+                        </div>
+                        <div class="asg-kpi-card">
+                            <span class="asg-kpi-label">Submitted</span>
+                            <span class="asg-kpi-val asg-val-purple" id="studSubmittedCount">2</span>
+                        </div>
+                        <div class="asg-kpi-card">
+                            <span class="asg-kpi-label">Evaluated / Graded</span>
+                            <span class="asg-kpi-val asg-val-green" id="studGradedCount">1</span>
+                        </div>
+                        <div class="asg-kpi-card">
+                            <span class="asg-kpi-label">Pending Upload</span>
+                            <span class="asg-kpi-val asg-val-amber" id="studPendingAsg">2</span>
+                        </div>
+                        <div class="asg-kpi-card">
+                            <span class="asg-kpi-label">Avg Score</span>
+                            <span class="asg-kpi-val asg-val-cyan" id="studAvgAsgScore">96%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Assignments Grid -->
+                <div class="asg-grid" id="studentAssignmentsGrid"></div>
+            </div>
+
+            <!-- ====================================================
+                 8. STUDENT AI ACADEMIC MENTOR & DOUBT SOLVER
+            ==================================================== -->
+            <div id="studentAiExplainerSection" style="display: none; margin-top: 25px; margin-bottom: 40px;">
+                <div class="section-horizontal-heading-card" style="background: linear-gradient(135deg, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(168, 85, 247, 0.4);">
+                    <div class="horizontal-heading-content">
+                        <div class="horizontal-heading-tag" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">24/7 INTERACTIVE ACADEMIC TUTOR</div>
+                        <div class="horizontal-heading-title" style="font-size: 20px;">✨ Student AI Explainer & Academic Doubt Solver</div>
+                        <div class="horizontal-heading-sub">Ask any doubt on your subject scores, assignments, syllabus concepts, and SGPA calculations for instant clear explanations</div>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-accent btn-sm" onclick="toggleAiExplainer(true)" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; font-weight: 800;">
+                            💬 Open AI Chat Tutor
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Curated Student Doubt Categories -->
+                <div class="ai-hub-topics-grid" style="margin-top: 18px;">
+                    <div class="ai-topic-card" onclick="handleAiChipClick('Explain my current marks, percentage and SGPA breakdown'); toggleAiExplainer(true);">
+                        <div class="ai-topic-icon">🎓</div>
+                        <div>
+                            <div class="ai-topic-title">My Transcript & SGPA Analysis</div>
+                            <div class="ai-topic-sub">Understand your subject scores, credit weights, and autonomous letter grade.</div>
+                        </div>
+                    </div>
+                    <div class="ai-topic-card" onclick="handleAiChipClick('Explain D3.js scales, axes, and SVG transitions with a simple code snippet'); toggleAiExplainer(true);">
+                        <div class="ai-topic-icon">💡</div>
+                        <div>
+                            <div class="ai-topic-title">Programming & D3.js Doubts</div>
+                            <div class="ai-topic-sub">Step-by-step code snippets, SVG scaling logic, and animated chart tutorials.</div>
+                        </div>
+                    </div>
+                    <div class="ai-topic-card" onclick="handleAiChipClick('Am I eligible to appear for the autonomous semester exams?'); toggleAiExplainer(true);">
+                        <div class="ai-topic-icon">🎟️</div>
+                        <div>
+                            <div class="ai-topic-title">Attendance & Exam Clearance</div>
+                            <div class="ai-topic-sub">Verify your 75% biometric attendance criteria and digital hall ticket status.</div>
+                        </div>
+                    </div>
+                    <div class="ai-topic-card" onclick="handleAiChipClick('How can I improve my grades to achieve Grade O (≥90%)?'); toggleAiExplainer(true);">
+                        <div class="ai-topic-icon">📈</div>
+                        <div>
+                            <div class="ai-topic-title">Personalized Grade Boost Plan</div>
+                            <div class="ai-topic-sub">Targeted revision roadmaps focused on your weakest subject area.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instant Student Doubt Query Input -->
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px;">
+                    <h3 style="font-size: 16px; color: #fff; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>❓</span> Clear Any Subject or Coursework Doubt
+                    </h3>
+                    <p style="font-size: 13px; color: #94a3b8; margin: 0 0 16px 0;">Need help understanding an assignment problem, mathematical formula, or exam topic? Ask your AI Mentor!</p>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="studOnPageAiInput" class="auth-control" style="flex: 1;" placeholder="e.g. Explain how to compute Pearson correlation or How to submit D3 project?" onkeydown="if(event.key==='Enter') { handleAiChipClick(this.value); toggleAiExplainer(true); }">
+                        <button type="button" class="btn btn-primary" onclick="const val = document.getElementById('studOnPageAiInput').value; if(val){ handleAiChipClick(val); toggleAiExplainer(true); }" style="background: linear-gradient(135deg, #a855f7, #6366f1); font-weight: 800;">
+                            ✨ Clear Doubt
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div> <!-- ==================== END STUDENT DASHBOARD VIEW ==================== -->
     </div> <!-- end .container -->
 
@@ -1855,6 +2609,385 @@
         </div>
     </div>
 
+    <!-- ====================================================
+         BROADCAST ANNOUNCEMENT MODAL (FACULTY)
+    ==================================================== -->
+    <div class="modal-backdrop" id="broadcastNoticeModal">
+        <div class="modal-content" style="max-width: 580px; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 25px 60px rgba(0,0,0,0.8);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px;">
+                <div>
+                    <h3 style="display: flex; align-items: center; gap: 8px; font-size: 17px; color: #fff;">
+                        <span>📢</span> Compose Campus Broadcast
+                    </h3>
+                    <p style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Instantly notify all enrolled students across engineering departments</p>
+                </div>
+                <button type="button" class="modal-close" onclick="closeBroadcastModal()">&times;</button>
+            </div>
+            <form id="broadcastNoticeForm" onsubmit="handleBroadcastNoticeSubmit(event)">
+                <div class="modal-body" style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Announcement Title</label>
+                        <input type="text" id="noticeTitleInput" class="auth-control" placeholder="e.g. End-Semester Examination Schedule Released" required style="width: 100%;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Category</label>
+                            <select id="noticeCategoryInput" class="auth-control" style="width: 100%;">
+                                <option value="exam">📝 Examination & Hall Ticket</option>
+                                <option value="fee">💳 Fee Clearance & Dues</option>
+                                <option value="academic">📚 Academic & Curriculum</option>
+                                <option value="urgent">⚠️ Urgent Alert</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Priority Level</label>
+                            <select id="noticePriorityInput" class="auth-control" style="width: 100%;">
+                                <option value="urgent">🔴 Urgent / Statutory</option>
+                                <option value="normal" selected>🔵 Standard Notice</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Target Student Cohort</label>
+                        <select id="noticeTargetInput" class="auth-control" style="width: 100%;">
+                            <option value="All Cohorts">All Students (All Departments)</option>
+                            <option value="CSE Department">CSE Department Only</option>
+                            <option value="ECE Department">ECE Department Only</option>
+                            <option value="Final Year / Sem VI">Final Year (Semester VI) Only</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Announcement Details</label>
+                        <textarea id="noticeBodyInput" class="auth-control" rows="4" placeholder="Enter detailed institutional notice for students..." required style="width: 100%; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+                    <button type="button" class="btn btn-outline" onclick="closeBroadcastModal()">Cancel</button>
+                    <button type="submit" class="btn btn-accent" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 700;">
+                        📢 Dispatch Broadcast to Students
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-- ====================================================
+         OFFICIAL FEE RECEIPT CERTIFICATE MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="feeReceiptModal">
+        <div class="modal-content" style="max-width: 680px; background: transparent; box-shadow: none; border: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px; gap: 8px;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="window.print()" style="background: #10b981;">🖨️ Print / Download Receipt</button>
+                <button type="button" class="btn btn-outline-white btn-sm" onclick="closeOfficialReceiptModal()">&times; Close</button>
+            </div>
+            <div id="feeReceiptModalBody"></div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         OFFICIAL DIGITAL EXAMINATION HALL TICKET MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="hallTicketModal">
+        <div class="modal-content" style="max-width: 720px; background: transparent; box-shadow: none; border: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px; gap: 8px;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="window.print()" style="background: #6366f1;">🖨️ Print / Save Hall Ticket (PDF)</button>
+                <button type="button" class="btn btn-outline-white btn-sm" onclick="closeOfficialHallTicketModal()">&times; Close</button>
+            </div>
+            <div id="hallTicketModalBody"></div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         STUDENT SELF-SERVICE: RECORD / ADD PAID FEE MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="addCustomFeeModal">
+        <div class="modal-content" style="max-width: 600px; background: #0f172a; border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 20px; overflow: hidden; box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 50px rgba(99, 102, 241, 0.2);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1e1b4b, #0f172a); border-bottom: 1px solid rgba(99, 102, 241, 0.3); padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="font-size: 17px; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                        <span>➕</span> Record / Add Paid Institutional Fee
+                    </h3>
+                    <p style="font-size: 12px; color: #94a3b8; margin: 3px 0 0 0;" id="customFeeStudentInfo">Self-report fees paid via Offline Counter, Bank Challan, or UPI</p>
+                </div>
+                <button type="button" class="modal-close" onclick="closeAddCustomFeeModal()">&times;</button>
+            </div>
+            <form id="addCustomFeeForm" onsubmit="handleAddCustomFeeSubmit(event)" style="padding: 22px;">
+                <!-- Quick Preset Selector Chips -->
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 11px; font-weight: 700; color: #a5b4fc; text-transform: uppercase; letter-spacing: 0.5px;">⚡ Quick Presets (Click to autofill):</label>
+                    <div class="fee-preset-chips">
+                        <button type="button" class="fee-preset-chip" onclick="applyFeePreset('hostel')">🏨 Hostel Fee (₹45k)</button>
+                        <button type="button" class="fee-preset-chip" onclick="applyFeePreset('transport')">🚌 College Bus (₹18k)</button>
+                        <button type="button" class="fee-preset-chip" onclick="applyFeePreset('exam')">📝 Exam Fee (₹2.5k)</button>
+                        <button type="button" class="fee-preset-chip" onclick="applyFeePreset('tuition')">🏛️ Tuition (₹65k)</button>
+                        <button type="button" class="fee-preset-chip" onclick="applyFeePreset('lab')">💻 AI Lab Fee (₹4k)</button>
+                        <button type="button" class="fee-preset-chip" onclick="applyFeePreset('reeval')">📑 Re-evaluation (₹1k)</button>
+                        <button type="button" class="fee-preset-chip" onclick="applyFeePreset('convocation')">🎓 Convocation (₹3k)</button>
+                    </div>
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label">Fee Head Description / Title *</label>
+                    <input type="text" id="customFeeName" class="auth-control" placeholder="e.g. Campus AC Hostel & Mess Facility Fee" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">Classification / Domain</label>
+                        <select id="customFeeCategory" class="auth-control">
+                            <option value="Academic">Academic</option>
+                            <option value="Examinations">Examinations</option>
+                            <option value="Laboratories">Laboratories</option>
+                            <option value="Hostel & Living">Hostel & Living</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Facilities">Facilities</option>
+                            <option value="Co-Curricular">Co-Curricular</option>
+                            <option value="Institutional">Institutional</option>
+                        </select>
+                    </div>
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">Amount Paid (INR ₹) *</label>
+                        <input type="number" id="customFeeAmount" class="auth-control" placeholder="e.g. 45000" min="1" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">Payment Date *</label>
+                        <input type="date" id="customFeeDate" class="auth-control" required>
+                    </div>
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">Payment Channel / Mode</label>
+                        <select id="customFeeMode" class="auth-control">
+                            <option value="UPI (PhonePe / GPay / Paytm)">UPI (PhonePe / GPay / Paytm)</option>
+                            <option value="Net Banking / NEFT / IMPS">Net Banking / NEFT / IMPS</option>
+                            <option value="Bank Challan (SBI / Axis)">Bank Challan (SBI / Axis)</option>
+                            <option value="College Accounts Cash Counter">College Accounts Cash Counter</option>
+                            <option value="Demand Draft (DD)">Demand Draft (DD)</option>
+                            <option value="Debit / Credit Card">Debit / Credit Card</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 140px; gap: 14px;">
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">Transaction ID / UTR / Challan No *</label>
+                        <input type="text" id="customFeeRef" class="auth-control" placeholder="e.g. UTR-8849201" required>
+                    </div>
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">&nbsp;</label>
+                        <button type="button" class="btn btn-outline" onclick="generateRandomUtr()" style="width: 100%; font-size: 11px; padding: 10px 4px; font-weight: 700;">
+                            ⚡ Auto Ref
+                        </button>
+                    </div>
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label">Payment Status</label>
+                    <select id="customFeeStatus" class="auth-control">
+                        <option value="PAID">✓ Realized & Paid (Generate Verified Receipt & Passbook Entry)</option>
+                        <option value="DUE">● Outstanding Due (Add to Due Heads for Online Payment)</option>
+                    </select>
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label">Counter Remarks / Notes (Optional)</label>
+                    <input type="text" id="customFeeNotes" class="auth-control" placeholder="e.g. Paid at SBI Campus counter with slip #4409">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" onclick="closeAddCustomFeeModal()" style="flex: 1;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 2; font-weight: 800; background: linear-gradient(135deg, #38bdf8, #2563eb); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);">
+                        💾 Confirm & Record Payment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         CONSOLIDATED ANNUAL INSTITUTIONAL FEE STATEMENT MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="consolidatedFeeStatementModal">
+        <div class="modal-content" style="max-width: 780px; background: transparent; box-shadow: none; border: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px; gap: 8px;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="window.print()" style="background: #10b981; font-weight: 700;">🖨️ Print / Download Statement PDF</button>
+                <button type="button" class="btn btn-outline-white btn-sm" onclick="closeConsolidatedFeeModal()">&times; Close</button>
+            </div>
+            <div id="consolidatedFeeStatementBody"></div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         FACULTY: CREATE / EDIT ASSIGNMENT MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="createAssignmentModal">
+        <div class="modal-content" style="max-width: 640px;">
+            <div class="modal-header">
+                <h3 id="asgModalTitle" style="margin: 0; color: #fff;">Publish New Assignment</h3>
+                <button type="button" class="modal-close" onclick="closeCreateAssignmentModal()">&times;</button>
+            </div>
+            <form onsubmit="handleSaveAssignment(event)" style="padding: 22px;">
+                <input type="hidden" id="asgEditId">
+                <div class="auth-field-group">
+                    <label class="auth-field-label">Assignment Title / Topic *</label>
+                    <input type="text" id="asgTitleInput" class="auth-control" placeholder="e.g. D3.js Multi-Chart Academic Visualizer" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">Subject / Course *</label>
+                        <select id="asgSubjectInput" class="auth-control" required>
+                            <option value="Programming">Programming</option>
+                            <option value="Maths">Maths</option>
+                            <option value="Science">Science</option>
+                            <option value="English">English</option>
+                        </select>
+                    </div>
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">Target Cohort / Department</label>
+                        <select id="asgDeptInput" class="auth-control">
+                            <option value="All">All Departments</option>
+                            <option value="CSE">CSE</option>
+                            <option value="ECE">ECE</option>
+                            <option value="EEE">EEE</option>
+                            <option value="MECH">MECH</option>
+                            <option value="CIVIL">CIVIL</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">Start Date *</label>
+                        <input type="date" id="asgStartDateInput" class="auth-control" required>
+                    </div>
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">End / Due Date *</label>
+                        <input type="date" id="asgEndDateInput" class="auth-control" required>
+                    </div>
+                    <div class="auth-field-group">
+                        <label class="auth-field-label">Max Marks *</label>
+                        <input type="number" id="asgMaxMarksInput" class="auth-control" min="5" max="100" value="25" required>
+                    </div>
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label">Assignment Description, Guidelines & Rubrics</label>
+                    <textarea id="asgInstructionsInput" class="auth-control" rows="4" placeholder="Detail problem statement, expected output formats, submission criteria..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" onclick="closeCreateAssignmentModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="asgSubmitBtn" style="background: linear-gradient(135deg, #6366f1, #4f46e5); font-weight: 800;">
+                        Publish Assignment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         FACULTY: ASSIGNMENT SUBMISSIONS & GRADING MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="gradingModal">
+        <div class="modal-content" style="max-width: 950px; width: 95%;">
+            <div class="modal-header" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                    <h3 id="gradeModalTitle" style="margin: 0; font-size: 18px; color: #fff;">Assignment Submissions & Grading</h3>
+                    <button type="button" class="modal-close" onclick="closeGradingModal()">&times;</button>
+                </div>
+                <div id="gradeModalMeta" style="font-size: 12px; color: #94a3b8; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;"></div>
+            </div>
+
+            <div style="padding: 18px 24px;">
+                <!-- Filter Tabs & Bulk Action -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-outline btn-sm grading-filter-btn active" id="gradeFilter-all" onclick="setGradingFilter('all')">All Cohort</button>
+                        <button type="button" class="btn btn-outline btn-sm grading-filter-btn" id="gradeFilter-submitted" onclick="setGradingFilter('submitted')">Submitted Only</button>
+                        <button type="button" class="btn btn-outline btn-sm grading-filter-btn" id="gradeFilter-pending" onclick="setGradingFilter('pending')">Pending Marks</button>
+                        <button type="button" class="btn btn-outline btn-sm grading-filter-btn" id="gradeFilter-graded" onclick="setGradingFilter('graded')">Already Graded</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="bulkAwardFullMarks()" style="background: linear-gradient(135deg, #10b981, #059669); font-weight: 700;">
+                            ⚡ Auto-Award Full Marks to Submitted
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grading Table -->
+                <div class="grading-table-wrap">
+                    <table class="grading-table">
+                        <thead>
+                            <tr>
+                                <th>Roll No</th>
+                                <th>Student Name</th>
+                                <th>Status</th>
+                                <th>Submission & Attachment</th>
+                                <th>Award Marks</th>
+                                <th>Faculty Remarks</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gradingTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 18px;">
+                    <button type="button" class="btn btn-outline" onclick="closeGradingModal()">Done & Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         STUDENT: SUBMIT ASSIGNMENT MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="studentSubmitModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <div>
+                    <h3 id="submitModalTitle" style="margin: 0; color: #fff;">Submit Assignment</h3>
+                    <div id="submitModalMeta" style="font-size: 12px; color: #94a3b8; margin-top: 4px; display: flex; gap: 8px; align-items: center;"></div>
+                </div>
+                <button type="button" class="modal-close" onclick="closeStudentSubmitModal()">&times;</button>
+            </div>
+            <form onsubmit="handleStudentSubmission(event)" style="padding: 22px;">
+                <div style="background: rgba(30, 41, 59, 0.5); border-radius: 10px; padding: 14px; margin-bottom: 18px; border: 1px solid rgba(255, 255, 255, 0.08);">
+                    <div style="font-size: 11px; font-weight: 700; color: #a5b4fc; text-transform: uppercase; margin-bottom: 4px;">Assignment Instructions & Rubric</div>
+                    <div id="submitModalInstructions" style="font-size: 13px; color: #cbd5e1; line-height: 1.5;"></div>
+                </div>
+
+                <!-- Solution File Upload Dropzone -->
+                <div class="auth-field-group">
+                    <label class="auth-field-label">Upload Solution File (PDF, ZIP, JS, PY, DOCX, etc.)</label>
+                    <div class="asg-dropzone" onclick="document.getElementById('studentFileInput').click()">
+                        <div class="asg-dropzone-icon">📁</div>
+                        <div class="asg-dropzone-text">Click to browse or drag & drop assignment file here</div>
+                        <div class="asg-dropzone-hint">Supports PDF, ZIP, code archives, documents up to 50 MB</div>
+                        <div id="selectedFileName" style="margin-top: 10px; font-weight: 700; font-size: 12px;"></div>
+                    </div>
+                    <input type="file" id="studentFileInput" style="display: none;" onchange="handleFileInputChange(event)">
+                </div>
+
+                <div class="auth-field-group">
+                    <label class="auth-field-label">Student Remarks / Solution Notes / Repository Link</label>
+                    <textarea id="submitNotesInput" class="auth-control" rows="3" placeholder="Provide notes regarding your implementation, repository links, key formulas used..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" onclick="closeStudentSubmitModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); font-weight: 800;">
+                        🚀 Confirm & Submit Assignment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Tooltip & Toast Containers -->
     <div class="tooltip" id="tooltip"></div>
     <div class="toast-container" id="toastContainer"></div>
@@ -1873,6 +3006,48 @@
         </div>
     </div>
 
+    <!-- ====================================================
+         AI EXPLAINER: FLOATING LAUNCHER ORB & ASSISTANT DRAWER
+    ==================================================== -->
+    <div class="ai-explainer-launcher" id="aiExplainerLauncher" onclick="toggleAiExplainer()" title="Ask AI Explainer (Faculty Advisor & Student Doubt Solver)">
+        <div class="ai-launcher-icon">✨</div>
+        <span>AI Explainer</span>
+        <span class="ai-launcher-badge">ONLINE</span>
+    </div>
+
+    <!-- Floating Interactive AI Assistant Drawer -->
+    <div class="ai-explainer-modal" id="aiExplainerModal">
+        <div class="ai-modal-header">
+            <div class="ai-header-left">
+                <div class="ai-avatar-wrap">
+                    <span>✨</span>
+                    <div class="ai-status-pulse"></div>
+                </div>
+                <div class="ai-header-info">
+                    <h4 id="aiExplainerTitle">AI Academic Explainer</h4>
+                    <p id="aiExplainerSub">Institutional Knowledge & Doubt Solver</p>
+                </div>
+            </div>
+            <div class="ai-header-actions">
+                <span class="ai-launcher-badge" id="aiExplainerRoleBadge" style="background: rgba(129, 140, 248, 0.25); color: #c7d2fe;">ADVISOR</span>
+                <button type="button" class="ai-btn-icon" onclick="clearAiChat()" title="Clear Chat History">🗑️</button>
+                <button type="button" class="ai-btn-icon" onclick="toggleAiExplainer(false)" title="Close">&times;</button>
+            </div>
+        </div>
+
+        <!-- Quick Dynamic Prompt Chips -->
+        <div class="ai-chips-bar" id="aiChipsContainer"></div>
+
+        <!-- Messages Chat Body -->
+        <div class="ai-chat-body" id="aiChatBody"></div>
+
+        <!-- Query Input Toolbar -->
+        <form class="ai-input-wrap" onsubmit="sendAiMessage(event)">
+            <input type="text" id="aiChatInput" class="ai-input-field" placeholder="Ask any academic question or doubt..." autocomplete="off">
+            <button type="submit" class="ai-send-btn" title="Send Question">➤</button>
+        </form>
+    </div>
+
     <!-- Footer -->
     <footer>
         Bharath Institute of Engineering & Technology (Autonomous) &bull; Minimum Qualifying Pass Criteria: 35 Marks
@@ -1885,6 +3060,9 @@
     <script src="js/marksheet.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/charts.js"></script>
+    <script src="js/fees-notices.js"></script>
+    <script src="js/assignments.js"></script>
+    <script src="js/ai-explainer.js"></script>
     <script src="js/app.js"></script>
 </body>
 

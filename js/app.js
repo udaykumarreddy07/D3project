@@ -185,6 +185,14 @@ function simulateRealtimePush() {
     showToast(`⚡ Live Push: ${targetStudent.name} (${targetStudent.department}) ${subTitle} updated to ${newMark}`, "info");
 }
 
+function openNoticesModalOrTab() {
+    if (currentUser && currentUser.role === 'Student') {
+        if (typeof switchStudentTab === 'function') switchStudentTab('notices');
+    } else {
+        if (typeof switchViewTab === 'function') switchViewTab('broadcast');
+    }
+}
+
 function updateDashboard() {
     const isStudent = currentUser && currentUser.role === 'Student';
 
@@ -196,6 +204,18 @@ function updateDashboard() {
             if (typeof renderStudentDashboard === 'function') {
                 renderStudentDashboard(studentObj);
             }
+            if (typeof renderStudentFeesView === 'function') {
+                renderStudentFeesView(studentObj);
+            }
+            if (typeof renderStudentAssignments === 'function') {
+                renderStudentAssignments(studentObj);
+            }
+        }
+        if (typeof renderNoticesGrid === 'function') {
+            renderNoticesGrid();
+        }
+        if (typeof updateAssignmentBadges === 'function') {
+            updateAssignmentBadges();
         }
     } else {
         d3.select("#facultyDashboardView").style("display", "block");
@@ -204,6 +224,18 @@ function updateDashboard() {
         updateKPIs(data, false);
         updateTable(data, false);
         renderFacultyVisualizations(data);
+        if (typeof renderFacultyFeeMonitor === 'function') {
+            renderFacultyFeeMonitor();
+        }
+        if (typeof renderFacultyAssignments === 'function') {
+            renderFacultyAssignments();
+        }
+        if (typeof renderNoticesGrid === 'function') {
+            renderNoticesGrid();
+        }
+        if (typeof updateAssignmentBadges === 'function') {
+            updateAssignmentBadges();
+        }
     }
 }
 
@@ -234,5 +266,13 @@ if (students.length > 0) {
     const initStudent = students.find(s => s.id === 4) || students[0];
     populateMarksheet(initStudent);
     syncSimulatorInputs(initStudent);
+    if (typeof renderStudentFeesView === 'function') {
+        renderStudentFeesView(initStudent);
+    }
+}
+if (typeof renderFacultyFeeMonitor === 'function') {
+    renderFacultyFeeMonitor();
 }
 checkInitialAuth();
+if (typeof initAiExplainer === 'function') initAiExplainer();
+
