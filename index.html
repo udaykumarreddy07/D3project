@@ -289,13 +289,17 @@
                         <span>📊</span>
                         <span>Live Analytics & Charts</span>
                     </button>
-                    <button type="button" class="horizontal-nav-btn" id="tabView-marksheet" onclick="switchViewTab('marksheet')">
-                        <span>🎓</span>
-                        <span>Student Marksheet Hub</span>
-                    </button>
                     <button type="button" class="horizontal-nav-btn" id="tabView-table" onclick="switchViewTab('table')">
                         <span>📋</span>
                         <span>Master Records Gradebook</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="tabView-assignments" onclick="switchViewTab('assignments')">
+                        <span>📝</span>
+                        <span>Assignments & Grading</span>
+                    </button>
+                    <button type="button" class="horizontal-nav-btn" id="tabView-marksheet" onclick="switchViewTab('marksheet')">
+                        <span>🎓</span>
+                        <span>Student Marksheet Hub</span>
                     </button>
                     <button type="button" class="horizontal-nav-btn" id="tabView-fees" onclick="switchViewTab('fees')">
                         <span>💳</span>
@@ -305,10 +309,6 @@
                         <span>📢</span>
                         <span>Broadcasts & Notices</span>
                     </button>
-                    <button type="button" class="horizontal-nav-btn" id="tabView-assignments" onclick="switchViewTab('assignments')">
-                        <span>📝</span>
-                        <span>Assignments & Grading</span>
-                    </button>
                     <button type="button" class="horizontal-nav-btn" id="tabView-aiexplainer" onclick="switchViewTab('aiexplainer')">
                         <span>✨</span>
                         <span>AI Explainer Copilot</span>
@@ -316,8 +316,8 @@
                 </nav>
 
                 <div class="horizontal-action-buttons faculty-control">
-                    <button class="btn btn-accent" id="btnQuickAiFaculty" onclick="toggleAiExplainer(true)" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; font-weight: 800; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);">
-                        ✨ Ask AI Explainer
+                    <button class="btn btn-primary" id="addStudentBtn" onclick="openAddStudentModal()">
+                        + Add New Student
                     </button>
                     <button class="btn btn-primary" id="btnQuickCreateAsg" onclick="openCreateAssignmentModal()" style="background: linear-gradient(135deg, #6366f1, #4f46e5); font-weight: 700;">
                         📝 + New Assignment
@@ -325,19 +325,19 @@
                     <button class="btn btn-accent" id="postNoticeBtn" onclick="openBroadcastModal()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 700;">
                         📢 Post Notice
                     </button>
-                    <button class="btn btn-primary" id="addStudentBtn" onclick="openAddStudentModal()">
-                        + Add New Student
+                    <button class="btn btn-accent" id="btnQuickAiFaculty" onclick="toggleAiExplainer(true)" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; font-weight: 800; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);">
+                        ✨ Ask AI Explainer
                     </button>
                     <button class="btn btn-outline" id="execDossierBtn" onclick="openExecutiveReportModal()" title="View Complete Institutional Executive Audit Dossier">
                         📊 Executive Dossier
+                    </button>
+                    <button class="btn btn-outline" id="exportCsvBtn" onclick="exportToCSV()">
+                        ⬇ CSV Export
                     </button>
                     <button class="btn btn-primary" id="livePushBtn" onclick="simulateRealtimePush()"
                         style="background: #f59e0b; color: #1e1b4b; font-weight: 700;"
                         title="Simulate real-time grade update via D3.js">
                         ⚡ Live Push
-                    </button>
-                    <button class="btn btn-outline" id="exportCsvBtn" onclick="exportToCSV()">
-                        ⬇ CSV Export
                     </button>
                     <button class="btn btn-outline" id="resetBtn" onclick="resetToDefaultData()">
                         ↺ Reset
@@ -1175,21 +1175,21 @@
                         <span>📊</span>
                         <span>My D3 Visualizations</span>
                     </button>
+                    <button type="button" class="horizontal-nav-btn" id="studTab-assignments" onclick="switchStudentTab('assignments')">
+                        <span>📝</span>
+                        <span>My Assignments & Marks <span class="notice-badge-count" id="studPendingAssignmentsBadge">1</span></span>
+                    </button>
                     <button type="button" class="horizontal-nav-btn" id="studTab-marksheet" onclick="switchStudentTab('marksheet')">
                         <span>🎓</span>
                         <span>My Semester Marksheet</span>
                     </button>
                     <button type="button" class="horizontal-nav-btn" id="studTab-fees" onclick="switchStudentTab('fees')">
                         <span>💳</span>
-                        <span>Fee Payment & Dues</span>
+                        <span>Fee Ledger & Dues</span>
                     </button>
                     <button type="button" class="horizontal-nav-btn" id="studTab-notices" onclick="switchStudentTab('notices')">
                         <span>📢</span>
                         <span>Notice Board <span class="notice-badge-count" id="studUnreadNoticesBadge">3</span></span>
-                    </button>
-                    <button type="button" class="horizontal-nav-btn" id="studTab-assignments" onclick="switchStudentTab('assignments')">
-                        <span>📝</span>
-                        <span>My Assignments & Marks <span class="notice-badge-count" id="studPendingAssignmentsBadge">1</span></span>
                     </button>
                     <button type="button" class="horizontal-nav-btn" id="studTab-aiexplainer" onclick="switchStudentTab('aiexplainer')">
                         <span>✨</span>
@@ -1198,14 +1198,14 @@
                 </nav>
 
                 <div class="horizontal-action-buttons">
-                    <button type="button" class="btn btn-accent btn-sm" id="btnQuickAiStudent" onclick="toggleAiExplainer(true)" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; font-weight: 800; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);">
-                        ✨ Ask AI Explainer
-                    </button>
-                    <button type="button" class="btn btn-outline btn-sm" onclick="switchStudentTab('assignments')" style="border-color: #818cf8; color: #c7d2fe; font-weight: 700;">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="switchStudentTab('assignments')" style="background: linear-gradient(135deg, #6366f1, #4f46e5); font-weight: 700;">
                         📝 My Assignments
                     </button>
                     <button type="button" class="btn btn-accent btn-sm" onclick="window.print()">
                         🖨️ Print Marksheet (PDF)
+                    </button>
+                    <button type="button" class="btn btn-accent btn-sm" id="btnQuickAiStudent" onclick="toggleAiExplainer(true)" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; font-weight: 800; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);">
+                        ✨ Ask AI Explainer
                     </button>
                     <button type="button" class="btn btn-outline btn-sm" onclick="copyTranscriptSummary()">
                         📋 Copy Transcript
