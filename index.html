@@ -254,6 +254,13 @@
                     📑 Hardcopy Report
                 </a>
 
+                <!-- LocalStorage Database Manager -->
+                <button type="button" class="btn btn-outline-white" onclick="openDatabaseModal()"
+                    style="border-color: rgba(56, 189, 248, 0.5); color: #38bdf8; display: inline-flex; align-items: center; gap: 5px; font-weight: 600;"
+                    title="Manage & Inspect LocalStorage Database Collections">
+                    💾 Database
+                </button>
+
                 <!-- Institutional Notices & Broadcasts -->
                 <button type="button" class="header-notice-btn" onclick="openNoticesModalOrTab()" title="View Announcements & Broadcasts">
                     <span>📢 Notices</span>
@@ -3049,6 +3056,76 @@
         </form>
     </div>
 
+    <!-- ====================================================
+         LOCALSTORAGE DATABASE CONSOLE & BACKUP MANAGER MODAL
+    ==================================================== -->
+    <div class="modal-overlay" id="localStorageDbModal" style="z-index: 100000;">
+        <div class="modal-card" style="max-width: 780px; width: 95%; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.3); box-shadow: 0 25px 60px rgba(0,0,0,0.8); border-radius: 20px; overflow: hidden; max-height: 90vh; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95)); padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 44px; height: 44px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                        💾
+                    </div>
+                    <div>
+                        <h2 style="font-size: 18px; color: #fff; margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                            EduPulse LocalStorage Database Console
+                            <span style="font-size: 11px; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 2px 8px; border-radius: 10px; font-weight: 700;">● BROWSER PERSISTENT</span>
+                        </h2>
+                        <p style="margin: 2px 0 0; font-size: 12px; color: #94a3b8;">Unified ORM collections, live quota meter, JSON backup and restore engine</p>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-outline btn-sm" onclick="closeDatabaseModal()" style="font-size: 18px; line-height: 1; padding: 6px 12px;">&times;</button>
+            </div>
+
+            <!-- Body -->
+            <div style="padding: 24px; overflow-y: auto; flex: 1;">
+                <!-- Quota Bar -->
+                <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 16px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 13px; font-weight: 700; color: #e2e8f0;">LocalStorage Storage Quota:</span>
+                        <span style="font-size: 12px; color: #38bdf8; font-weight: 700;" id="dbQuotaText">Calculating...</span>
+                    </div>
+                    <div style="height: 10px; background: rgba(15, 23, 42, 0.8); border-radius: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);">
+                        <div id="dbQuotaBarFill" style="height: 100%; width: 5%; background: linear-gradient(90deg, #38bdf8, #818cf8); border-radius: 6px; transition: width 0.4s ease;"></div>
+                    </div>
+                </div>
+
+                <!-- Collections Grid -->
+                <h3 style="font-size: 14px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 12px;">Active Database Collections:</h3>
+                <div id="dbStatsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 24px;">
+                    <!-- Injected via renderDatabaseModalUI -->
+                </div>
+
+                <!-- Actions Toolbar -->
+                <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px;">
+                    <h3 style="font-size: 14px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 12px;">Database Operations & Disaster Recovery:</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="EduPulseDB.exportBackup()" style="background: linear-gradient(135deg, #0284c7, #2563eb); font-weight: 700;">
+                            📥 Export Full Backup (JSON)
+                        </button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="triggerDbFileImport()" style="border-color: #38bdf8; color: #38bdf8; font-weight: 700;">
+                            📤 Restore from Backup (JSON)
+                        </button>
+                        <input type="file" id="dbFileInput" accept=".json" style="display: none;" onchange="handleDbFileUploaded(event)">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="EduPulseDB.resetDatabase()" style="border-color: rgba(244, 63, 94, 0.4); color: #fb7185; font-weight: 700;">
+                            ↺ Factory Reset Database
+                        </button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="renderDatabaseModalUI()" style="color: #94a3b8;">
+                            🔄 Refresh Stats
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="background: rgba(15, 23, 42, 0.95); padding: 14px 24px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #64748b;">
+                <span>Engine: <b>EduPulseDB v2.1 (HTML5 Web Storage API)</b></span>
+                <button type="button" class="btn btn-primary btn-sm" onclick="closeDatabaseModal()">Close Console</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         Bharath Institute of Engineering & Technology (Autonomous) &bull; Minimum Qualifying Pass Criteria: 35 Marks
@@ -3056,6 +3133,7 @@
     </footer>
 
     <!-- Modular JavaScript Controllers (by Language/Layer) -->
+    <script src="js/database.js"></script>
     <script src="js/data.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/marksheet.js"></script>

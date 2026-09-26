@@ -11,6 +11,7 @@ const feesNoticesCss = fs.readFileSync(path.join(__dirname, 'css', 'fees-notices
 const assignmentsCss = fs.readFileSync(path.join(__dirname, 'css', 'assignments.css'), 'utf8');
 const aiExplainerCss = fs.readFileSync(path.join(__dirname, 'css', 'ai-explainer.css'), 'utf8');
 
+const databaseJs = fs.readFileSync(path.join(__dirname, 'js', 'database.js'), 'utf8');
 const dataJs = fs.readFileSync(path.join(__dirname, 'js', 'data.js'), 'utf8');
 const authJs = fs.readFileSync(path.join(__dirname, 'js', 'auth.js'), 'utf8');
 const marksheetJs = fs.readFileSync(path.join(__dirname, 'js', 'marksheet.js'), 'utf8');
@@ -75,6 +76,8 @@ ${aiExplainerCss}
 ${bodyMarkup}
 
 <script>
+${databaseJs}
+
 ${dataJs}
 
 ${authJs}
