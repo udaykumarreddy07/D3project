@@ -1,0 +1,73 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "buildCommand": "node build.js",
+  "outputDirectory": ".",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/css/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/css; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/js/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "/presentation/?$",
+      "dest": "/presentation/index.html"
+    },
+    {
+      "src": "/presentation/(.*)",
+      "dest": "/presentation/$1"
+    },
+    {
+      "src": "/hardcopy/?$",
+      "dest": "/hardcopy.html"
+    },
+    {
+      "src": "/standalone/?$",
+      "dest": "/uday.html"
+    },
+    {
+      "src": "/uday/?$",
+      "dest": "/uday.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

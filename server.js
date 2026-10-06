@@ -114,10 +114,12 @@ function printConsoleSummary(activePort) {
     console.log(`✨ Launching your web browser automatically...`);
     console.log('='.repeat(68) + '\n');
 
-    // Automatically launch default browser on Windows / Mac / Linux
-    const url = `http://localhost:${activePort}`;
-    const startCmd = process.platform === 'win32' ? `start "" "${url}"` : (process.platform === 'darwin' ? `open "${url}"` : `xdg-open "${url}"`);
-    exec(startCmd, () => {});
+    // Automatically launch default browser on local environments only
+    if (!process.env.PORT && !process.env.VERCEL && !process.env.RENDER && process.env.NODE_ENV !== 'production') {
+        const url = `http://localhost:${activePort}`;
+        const startCmd = process.platform === 'win32' ? `start "" "${url}"` : (process.platform === 'darwin' ? `open "${url}"` : `xdg-open "${url}"`);
+        try { exec(startCmd, () => {}); } catch (e) {}
+    }
 }
 
 let currentPort = Number(PORT);
@@ -129,7 +131,7 @@ server.on('error', (err) => {
         console.log(`⚠️ Port ${busyPort} is in use, automatically trying http://localhost:${currentPort}...`);
         setTimeout(() => {
             try { server.close(); } catch (e) {}
-            server.listen(currentPort, () => {
+            server.listen(currentPort, '0.0.0.0', () => {
                 printConsoleSummary(currentPort);
             });
         }, 150);
@@ -138,6 +140,6 @@ server.on('error', (err) => {
     }
 });
 
-server.listen(currentPort, () => {
+server.listen(currentPort, '0.0.0.0', () => {
     printConsoleSummary(currentPort);
 });
