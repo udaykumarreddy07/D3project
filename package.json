@@ -2,7 +2,7 @@
   "name": "d3project",
   "version": "1.0.0",
   "description": "Academic Analytics & Student Marksheet Portal",
-  "main": "server.js",
+  "main": "index.html",
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",

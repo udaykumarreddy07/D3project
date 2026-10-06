@@ -22,27 +22,29 @@ const assignmentsJs = fs.readFileSync(path.join(__dirname, 'js', 'assignments.js
 const aiExplainerJs = fs.readFileSync(path.join(__dirname, 'js', 'ai-explainer.js'), 'utf8');
 const appJs = fs.readFileSync(path.join(__dirname, 'js', 'app.js'), 'utf8');
 
-const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
-
-// 2. Extract Body Markup from index.html
+// 2. Extract Body Markup from template.html (or index.html fallback)
+const sourceHtmlPath = fs.existsSync(path.join(__dirname, 'template.html')) 
+    ? path.join(__dirname, 'template.html') 
+    : path.join(__dirname, 'index.html');
+const indexHtml = fs.readFileSync(sourceHtmlPath, 'utf8');
 const bodyMatch = indexHtml.match(/<body>([\s\S]*?)<!-- Modular JavaScript Controllers/i);
 let bodyMarkup = bodyMatch ? bodyMatch[1].trim() : '';
 
-// Inline kare-logo.png as Base64 Data URI in uday.html for 100% standalone offline portability
+// Inline kare-logo.png as Base64 Data URI for 100% standalone offline portability and zero 404s
 if (fs.existsSync(path.join(__dirname, 'kare-logo.png'))) {
     const logoBase64 = fs.readFileSync(path.join(__dirname, 'kare-logo.png')).toString('base64');
     const logoDataUri = 'data:image/png;base64,' + logoBase64;
     bodyMarkup = bodyMarkup.replace(/src="kare-logo\.png"/g, `src="${logoDataUri}"`);
 }
 
-// 3. Generate Single-File All-in-One Distribution (uday.html)
+// 3. Generate Single-File All-in-One Distribution Bundle
 const bundledHtml = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Analytics & Student Marksheet Portal | KARE Deemed to be University, Tamil Nadu</title>
+    <title>EduPulse | Intelligent Campus Analytics & Student Marksheet Portal</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,11 +53,11 @@ const bundledHtml = `<!DOCTYPE html>
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- D3.js with fallback -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- D3.js Visualization Engine (High-Performance CDN with Local Fallback) -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
     <script>
         if (typeof d3 === 'undefined') {
-            document.write('<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"><\\/script>');
+            document.write('<script src="d3.v7.min.js"><\\/script>');
         }
     </script>
 
@@ -108,6 +110,8 @@ ${appJs}
 </html>
 `;
 
+// Write to both index.html (for Vercel/production root) and uday.html (for standalone distribution)
+fs.writeFileSync(path.join(__dirname, 'index.html'), bundledHtml, 'utf8');
 fs.writeFileSync(path.join(__dirname, 'uday.html'), bundledHtml, 'utf8');
-console.log('✅ Synchronized uday.html bundle with modular assets (' + bundledHtml.length + ' bytes)');
-console.log('✅ Modular files in css/ and js/ validated and up to date.');
+console.log('✅ Synchronized index.html & uday.html production bundles (' + bundledHtml.length + ' bytes)');
+console.log('✅ All CSS styles, JavaScript modules, and logos successfully bundled for deployment.');
