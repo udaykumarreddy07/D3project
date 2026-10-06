@@ -2,15 +2,23 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/presentation",
+      "source": "/presentation/?",
       "destination": "/presentation/index.html"
     },
     {
-      "source": "/hardcopy",
+      "source": "/presentation/:path*",
+      "destination": "/presentation/:path*"
+    },
+    {
+      "source": "/hardcopy/?",
       "destination": "/hardcopy.html"
     },
     {
-      "source": "/uday",
+      "source": "/uday/?",
+      "destination": "/uday.html"
+    },
+    {
+      "source": "/standalone/?",
       "destination": "/uday.html"
     }
   ]
