@@ -152,7 +152,7 @@ let currentUserRole = "Faculty";
                 role: "Faculty",
                 department: "CSE",
                 studentId: null,
-                email: "sharma@biet.edu.in",
+                email: "sharma@kalasalingam.ac.in",
                 avatar: "PS"
             } : {
                 username: "google_sneha",
@@ -160,7 +160,7 @@ let currentUserRole = "Faculty";
                 role: "Student",
                 department: "CSE",
                 studentId: 4,
-                email: "sneha.devi@student.biet.edu.in",
+                email: "sneha.devi@student.kalasalingam.ac.in",
                 avatar: "SD"
             };
 

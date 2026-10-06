@@ -26,7 +26,14 @@ const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
 
 // 2. Extract Body Markup from index.html
 const bodyMatch = indexHtml.match(/<body>([\s\S]*?)<!-- Modular JavaScript Controllers/i);
-const bodyMarkup = bodyMatch ? bodyMatch[1].trim() : '';
+let bodyMarkup = bodyMatch ? bodyMatch[1].trim() : '';
+
+// Inline kare-logo.png as Base64 Data URI in uday.html for 100% standalone offline portability
+if (fs.existsSync(path.join(__dirname, 'kare-logo.png'))) {
+    const logoBase64 = fs.readFileSync(path.join(__dirname, 'kare-logo.png')).toString('base64');
+    const logoDataUri = 'data:image/png;base64,' + logoBase64;
+    bodyMarkup = bodyMarkup.replace(/src="kare-logo\.png"/g, `src="${logoDataUri}"`);
+}
 
 // 3. Generate Single-File All-in-One Distribution (uday.html)
 const bundledHtml = `<!DOCTYPE html>
@@ -35,7 +42,7 @@ const bundledHtml = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Analytics & Student Marksheet Portal | BIET Autonomous</title>
+    <title>Academic Analytics & Student Marksheet Portal | KARE Deemed to be University, Tamil Nadu</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

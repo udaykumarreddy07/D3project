@@ -5,8 +5,8 @@ const path = require('path');
 // Initialize Presentation
 const pptx = new pptxgen();
 pptx.layout = 'LAYOUT_16x9'; // 13.33 x 7.5 inches
-pptx.author = 'Antigravity AI / BIET Academic Portal';
-pptx.company = 'Bharath Institute of Engineering & Technology';
+pptx.author = 'Antigravity AI / KARE Academic Portal';
+pptx.company = 'Kalasalingam Academy of Research and Education (Deemed to be University)';
 pptx.title = 'Academic Analytics & Student Marksheet Portal - Project Presentation';
 pptx.subject = 'Modular Web Architecture, D3.js Visualizations & UGC 10-Point Marksheet Engine';
 
@@ -45,7 +45,7 @@ function addSlideHeader(slide, title, category, slideNum) {
     });
 
     // Footer branding & page number
-    slide.addText('Academic Analytics Portal | Bharath Institute (Autonomous)', {
+    slide.addText('Academic Analytics Portal | KARE (Deemed to be University), Tamil Nadu', {
         x: 0.8, y: 7.0, w: 8.0, h: 0.3,
         fontSize: 9, color: C_TEXT_MUTED, fontFace: 'Arial'
     });
@@ -78,7 +78,7 @@ function addSlideHeader(slide, title, category, slideNum) {
         fill: { color: '1E1B4B' },
         line: { color: C_PRIMARY, width: 1 }
     });
-    slide.addText('🏛️  BHARATH INSTITUTE (AUTONOMOUS)', {
+    slide.addText('🏛️  KALASALINGAM ACADEMY (DEEMED UNIVERSITY) - TAMIL NADU', {
         x: 1.3, y: 1.3, w: 3.8, h: 0.4,
         fontSize: 10, bold: true, color: 'A5B4FC', fontFace: 'Arial', align: 'center'
     });

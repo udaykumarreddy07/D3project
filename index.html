@@ -43,9 +43,12 @@
 
         <div class="login-standalone-card">
             <div class="login-brand-header">
-                <div class="login-brand-icon" style="font-size: 38px; display: inline-flex; align-items: center; justify-content: center; width: 68px; height: 68px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(99, 102, 241, 0.2)); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 18px; margin-bottom: 12px; box-shadow: 0 8px 24px rgba(56, 189, 248, 0.25);">⚡</div>
-                <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; letter-spacing: -0.5px; font-size: 28px; background: linear-gradient(135deg, #fff, #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">EduPulse</h2>
-                <p style="font-weight: 600; color: #38bdf8; letter-spacing: 0.5px; font-size: 13px; text-transform: uppercase; margin-bottom: 4px;">Intelligent Campus Analytics & Marksheet Portal</p>
+                <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+                    <img src="kare-logo.png" alt="KARE University Emblem" style="width: 82px; height: 82px; object-fit: contain; filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.6));">
+                </div>
+                <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; letter-spacing: -0.5px; font-size: 26px; background: linear-gradient(135deg, #fff, #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">EduPulse</h2>
+                <p style="font-weight: 700; color: #38bdf8; letter-spacing: 0.5px; font-size: 13px; text-transform: uppercase; margin-bottom: 2px;">Kalasalingam Academy of Research and Education</p>
+                <p style="color: #cbd5e1; font-size: 11px; margin-bottom: 4px;">(Deemed to be University &bull; Anand Nagar, Krishnankoil, Tamil Nadu)</p>
                 <p style="color: #94a3b8; font-size: 12px;">Sign in to access student marksheets, assignments & cohort records</p>
             </div>
 
@@ -206,17 +209,20 @@
     ==================================================== -->
     <header class="header">
         <div class="header-content">
-            <div class="header-title">
-                <h1 id="portalHeaderTitle">
-                    <span style="color: #38bdf8; font-family: 'Space Grotesk', sans-serif; font-weight: 800; letter-spacing: -0.5px;">⚡ EduPulse</span> &bull; Campus Analytics & Marksheet Portal
-                    <span class="badge-version" id="portalRoleBadge">Faculty Portal</span>
-                </h1>
-                <p id="portalHeaderSub">Intelligent Campus Analytics, D3.js Visualizations & Official Autonomous Progress Cards</p>
-                <div class="header-accreditation-strip">
-                    <span class="accred-pill accred-gold">🏛️ BIET Autonomous</span>
-                    <span class="accred-pill accred-emerald">⭐ NAAC 'A+' Grade</span>
-                    <span class="accred-pill accred-cyan">✓ NBA Tier-1</span>
-                    <span class="accred-pill accred-purple">📜 UGC CBCS Scheme</span>
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <img src="kare-logo.png" class="header-kare-logo" alt="KARE University Logo">
+                <div class="header-title">
+                    <h1 id="portalHeaderTitle">
+                        <span style="color: #38bdf8; font-family: 'Space Grotesk', sans-serif; font-weight: 800; letter-spacing: -0.5px;">⚡ EduPulse</span> &bull; Campus Analytics & Marksheet Portal
+                        <span class="badge-version" id="portalRoleBadge">Faculty Portal</span>
+                    </h1>
+                    <p id="portalHeaderSub">Intelligent Campus Analytics, D3.js Visualizations & Official Autonomous Progress Cards</p>
+                    <div class="header-accreditation-strip">
+                        <span class="accred-pill accred-gold">🏛️ KARE Deemed to be University</span>
+                        <span class="accred-pill accred-emerald">⭐ NAAC 'A++' Grade</span>
+                        <span class="accred-pill accred-cyan">✓ NBA Tier-1</span>
+                        <span class="accred-pill accred-purple">📜 UGC CBCS Scheme</span>
+                    </div>
                 </div>
             </div>
 
@@ -316,6 +322,9 @@
                 </nav>
 
                 <div class="horizontal-action-buttons faculty-control">
+                    <button class="btn btn-primary" id="btnViewAllMarks" onclick="openAllStudentMarksModal()" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: #fff; font-weight: 800; box-shadow: 0 4px 16px rgba(37, 99, 235, 0.45); font-size: 13px; display: inline-flex; align-items: center; gap: 7px; border: none;" title="Instantly view consolidated marks for all 100 students">
+                        📋 View All Student Marks
+                    </button>
                     <button class="btn btn-primary" id="addStudentBtn" onclick="openAddStudentModal()">
                         + Add New Student
                     </button>
@@ -353,6 +362,9 @@
                         <button type="button" class="quick-filter-pill active" id="pill-all" onclick="applyQuickFilter('all')">
                             <span>👥 All Cohort</span>
                             <b id="pillAllCount">(100)</b>
+                        </button>
+                        <button type="button" class="quick-filter-pill" onclick="openAllStudentMarksModal()" style="background: rgba(99, 102, 241, 0.2); border-color: rgba(99, 102, 241, 0.5); color: #c7d2fe; font-weight: 700;" title="Click to view all student marksheet records at once">
+                            <span>📋 View All Marks</span>
                         </button>
                         <button type="button" class="quick-filter-pill" id="pill-toppers" onclick="applyQuickFilter('topper')">
                             <span>🌟 Grade O Toppers</span>
@@ -691,27 +703,17 @@
                         <!-- College Letterhead (College Information) -->
                         <div class="college-letterhead">
                             <div class="college-header-top">
-                                <svg class="college-emblem-svg" viewBox="0 0 100 100" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="50" cy="50" r="48" fill="#1e1b4b" stroke="#f59e0b" stroke-width="4" />
-                                    <circle cx="50" cy="50" r="40" stroke="#cbd5e1" stroke-dasharray="3,3" stroke-width="1.5" />
-                                    <path d="M50 18 L76 34 L76 66 L50 82 L24 66 L24 34 Z" fill="rgba(245, 158, 11, 0.2)"
-                                        stroke="#f59e0b" stroke-width="2.5" />
-                                    <path d="M50 26 L50 74 M32 38 L68 62 M32 62 L68 38" stroke="#fef08a" stroke-width="2" />
-                                    <circle cx="50" cy="50" r="14" fill="#f59e0b" />
-                                    <text x="50" y="55" font-family="'Cinzel', serif" font-size="12" font-weight="900"
-                                        fill="#1e1b4b" text-anchor="middle">BIET</text>
-                                </svg>
+                                <img src="kare-logo.png" class="college-emblem-img" alt="KARE University Emblem">
 
                                 <div class="college-title-block">
-                                    <div class="college-name-primary">BHARATH INSTITUTE OF ENGINEERING & TECHNOLOGY</div>
-                                    <div class="college-autonomous-badge">UGC AUTONOMOUS INSTITUTION &bull; ESTD. 1998</div>
+                                    <div class="college-name-primary">KALASALINGAM ACADEMY OF RESEARCH AND EDUCATION</div>
+                                    <div class="college-autonomous-badge">DEEMED TO BE UNIVERSITY UNDER SEC. 3 OF UGC ACT &bull; ESTD. 1984</div>
                                 </div>
                             </div>
 
                             <div class="college-affiliation-text">
-                                Approved by AICTE, New Delhi &bull; Affiliated to State Technological University (JNTUH)<br>
-                                Accredited by NAAC with <b>'A++' Grade</b> &bull; NBA Accredited UG Programmes &bull; Hyderabad - 501510
+                                Approved by AICTE, New Delhi &bull; Deemed to be University under Sec. 3 of UGC Act, 1956 • Anand Nagar, Krishnankoil, Tamil Nadu<br>
+                                Accredited by NAAC with <b>'A++' Grade</b> &bull; NBA Accredited UG Programmes &bull; Tamil Nadu - 626126
                             </div>
 
                             <div class="marksheet-title-ribbon">
@@ -720,12 +722,12 @@
                         </div>
 
                         <div class="progress-card-body">
-                            <div class="progress-watermark">BIET OFFICIAL TRANSCRIPT</div>
+                            <div class="progress-watermark">KARE OFFICIAL TRANSCRIPT</div>
 
                             <div class="marksheet-serial-row">
                                 <div>
                                     <span>CERTIFICATE SL. NO: </span>
-                                    <span class="serial-badge val-cardSerialNo">BIET/2026/UG/0004</span>
+                                    <span class="serial-badge val-cardSerialNo">KARE/2026/UG/0004</span>
                                 </div>
                                 <div>
                                     <span>EXAMINATION: </span>
@@ -819,7 +821,7 @@
                                     <div class="val-cardStampContainer"></div>
                                     <div class="security-cert-hash">
                                         <span class="cert-dot"></span>
-                                        <span class="val-cardCertHash">BIET-DIGI-CERT-2026-0004</span>
+                                        <span class="val-cardCertHash">KARE-DIGI-CERT-2026-0004</span>
                                     </div>
                                 </div>
 
@@ -829,7 +831,7 @@
                                         <circle cx="40" cy="40" r="38" stroke="#1e3a8a" stroke-width="2" stroke-dasharray="4,2"/>
                                         <circle cx="40" cy="40" r="33" stroke="#1e3a8a" stroke-width="1.2"/>
                                         <circle cx="40" cy="40" r="14" fill="rgba(30, 58, 138, 0.08)" stroke="#1e3a8a" stroke-width="1"/>
-                                        <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">BIET AUTONOMOUS</text>
+                                        <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">KARE DEEMED UNIVERSITY</text>
                                         <text x="40" y="42.5" font-size="7.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" font-family="'Cinzel', serif">SEAL</text>
                                         <text x="40" y="60" font-size="4.5" font-weight="800" fill="#1e3a8a" text-anchor="middle" letter-spacing="0.5">★ EXAM BRANCH ★</text>
                                     </svg>
@@ -878,15 +880,47 @@
                             <div class="horizontal-heading-sub">Searchable, sortable student marksheet records with quick academic progress card viewer</div>
                         </div>
 
-                        <div>
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-primary btn-sm" onclick="openAllStudentMarksModal()" style="background: linear-gradient(135deg, #2563eb, #7c3aed); border: none; font-weight: 800; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); display: inline-flex; align-items: center; gap: 6px;">
+                                📋 View All 100 Student Marks
+                            </button>
                             <button class="btn btn-accent btn-sm faculty-control" onclick="openAddStudentModal()">+ Add New Student</button>
                         </div>
                     </div>
 
-                    <section class="table-card">
-                        <div class="table-toolbar">
-                            <div class="table-info" id="tableRecordCount">Showing records</div>
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <!-- Collapsed Default Banner (shown by default so 100 rows don't flood the dashboard) -->
+                    <div id="tableCollapsedBanner" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9)); border: 1px dashed rgba(99, 102, 241, 0.4); border-radius: 16px; padding: 24px; text-align: center; margin-top: 14px; margin-bottom: 20px;">
+                        <div style="font-size: 28px; margin-bottom: 6px;">📋</div>
+                        <h3 style="font-size: 16px; color: #f8fafc; margin: 0 0 6px 0; font-weight: 800;">100 Student Marksheet Records Standby</h3>
+                        <p style="font-size: 12.5px; color: #94a3b8; max-width: 580px; margin: 0 auto 16px auto;">
+                            To keep your dashboard clean and fast, the 100 students marksheet records are on standby. Click below to view all marks.
+                        </p>
+                        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-primary" onclick="openAllStudentMarksModal()" style="background: linear-gradient(135deg, #2563eb, #7c3aed); font-weight: 800; padding: 9px 22px; font-size: 13px; box-shadow: 0 4px 16px rgba(37, 99, 235, 0.45); border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                                📋 View All 100 Student Marks (Master Sheet)
+                            </button>
+                            <button type="button" class="btn btn-outline" id="btnToggleTableInline" onclick="toggleInlineStudentTable(true)" style="border-color: rgba(99, 102, 241, 0.5); color: #c7d2fe; font-weight: 700; padding: 9px 18px; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                                👁️ Show 100 Records in Table
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Expanded Table Container (revealed on button click or tabView-table) -->
+                    <div id="tableExpandedContent" style="display: none;">
+                        <div class="table-toolbar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <div class="table-info" id="tableRecordCount">Showing records</div>
+                                <button type="button" class="btn btn-primary btn-sm" id="btnToolbarAllMarks" onclick="openAllStudentMarksModal()" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: #fff; font-weight: 700; border: none; padding: 5px 14px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35); font-size: 12px;">
+                                    📋 View in Modal Sheet
+                                </button>
+                                <button type="button" class="btn btn-accent btn-sm" id="btnToolbarSubjectEval" onclick="openCompleteSubjectEvaluationModal()" style="background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff; font-weight: 700; border: none; padding: 5px 14px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 10px rgba(99, 102, 241, 0.35); font-size: 12px;">
+                                    📊 View Complete Subject Evaluation
+                                </button>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="toggleInlineStudentTable(false)" style="border-color: rgba(244,63,94,0.4); color: #fb7185; font-size: 11.5px; padding: 5px 12px;">
+                                    ✕ Hide Table Records
+                                </button>
+                            </div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
                                 <span class="badge status-pass">Pass: All Subjects &ge; 35</span>
                                 <span class="badge status-fail">Fail: Any Subject &lt; 35</span>
                                 <span class="badge" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc;">🎓 Official Marksheet</span>
@@ -917,7 +951,7 @@
                                 <tbody id="studentTable"></tbody>
                             </table>
                         </div>
-                    </section>
+                    </div>
                 </div>
 
                 <!-- ====================================================
@@ -930,7 +964,13 @@
                             <div class="horizontal-heading-title">💳 Cohort Fee Collection & Statutory Dues Monitor</div>
                             <div class="horizontal-heading-sub">Institutional fee tracking across Semesters, Autonomous Examination fees & Lab clearance</div>
                         </div>
-                        <div class="horizontal-heading-actions">
+                        <div class="horizontal-heading-actions" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                            <button type="button" class="btn btn-accent btn-sm" onclick="openFacultyAddFeeModal()" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700; border: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+                                ➕ Add Fee by Situation
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="openFacultyBatchDeadlineModal()" style="font-size: 11px; border-color: rgba(99, 102, 241, 0.45); color: #c7d2fe;">
+                                📅 Batch Deadlines
+                            </button>
                             <button type="button" class="btn btn-primary btn-sm" onclick="sendBulkFeeReminders()">
                                 📩 Broadcast Dues Reminder
                             </button>
@@ -948,7 +988,7 @@
                             </div>
                             <div class="fees-hero-info">
                                 <h2>Autonomous Institutional Accounts Telemetry</h2>
-                                <p>Track student tuition receipts, exam admission clearances, and financial holds</p>
+                                <p>Track student tuition receipts, exam admission clearances, situational fee dues, and deadlines</p>
                             </div>
                         </div>
                         <div class="fees-metric-pills">
@@ -965,6 +1005,10 @@
                                 <div class="fee-pill-val val-amber" id="facFeePending">₹5.50 Lakhs</div>
                             </div>
                             <div class="fee-metric-pill">
+                                <div class="fee-pill-lbl">DEADLINES OVERDUE</div>
+                                <div class="fee-pill-val" style="color: #fb7185;" id="facFeeOverdueCount">0</div>
+                            </div>
+                            <div class="fee-metric-pill">
                                 <div class="fee-pill-lbl">100% CLEARED</div>
                                 <div class="fee-pill-val val-green" id="facFeeClearedCount">92 / 100 (92%)</div>
                             </div>
@@ -975,9 +1019,10 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; background: rgba(15, 23, 42, 0.6); padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.06);">
                         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                             <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Filter Status:</span>
-                            <button type="button" class="btn btn-outline btn-sm" onclick="filterFacultyFeeCohort('all')" style="font-size: 11px; padding: 4px 10px;">All Students</button>
-                            <button type="button" class="btn btn-outline btn-sm" onclick="filterFacultyFeeCohort('due')" style="font-size: 11px; padding: 4px 10px; color: #fb7185; border-color: rgba(244,63,94,0.4);">⚠️ Dues Pending</button>
-                            <button type="button" class="btn btn-outline btn-sm" onclick="filterFacultyFeeCohort('cleared')" style="font-size: 11px; padding: 4px 10px; color: #34d399; border-color: rgba(16,185,129,0.4);">✓ 100% Cleared</button>
+                            <button type="button" class="btn btn-outline btn-sm" id="btnFacFeeAll" onclick="filterFacultyFeeCohort('all')" style="font-size: 11px; padding: 4px 10px;">All Students</button>
+                            <button type="button" class="btn btn-outline btn-sm" id="btnFacFeeDue" onclick="filterFacultyFeeCohort('due')" style="font-size: 11px; padding: 4px 10px; color: #fb7185; border-color: rgba(244,63,94,0.4);">⚠️ Dues Pending</button>
+                            <button type="button" class="btn btn-outline btn-sm" id="btnFacFeeOverdue" onclick="filterFacultyFeeCohort('overdue')" style="font-size: 11px; padding: 4px 10px; color: #f43f5e; border-color: rgba(244,63,94,0.5); font-weight: 700;">🚨 Overdue Deadlines</button>
+                            <button type="button" class="btn btn-outline btn-sm" id="btnFacFeeCleared" onclick="filterFacultyFeeCohort('cleared')" style="font-size: 11px; padding: 4px 10px; color: #34d399; border-color: rgba(16,185,129,0.4);">✓ 100% Cleared</button>
                         </div>
                         <div style="display: flex; gap: 8px; align-items: center;">
                             <input type="text" placeholder="🔍 Search Roll No or Student..." oninput="searchFacultyFeeCohort(this.value)" class="auth-control" style="font-size: 12px; padding: 6px 12px; width: 220px; background: rgba(30, 41, 59, 0.8);">
@@ -996,8 +1041,9 @@
                                     <th>Total Fee</th>
                                     <th>Amount Paid</th>
                                     <th>Pending Dues</th>
+                                    <th>Payment Deadline</th>
                                     <th>Clearance Status</th>
-                                    <th>Action</th>
+                                    <th style="min-width: 175px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="facultyFeeCohortTableBody"></tbody>
@@ -1411,27 +1457,17 @@
                 <div class="progress-card-modal" style="box-shadow: 0 16px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15);">
                     <div class="college-letterhead">
                         <div class="college-header-top">
-                            <svg class="college-emblem-svg" viewBox="0 0 100 100" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="50" cy="50" r="48" fill="#1e1b4b" stroke="#f59e0b" stroke-width="4" />
-                                <circle cx="50" cy="50" r="40" stroke="#cbd5e1" stroke-dasharray="3,3" stroke-width="1.5" />
-                                <path d="M50 18 L76 34 L76 66 L50 82 L24 66 L24 34 Z" fill="rgba(245, 158, 11, 0.2)"
-                                    stroke="#f59e0b" stroke-width="2.5" />
-                                <path d="M50 26 L50 74 M32 38 L68 62 M32 62 L68 38" stroke="#fef08a" stroke-width="2" />
-                                <circle cx="50" cy="50" r="14" fill="#f59e0b" />
-                                <text x="50" y="55" font-family="'Cinzel', serif" font-size="12" font-weight="900"
-                                    fill="#1e1b4b" text-anchor="middle">BIET</text>
-                            </svg>
+                            <img src="kare-logo.png" class="college-emblem-img" alt="KARE University Emblem">
 
                             <div class="college-title-block">
-                                <div class="college-name-primary">BHARATH INSTITUTE OF ENGINEERING & TECHNOLOGY</div>
-                                <div class="college-autonomous-badge">UGC AUTONOMOUS INSTITUTION &bull; ESTD. 1998</div>
+                                <div class="college-name-primary">KALASALINGAM ACADEMY OF RESEARCH AND EDUCATION</div>
+                                <div class="college-autonomous-badge">DEEMED TO BE UNIVERSITY UNDER SEC. 3 OF UGC ACT &bull; ESTD. 1984</div>
                             </div>
                         </div>
 
                         <div class="college-affiliation-text">
-                            Approved by AICTE, New Delhi &bull; Affiliated to State Technological University (JNTUH)<br>
-                            Accredited by NAAC with <b>'A++' Grade</b> &bull; NBA Accredited UG Programmes &bull; Hyderabad - 501510
+                            Approved by AICTE, New Delhi &bull; Deemed to be University under Sec. 3 of UGC Act, 1956 • Anand Nagar, Krishnankoil, Tamil Nadu<br>
+                            Accredited by NAAC with <b>'A++' Grade</b> &bull; NBA Accredited UG Programmes &bull; Tamil Nadu - 626126
                         </div>
 
                         <div class="marksheet-title-ribbon">
@@ -1440,12 +1476,12 @@
                     </div>
 
                     <div class="progress-card-body">
-                        <div class="progress-watermark">BIET OFFICIAL TRANSCRIPT</div>
+                        <div class="progress-watermark">KARE OFFICIAL TRANSCRIPT</div>
 
                         <div class="marksheet-serial-row">
                             <div>
                                 <span>CERTIFICATE SL. NO: </span>
-                                <span class="serial-badge val-cardSerialNo">BIET/2026/UG/0004</span>
+                                <span class="serial-badge val-cardSerialNo">KARE/2026/UG/0004</span>
                             </div>
                             <div>
                                 <span>EXAMINATION: </span>
@@ -1539,7 +1575,7 @@
                                 <div class="val-cardStampContainer"></div>
                                 <div class="security-cert-hash">
                                     <span class="cert-dot"></span>
-                                    <span class="val-cardCertHash">BIET-DIGI-CERT-2026-0004</span>
+                                    <span class="val-cardCertHash">KARE-DIGI-CERT-2026-0004</span>
                                 </div>
                             </div>
 
@@ -1548,7 +1584,7 @@
                                     <circle cx="40" cy="40" r="38" stroke="#1e3a8a" stroke-width="2" stroke-dasharray="4,2"/>
                                     <circle cx="40" cy="40" r="33" stroke="#1e3a8a" stroke-width="1.2"/>
                                     <circle cx="40" cy="40" r="14" fill="rgba(30, 58, 138, 0.08)" stroke="#1e3a8a" stroke-width="1"/>
-                                    <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">BIET AUTONOMOUS</text>
+                                    <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">KARE DEEMED UNIVERSITY</text>
                                     <text x="40" y="42.5" font-size="7.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" font-family="'Cinzel', serif">SEAL</text>
                                     <text x="40" y="60" font-size="4.5" font-weight="800" fill="#1e3a8a" text-anchor="middle" letter-spacing="0.5">★ EXAM BRANCH ★</text>
                                 </svg>
@@ -1677,7 +1713,7 @@
                                     <div class="fee-item-icon">🏛️</div>
                                     <div>
                                         <div class="fee-item-name">Semester VI Tuition & Academic Instruction Fee</div>
-                                        <div class="fee-item-sub">Domain: Academic &bull; Ref: BIET/FEES/2026-TUITION &bull; Paid on 15 Jan 2026</div>
+                                        <div class="fee-item-sub">Domain: Academic &bull; Ref: KARE/FEES/2026-TUITION &bull; Paid on 15 Jan 2026</div>
                                     </div>
                                 </div>
                                 <div class="fee-item-right">
@@ -1719,7 +1755,7 @@
                                     <div class="fee-item-icon">💻</div>
                                     <div>
                                         <div class="fee-item-name">Autonomous Computing & High-Perf AI Lab Fee</div>
-                                        <div class="fee-item-sub">Domain: Laboratories &bull; Ref: BIET/FEES/2026-LAB &bull; Paid on 18 Jan 2026</div>
+                                        <div class="fee-item-sub">Domain: Laboratories &bull; Ref: KARE/FEES/2026-LAB &bull; Paid on 18 Jan 2026</div>
                                     </div>
                                 </div>
                                 <div class="fee-item-right">
@@ -1739,7 +1775,7 @@
                                     <div class="fee-item-icon">📚</div>
                                     <div>
                                         <div class="fee-item-name">IEEE Digital Consortium & Library Membership</div>
-                                        <div class="fee-item-sub">Domain: Facilities &bull; Ref: BIET/FEES/2026-LIB &bull; Paid on 12 Jan 2026</div>
+                                        <div class="fee-item-sub">Domain: Facilities &bull; Ref: KARE/FEES/2026-LIB &bull; Paid on 12 Jan 2026</div>
                                     </div>
                                 </div>
                                 <div class="fee-item-right">
@@ -1759,7 +1795,7 @@
                                     <div class="fee-item-icon">🚀</div>
                                     <div>
                                         <div class="fee-item-name">Campus Placement & Corporate Readiness Training</div>
-                                        <div class="fee-item-sub">Domain: Career Development &bull; Ref: BIET/FEES/2026-CRT &bull; Paid on 10 Jan 2026</div>
+                                        <div class="fee-item-sub">Domain: Career Development &bull; Ref: KARE/FEES/2026-CRT &bull; Paid on 10 Jan 2026</div>
                                     </div>
                                 </div>
                                 <div class="fee-item-right">
@@ -1795,7 +1831,7 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 18px;">
                         <div style="background: rgba(30, 41, 59, 0.6); padding: 12px 16px; border-radius: 10px;">
                             <div style="font-size: 11px; color: #94a3b8;">EXAM CENTER</div>
-                            <div style="font-size: 13px; font-weight: 700; color: #f8fafc; margin-top: 2px;">BIET Campus &bull; Block-3</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #f8fafc; margin-top: 2px;">KARE Campus &bull; Krishnankoil, Tamil Nadu</div>
                         </div>
                         <div style="background: rgba(30, 41, 59, 0.6); padding: 12px 16px; border-radius: 10px;">
                             <div style="font-size: 11px; color: #94a3b8;">ALLOCATED SEAT</div>
@@ -1843,7 +1879,7 @@
                             <tbody id="studFeePassbookBody">
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <td style="padding: 12px 10px; color: #cbd5e1;">15 Jan 2026</td>
-                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">BIET-TXN-100004</td>
+                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">KARE-TXN-100004</td>
                                     <td style="padding: 12px 10px; font-weight: 600;">Semester VI Tuition Fee</td>
                                     <td style="padding: 12px 10px; color: #94a3b8;">Net Banking (Axis)</td>
                                     <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: #34d399;">₹65,000</td>
@@ -1852,7 +1888,7 @@
                                 </tr>
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <td style="padding: 12px 10px; color: #cbd5e1;">18 Jan 2026</td>
-                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">BIET-TXN-300004</td>
+                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">KARE-TXN-300004</td>
                                     <td style="padding: 12px 10px; font-weight: 600;">Autonomous Computing Lab Fee</td>
                                     <td style="padding: 12px 10px; color: #94a3b8;">UPI (Google Pay)</td>
                                     <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: #34d399;">₹4,000</td>
@@ -1861,7 +1897,7 @@
                                 </tr>
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <td style="padding: 12px 10px; color: #cbd5e1;">12 Jan 2026</td>
-                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">BIET-TXN-400004</td>
+                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">KARE-TXN-400004</td>
                                     <td style="padding: 12px 10px; font-weight: 600;">IEEE Digital Library & Consortium</td>
                                     <td style="padding: 12px 10px; color: #94a3b8;">Debit Card (HDFC)</td>
                                     <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: #34d399;">₹1,500</td>
@@ -1870,7 +1906,7 @@
                                 </tr>
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <td style="padding: 12px 10px; color: #cbd5e1;">10 Jan 2026</td>
-                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">BIET-TXN-500004</td>
+                                    <td style="padding: 12px 10px; font-family: monospace; color: #a5b4fc;">KARE-TXN-500004</td>
                                     <td style="padding: 12px 10px; font-weight: 600;">Campus Placement & Readiness Training</td>
                                     <td style="padding: 12px 10px; color: #94a3b8;">UPI (PhonePe)</td>
                                     <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: #34d399;">₹1,000</td>
@@ -1886,9 +1922,9 @@
                 <div style="margin-top: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
                     <div style="background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(255,255,255,0.12); border-radius: 12px; padding: 18px;">
                         <div style="font-size: 11px; color: #38bdf8; font-weight: 700; text-transform: uppercase;">INSTITUTIONAL RTGS / NEFT SETTLEMENT</div>
-                        <div style="font-size: 13px; color: #f8fafc; font-weight: 600; margin-top: 6px;">Virtual Account: <span style="font-family: monospace; color: #34d399;">BIET2026CSE004</span></div>
+                        <div style="font-size: 13px; color: #f8fafc; font-weight: 600; margin-top: 6px;">Virtual Account: <span style="font-family: monospace; color: #34d399;">KARE2026CSE004</span></div>
                         <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Bank: Axis Bank Ltd &bull; IFSC: <span style="font-family: monospace; color: #fff;">UTIB0001842</span></div>
-                        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Beneficiary: Bharat Institute of Engineering & Technology Autonomous Fee Account</div>
+                        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Beneficiary: Kalasalingam Academy of Research and Education Fee Account</div>
                     </div>
                     <div style="background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(255,255,255,0.12); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
@@ -2044,27 +2080,17 @@
                     onclick="closeProgressCardModal()">&times;</button>
 
                 <div class="college-header-top">
-                    <svg class="college-emblem-svg" viewBox="0 0 100 100" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="48" fill="#1e1b4b" stroke="#f59e0b" stroke-width="4" />
-                        <circle cx="50" cy="50" r="40" stroke="#cbd5e1" stroke-dasharray="3,3" stroke-width="1.5" />
-                        <path d="M50 18 L76 34 L76 66 L50 82 L24 66 L24 34 Z" fill="rgba(245, 158, 11, 0.2)"
-                            stroke="#f59e0b" stroke-width="2.5" />
-                        <path d="M50 26 L50 74 M32 38 L68 62 M32 62 L68 38" stroke="#fef08a" stroke-width="2" />
-                        <circle cx="50" cy="50" r="14" fill="#f59e0b" />
-                        <text x="50" y="55" font-family="'Cinzel', serif" font-size="12" font-weight="900"
-                            fill="#1e1b4b" text-anchor="middle">BIET</text>
-                    </svg>
+                    <img src="kare-logo.png" class="college-emblem-img" alt="KARE University Emblem">
 
                     <div class="college-title-block">
-                        <div class="college-name-primary">BHARATH INSTITUTE OF ENGINEERING & TECHNOLOGY</div>
-                        <div class="college-autonomous-badge">UGC AUTONOMOUS INSTITUTION &bull; ESTD. 1998</div>
+                        <div class="college-name-primary">KALASALINGAM ACADEMY OF RESEARCH AND EDUCATION</div>
+                        <div class="college-autonomous-badge">DEEMED TO BE UNIVERSITY UNDER SEC. 3 OF UGC ACT &bull; ESTD. 1984</div>
                     </div>
                 </div>
 
                 <div class="college-affiliation-text">
-                    Approved by AICTE, New Delhi &bull; Affiliated to State Technological University (JNTUH)<br>
-                    Accredited by NAAC with <b>'A++' Grade</b> &bull; NBA Accredited UG Programmes &bull; Hyderabad - 501510
+                    Approved by AICTE, New Delhi &bull; Deemed to be University under Sec. 3 of UGC Act, 1956 • Anand Nagar, Krishnankoil, Tamil Nadu<br>
+                    Accredited by NAAC with <b>'A++' Grade</b> &bull; NBA Accredited UG Programmes &bull; Tamil Nadu - 626126
                 </div>
 
                 <div class="marksheet-title-ribbon">
@@ -2073,12 +2099,12 @@
             </div>
 
             <div class="progress-card-body">
-                <div class="progress-watermark">BIET OFFICIAL TRANSCRIPT</div>
+                <div class="progress-watermark">KARE OFFICIAL TRANSCRIPT</div>
 
                 <div class="marksheet-serial-row">
                     <div>
                         <span>CERTIFICATE SL. NO: </span>
-                        <span class="serial-badge val-cardSerialNo">BIET/2026/UG/0004</span>
+                        <span class="serial-badge val-cardSerialNo">KARE/2026/UG/0004</span>
                     </div>
                     <div>
                         <span>EXAMINATION: </span>
@@ -2172,7 +2198,7 @@
                         <div class="val-cardStampContainer"></div>
                         <div class="security-cert-hash">
                             <span class="cert-dot"></span>
-                            <span class="val-cardCertHash">BIET-DIGI-CERT-2026-0004</span>
+                            <span class="val-cardCertHash">KARE-DIGI-CERT-2026-0004</span>
                         </div>
                     </div>
 
@@ -2182,7 +2208,7 @@
                             <circle cx="40" cy="40" r="38" stroke="#1e3a8a" stroke-width="2" stroke-dasharray="4,2"/>
                             <circle cx="40" cy="40" r="33" stroke="#1e3a8a" stroke-width="1.2"/>
                             <circle cx="40" cy="40" r="14" fill="rgba(30, 58, 138, 0.08)" stroke="#1e3a8a" stroke-width="1"/>
-                            <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">BIET AUTONOMOUS</text>
+                            <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">KARE DEEMED UNIVERSITY</text>
                             <text x="40" y="42.5" font-size="7.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" font-family="'Cinzel', serif">SEAL</text>
                             <text x="40" y="60" font-size="4.5" font-weight="800" fill="#1e3a8a" text-anchor="middle" letter-spacing="0.5">★ EXAM BRANCH ★</text>
                         </svg>
@@ -2568,6 +2594,83 @@
     </div>
 
     <!-- ====================================================
+         COMPLETE SUBJECT EVALUATION MODAL (ALL 4 SUBJECTS MATRIX)
+    ==================================================== -->
+    <div class="modal-backdrop" id="completeSubjectEvaluationModal">
+        <div class="modal-content" style="max-width: 920px; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(99, 102, 241, 0.45); box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95); border-radius: 18px;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 16px 22px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 42px; height: 42px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 15px rgba(99,102,241,0.4);">
+                        📊
+                    </div>
+                    <div>
+                        <h3 style="font-size: 17px; color: #fff; margin: 0; font-weight: 800;">
+                            Complete Subject Evaluation & Performance Matrix
+                        </h3>
+                        <p style="font-size: 12px; color: #94a3b8; margin: 2px 0 0 0;">
+                            Autonomous End-Semester Evaluation across Mathematics, Applied Science, English & Programming
+                        </p>
+                    </div>
+                </div>
+                <button type="button" class="modal-close" onclick="closeCompleteSubjectEvaluationModal()">&times;</button>
+            </div>
+
+            <div class="modal-body" style="padding: 20px 22px; max-height: 74vh; overflow-y: auto;">
+                <!-- Student Switcher & Profile Header Card -->
+                <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 16px 20px; margin-bottom: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+                        <div>
+                            <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Select Student to Inspect:</span>
+                            <div style="margin-top: 4px;">
+                                <select id="completeEvalStudentSelect" onchange="renderCompleteSubjectEvaluationModal(this.value)" class="auth-control" style="font-size: 13px; font-weight: 700; padding: 7px 14px; width: 340px; background: rgba(15, 23, 42, 0.9); border-color: rgba(99, 102, 241, 0.5); color: #fff;">
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div id="completeEvalPillsContainer" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                            <!-- Injected student quick badges -->
+                        </div>
+                    </div>
+
+                    <!-- Student Key Metrics Summary Strip -->
+                    <div id="completeEvalSummaryStrip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px;">
+                        <!-- Injected summary metrics -->
+                    </div>
+                </div>
+
+                <!-- 4-Subject Evaluation Cards Grid -->
+                <div style="margin-bottom: 10px;">
+                    <h4 style="font-size: 13px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>📚</span> Course Paper Evaluation (4 Subjects &bull; 400 Total Marks)
+                    </h4>
+                    <div id="completeEvalCardsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px;">
+                        <!-- Injected 4 subject cards -->
+                    </div>
+                </div>
+
+                <!-- Cohort Comparison & Faculty Insights -->
+                <div id="completeEvalCohortComparisonBox" style="margin-top: 20px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 16px 20px;">
+                    <!-- Injected comparison table & recommendation -->
+                </div>
+            </div>
+
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding: 14px 22px; background: rgba(15, 23, 42, 0.6);">
+                <div style="font-size: 12px; color: #94a3b8;">
+                    Evaluation Certified by Office of Controller of Examinations &bull; KARE
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button type="button" class="btn btn-outline btn-sm" id="btnCompleteEvalMarksheet" onclick="openStudentMarksheetFromEval()" style="border-color: #818cf8; color: #c7d2fe;">
+                        🎓 Official Marksheet
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="closeCompleteSubjectEvaluationModal()">
+                        Close Evaluation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
          EXECUTIVE DOSSIER & INSTITUTIONAL AUDIT MODAL
     ==================================================== -->
     <div class="modal" id="executiveReportModal">
@@ -2579,7 +2682,7 @@
                         <span>Institutional Performance Dossier & CBCS Audit</span>
                         <span class="badge-version" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: #34d399;">Accredited NAAC 'A+'</span>
                     </h2>
-                    <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Bharath Institute of Engineering & Technology (Autonomous) • Academic Year 2025-2026 Audit</p>
+                    <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Kalasalingam Academy of Research and Education (Deemed to be University) • Academic Year 2025-2026 Audit • Tamil Nadu</p>
                 </div>
                 <button type="button" class="modal-close" onclick="closeExecutiveReportModal()">&times;</button>
             </div>
@@ -2652,6 +2755,310 @@
                     <button type="button" class="btn btn-outline" onclick="closeBroadcastModal()">Cancel</button>
                     <button type="submit" class="btn btn-accent" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 700;">
                         📢 Dispatch Broadcast to Students
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         FACULTY ADD FEE MODAL (SITUATION & DEADLINE ENGINE)
+    ==================================================== -->
+    <div class="modal-backdrop" id="facultyAddFeeModal">
+        <div class="modal-content" style="max-width: 640px; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 25px 70px rgba(0,0,0,0.85);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px;">
+                <div>
+                    <h3 style="display: flex; align-items: center; gap: 8px; font-size: 17px; color: #fff;">
+                        <span>➕</span> Add Fee by Situation & Set Deadline
+                    </h3>
+                    <p style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Sanction special situational fee charges, penalties, or concessions with an enforcement deadline</p>
+                </div>
+                <button type="button" class="modal-close" onclick="closeFacultyAddFeeModal()">&times;</button>
+            </div>
+            <form id="facultyAddFeeForm" onsubmit="handleFacultyAddFeeSubmit(event)">
+                <div class="modal-body" style="padding: 20px; display: flex; flex-direction: column; gap: 14px; max-height: 70vh; overflow-y: auto;">
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Target Student / Cohort</label>
+                        <select id="facAddFeeStudentSelect" class="auth-control" required style="width: 100%;">
+                            <!-- Dynamically populated -->
+                        </select>
+                    </div>
+
+                    <!-- Situation Preset Chips -->
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Quick Situation Presets</label>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button type="button" class="situation-preset-chip" onclick="applyFacultyAddFeePreset('remedial')">📝 Remedial Exam (₹1,500)</button>
+                            <button type="button" class="situation-preset-chip" onclick="applyFacultyAddFeePreset('late_reg')">⚡ Late Registration (₹500)</button>
+                            <button type="button" class="situation-preset-chip" onclick="applyFacultyAddFeePreset('lab_damage')">🔬 Lab Breakage (₹1,200)</button>
+                            <button type="button" class="situation-preset-chip" onclick="applyFacultyAddFeePreset('hostel_dues')">🏢 Hostel / Mess (₹24,000)</button>
+                            <button type="button" class="situation-preset-chip" onclick="applyFacultyAddFeePreset('convocation')">📜 Convocation (₹3,000)</button>
+                            <button type="button" class="situation-preset-chip" onclick="applyFacultyAddFeePreset('waiver')">🎓 Special Concession (-₹5,000)</button>
+                            <button type="button" class="situation-preset-chip" onclick="applyFacultyAddFeePreset('custom')">✏️ Custom Situation</button>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Fee Title / Designation</label>
+                            <input type="text" id="facAddFeeName" class="auth-control" placeholder="e.g. Autonomous Remedial Exam Valuation" required style="width: 100%;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Category</label>
+                            <select id="facAddFeeCategory" class="auth-control" style="width: 100%;">
+                                <option value="Examinations">Examinations</option>
+                                <option value="Academic">Academic</option>
+                                <option value="Laboratories">Laboratories</option>
+                                <option value="Facilities">Facilities</option>
+                                <option value="Hostel">Hostel & Mess</option>
+                                <option value="Penalties">Penalties & Late Fines</option>
+                                <option value="Concession">Special Concession</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Situation / Reason for Fee Assessment</label>
+                        <textarea id="facAddFeeSituation" class="auth-control" rows="2" placeholder="Explain the specific situation or circumstance for imposing or adjusting this fee (e.g. Student missed registration window due to medical leave; sanctioned by HOD)..." required style="width: 100%; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Fee Amount (₹)</label>
+                            <input type="number" id="facAddFeeAmount" class="auth-control" min="-50000" max="200000" step="50" placeholder="e.g. 1500" required style="width: 100%;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span>⏰ Payment Deadline</span>
+                                <span style="font-size: 10px; color: #fb7185;">(Enforcement Date)</span>
+                            </label>
+                            <input type="date" id="facAddFeeDueDate" class="auth-control" required style="width: 100%;">
+                            <div style="display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap;">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyAddFeeDeadlineDays(7)" style="padding: 2px 6px; font-size: 10px;">+7 Days</button>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyAddFeeDeadlineDays(14)" style="padding: 2px 6px; font-size: 10px;">+14 Days</button>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyAddFeeDeadlineDays(30)" style="padding: 2px 6px; font-size: 10px;">+30 Days</button>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyAddFeeDeadlineDate('2026-04-15')" style="padding: 2px 6px; font-size: 10px;">15-Apr-2026</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Initial Status</label>
+                            <select id="facAddFeeStatus" class="auth-control" style="width: 100%;">
+                                <option value="DUE" selected>● DUE (Pending Payment by Student)</option>
+                                <option value="PAID">✓ PAID (Received Offline at Accounts)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Sanction Order / Note</label>
+                            <input type="text" id="facAddFeeNotes" class="auth-control" placeholder="e.g. Sanction Ref #CSE/2026/FEE/104" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+                    <button type="button" class="btn btn-outline" onclick="closeFacultyAddFeeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-accent" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700;">
+                        💾 Save & Apply Fee Record
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         FACULTY MANAGE STUDENT FEES MODAL (LEDGER VIEW)
+    ==================================================== -->
+    <div class="modal-backdrop" id="facultyManageStudentFeesModal">
+        <div class="modal-content" style="max-width: 860px; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 25px 80px rgba(0,0,0,0.9);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px;">
+                <div>
+                    <h3 style="display: flex; align-items: center; gap: 8px; font-size: 17px; color: #fff;">
+                        <span>⚙️</span> Student Fee Ledger & Situation Administration
+                    </h3>
+                    <p style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Review, add, and modify individual fee items, deadline enforcements, and payment clearances</p>
+                </div>
+                <button type="button" class="modal-close" onclick="closeFacultyManageStudentFeesModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <!-- Student Summary Banner -->
+                <div id="facManageStudentBanner" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <!-- Injected dynamically -->
+                </div>
+
+                <!-- Action row -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div style="font-size: 13px; font-weight: 800; color: #e2e8f0; text-transform: uppercase; letter-spacing: 0.5px;">
+                        📋 Itemized Statutory & Situational Fee Breakdown
+                    </div>
+                    <button type="button" class="btn btn-accent btn-sm" id="btnManageAddFeeForStudent" onclick="facultyQuickAddForCurrentStudent()" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700;">
+                        ➕ Add Fee for this Student
+                    </button>
+                </div>
+
+                <!-- Fee Items List Container -->
+                <div class="manage-fees-modal-grid" id="facManageFeeItemsList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+                <button type="button" class="btn btn-outline" onclick="closeFacultyManageStudentFeesModal()">Close Ledger</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         FACULTY EDIT FEE ITEM MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="facultyEditFeeModal">
+        <div class="modal-content" style="max-width: 600px; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 25px 70px rgba(0,0,0,0.85);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px;">
+                <div>
+                    <h3 style="display: flex; align-items: center; gap: 8px; font-size: 17px; color: #fff;">
+                        <span>✏️</span> Edit Fee Item & Payment Deadline
+                    </h3>
+                    <p style="font-size: 12px; color: #94a3b8; margin-top: 2px;" id="facEditStudentHeader">Updating fee details</p>
+                </div>
+                <button type="button" class="modal-close" onclick="closeFacultyEditFeeModal()">&times;</button>
+            </div>
+            <form id="facultyEditFeeForm" onsubmit="handleFacultyEditFeeSubmit(event)">
+                <input type="hidden" id="facEditStudentId">
+                <input type="hidden" id="facEditItemKey">
+
+                <div class="modal-body" style="padding: 20px; display: flex; flex-direction: column; gap: 14px; max-height: 70vh; overflow-y: auto;">
+                    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Fee Name</label>
+                            <input type="text" id="facEditFeeName" class="auth-control" required style="width: 100%;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Category</label>
+                            <select id="facEditFeeCategory" class="auth-control" style="width: 100%;">
+                                <option value="Academic">Academic</option>
+                                <option value="Examinations">Examinations</option>
+                                <option value="Laboratories">Laboratories</option>
+                                <option value="Facilities">Facilities</option>
+                                <option value="Hostel">Hostel & Mess</option>
+                                <option value="Penalties">Penalties & Late Fines</option>
+                                <option value="Concession">Special Concession</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Situation / Reason for Fee</label>
+                        <textarea id="facEditFeeSituation" class="auth-control" rows="2" placeholder="Circumstance, situation reason, or justification..." style="width: 100%; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Fee Amount (₹)</label>
+                            <input type="number" id="facEditFeeAmount" class="auth-control" min="-50000" max="200000" step="50" required style="width: 100%;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span>⏰ Payment Deadline</span>
+                                <span style="font-size: 10px; color: #fb7185;">(Enforcement Date)</span>
+                            </label>
+                            <input type="date" id="facEditFeeDueDate" class="auth-control" required style="width: 100%;">
+                            <div style="display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap;">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyEditFeeDeadlineDays(7)" style="padding: 2px 6px; font-size: 10px;">+7 Days</button>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyEditFeeDeadlineDays(14)" style="padding: 2px 6px; font-size: 10px;">+14 Days</button>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyEditFeeDeadlineDays(30)" style="padding: 2px 6px; font-size: 10px;">+30 Days</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Clearance Status</label>
+                            <select id="facEditFeeStatus" class="auth-control" style="width: 100%;">
+                                <option value="DUE">● DUE (Outstanding Dues)</option>
+                                <option value="PAID">✓ PAID (Cleared)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Faculty Remarks / Sanction Notes</label>
+                            <input type="text" id="facEditFeeNotes" class="auth-control" placeholder="e.g. Extended with approval" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+                    <button type="button" class="btn btn-outline" onclick="closeFacultyEditFeeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-accent" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 700;">
+                        💾 Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         FACULTY BATCH DEADLINE EXTENDER MODAL
+    ==================================================== -->
+    <div class="modal-backdrop" id="facultyBatchDeadlineModal">
+        <div class="modal-content" style="max-width: 580px; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 25px 70px rgba(0,0,0,0.85);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px;">
+                <div>
+                    <h3 style="display: flex; align-items: center; gap: 8px; font-size: 17px; color: #fff;">
+                        <span>📅</span> Batch Payment Deadline Extender
+                    </h3>
+                    <p style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Uniformly update or extend payment deadlines for cohorts or specific fee categories</p>
+                </div>
+                <button type="button" class="modal-close" onclick="closeFacultyBatchDeadlineModal()">&times;</button>
+            </div>
+            <form id="facultyBatchDeadlineForm" onsubmit="handleFacultyBatchDeadlineSubmit(event)">
+                <div class="modal-body" style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Fee Scope</label>
+                            <select id="facBatchScope" class="auth-control" style="width: 100%;">
+                                <option value="all_due">All Pending Dues (Any Category)</option>
+                                <option value="exam">Autonomous Exam Fee Only</option>
+                                <option value="tuition">Tuition & Academic Fee Only</option>
+                                <option value="lab">Lab & Computing Fee Only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Target Department</label>
+                            <select id="facBatchTargetDept" class="auth-control" style="width: 100%;">
+                                <option value="all">All Departments (Entire Cohort)</option>
+                                <option value="CSE">CSE Department</option>
+                                <option value="ECE">ECE Department</option>
+                                <option value="EEE">EEE Department</option>
+                                <option value="MECH">MECH Department</option>
+                                <option value="CIVIL">CIVIL Department</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">New Payment Deadline Date</label>
+                        <input type="date" id="facBatchDueDate" class="auth-control" required style="width: 100%;">
+                        <div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyBatchDeadlineDays(7)" style="padding: 2px 8px; font-size: 11px;">+7 Days</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyBatchDeadlineDays(14)" style="padding: 2px 8px; font-size: 11px;">+14 Days</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyBatchDeadlineDays(30)" style="padding: 2px 8px; font-size: 11px;">+30 Days</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="setFacultyBatchDeadlineDate('2026-04-30')" style="padding: 2px 8px; font-size: 11px;">30-Apr-2026</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 5px;">Justification / Authority Order</label>
+                        <input type="text" id="facBatchReason" class="auth-control" placeholder="e.g. Extended by order of Academic Dean due to festival recess" required style="width: 100%;">
+                    </div>
+
+                    <div style="background: rgba(30, 41, 59, 0.5); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+                        <label style="font-size: 12px; color: #e2e8f0; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="facBatchBroadcastNotice" checked style="accent-color: #6366f1;">
+                            <span>📢 Automatically broadcast announcement to affected students about this extension</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+                    <button type="button" class="btn btn-outline" onclick="closeFacultyBatchDeadlineModal()">Cancel</button>
+                    <button type="submit" class="btn btn-accent" style="background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; font-weight: 700;">
+                        📅 Update Deadlines
                     </button>
                 </div>
             </form>
@@ -2996,9 +3403,9 @@
     <!-- ====================================================
          AI EXPLAINER: FLOATING LAUNCHER ORB & ASSISTANT DRAWER
     ==================================================== -->
-    <div class="ai-explainer-launcher" id="aiExplainerLauncher" onclick="toggleAiExplainer()" title="Ask AI Explainer (Faculty Advisor & Student Doubt Solver)">
+    <div class="ai-explainer-launcher" id="aiExplainerLauncher" onclick="toggleAiExplainer()" title="Ask AI Explorer / Explainer (Faculty Copilot & Student Academic Mentor)">
         <div class="ai-launcher-icon">✨</div>
-        <span>AI Explainer</span>
+        <span>AI Explorer</span>
         <span class="ai-launcher-badge">ONLINE</span>
     </div>
 
@@ -3011,7 +3418,7 @@
                     <div class="ai-status-pulse"></div>
                 </div>
                 <div class="ai-header-info">
-                    <h4 id="aiExplainerTitle">AI Academic Explainer</h4>
+                    <h4 id="aiExplainerTitle">AI Academic Explorer & Copilot</h4>
                     <p id="aiExplainerSub">Institutional Knowledge & Doubt Solver</p>
                 </div>
             </div>
@@ -3102,12 +3509,140 @@
                 <span>Engine: <b>EduPulseDB v2.1 (HTML5 Web Storage API)</b></span>
                 <button type="button" class="btn btn-primary btn-sm" onclick="closeDatabaseModal()">Close Console</button>
             </div>
+    <!-- ====================================================
+         MASTER ALL-STUDENT MARKS & GRADEBOOK MODAL
+         (Instant 1-Click Consolidated Marksheet for All Students)
+    ==================================================== -->
+    <div class="modal-backdrop" id="allStudentMarksModal">
+        <div class="modal-content" style="max-width: 1300px; width: 96vw; max-height: 92vh; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(99, 102, 241, 0.45); box-shadow: 0 25px 90px rgba(0, 0, 0, 0.95); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden;">
+            
+            <!-- Modal Header -->
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 18px 24px; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #2563eb, #7c3aed); display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 4px 18px rgba(37, 99, 235, 0.45);">
+                        📋
+                    </div>
+                    <div>
+                        <h2 style="font-size: 18px; color: #fff; margin: 0; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                            Master Academic Gradebook & Cohort Marksheet Roster
+                            <span class="badge" style="background: rgba(99, 102, 241, 0.25); color: #c7d2fe; border: 1px solid rgba(99, 102, 241, 0.4); font-size: 11px; padding: 2px 8px; border-radius: 6px;">Total Cohort</span>
+                        </h2>
+                        <p style="font-size: 12px; color: #94a3b8; margin: 3px 0 0 0;">
+                            Consolidated 4-subject marks, total marks, percentages, SGPAs, attendance & statutory autonomous results
+                        </p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="printAllStudentMarks()" style="font-size: 12px; border-color: rgba(148, 163, 184, 0.3); color: #e2e8f0; display: inline-flex; align-items: center; gap: 5px;">
+                        🖨️ Print Master Sheet
+                    </button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="exportToCSV()" style="font-size: 12px; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; display: inline-flex; align-items: center; gap: 5px;">
+                        ⬇️ Export CSV
+                    </button>
+                    <button type="button" class="modal-close" onclick="closeAllStudentMarksModal()" style="font-size: 24px; cursor: pointer; background: transparent; border: none; color: #94a3b8; padding: 4px 8px; line-height: 1;">&times;</button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding: 20px 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                
+                <!-- Telemetry Metrics Bar -->
+                <div id="allMarksStatsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px;">
+                    <!-- Injected dynamically via renderAllStudentMarksStats -->
+                </div>
+
+                <!-- Search & Filters Toolbar -->
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 260px;">
+                        <span style="font-size: 14px;">🔍</span>
+                        <input type="text" id="allMarksSearchInput" placeholder="Search by Student Name, Roll No or Department..." oninput="onAllMarksSearchInput(this.value)" style="width: 100%; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 12.5px; outline: none;">
+                    </div>
+
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                        <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Dept:</span>
+                        <div class="all-marks-dept-pills" style="display: flex; gap: 4px;">
+                            <button type="button" class="btn btn-outline btn-xs all-marks-pill active" id="ampill-dept-all" onclick="filterAllMarksDept('All')" style="font-size: 11px; padding: 3px 8px;">All</button>
+                            <button type="button" class="btn btn-outline btn-xs all-marks-pill" id="ampill-dept-CSE" onclick="filterAllMarksDept('CSE')" style="font-size: 11px; padding: 3px 8px;">CSE</button>
+                            <button type="button" class="btn btn-outline btn-xs all-marks-pill" id="ampill-dept-ECE" onclick="filterAllMarksDept('ECE')" style="font-size: 11px; padding: 3px 8px;">ECE</button>
+                            <button type="button" class="btn btn-outline btn-xs all-marks-pill" id="ampill-dept-EEE" onclick="filterAllMarksDept('EEE')" style="font-size: 11px; padding: 3px 8px;">EEE</button>
+                            <button type="button" class="btn btn-outline btn-xs all-marks-pill" id="ampill-dept-MECH" onclick="filterAllMarksDept('MECH')" style="font-size: 11px; padding: 3px 8px;">MECH</button>
+                            <button type="button" class="btn btn-outline btn-xs all-marks-pill" id="ampill-dept-CIVIL" onclick="filterAllMarksDept('CIVIL')" style="font-size: 11px; padding: 3px 8px;">CIVIL</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                        <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Status:</span>
+                        <div class="all-marks-status-pills" style="display: flex; gap: 4px;">
+                            <button type="button" class="btn btn-outline btn-xs all-marks-status-pill active" id="ampill-status-all" onclick="filterAllMarksStatus('all')" style="font-size: 11px; padding: 3px 8px;">All</button>
+                            <button type="button" class="btn btn-outline btn-xs all-marks-status-pill" id="ampill-status-pass" onclick="filterAllMarksStatus('pass')" style="font-size: 11px; padding: 3px 8px; color: #34d399; border-color: rgba(16,185,129,0.35);">🟢 Passed</button>
+                            <button type="button" class="btn btn-outline btn-xs all-marks-status-pill" id="ampill-status-fail" onclick="filterAllMarksStatus('fail')" style="font-size: 11px; padding: 3px 8px; color: #fb7185; border-color: rgba(244,63,94,0.35);">🔴 Arrears</button>
+                            <button type="button" class="btn btn-outline btn-xs all-marks-status-pill" id="ampill-status-topper" onclick="filterAllMarksStatus('topper')" style="font-size: 11px; padding: 3px 8px; color: #fbbf24; border-color: rgba(245,158,11,0.35);">🌟 Toppers</button>
+                            <button type="button" class="btn btn-outline btn-xs all-marks-status-pill" id="ampill-status-lowatt" onclick="filterAllMarksStatus('lowatt')" style="font-size: 11px; padding: 3px 8px; color: #f43f5e; border-color: rgba(244,63,94,0.35);">⚠️ Low Att (&lt;75%)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Record Count Strip -->
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #94a3b8; padding: 0 4px;">
+                    <div id="allMarksRecordCount">Loading records...</div>
+                    <div style="font-size: 11px; color: #64748b;">
+                        Tip: Click on any student row or the "🎓 Marksheet" button to view full autonomous UGC progress card
+                    </div>
+                </div>
+
+                <!-- Consolidated Master Table -->
+                <div class="table-responsive" style="max-height: 52vh; overflow-y: auto; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; background: rgba(15, 23, 42, 0.6);">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+                        <thead style="position: sticky; top: 0; z-index: 10; background: #0f172a; border-bottom: 2px solid rgba(99, 102, 241, 0.4);">
+                            <tr>
+                                <th style="padding: 10px; text-align: center; color: #818cf8; width: 60px;">ID</th>
+                                <th style="padding: 10px; text-align: left; color: #f1f5f9; min-width: 180px;">Student Name &amp; Roll No</th>
+                                <th style="padding: 10px; text-align: center; color: #cbd5e1; width: 75px;">Dept</th>
+                                <th style="padding: 10px; text-align: center; color: #cbd5e1; width: 70px;">Gender</th>
+                                <th style="padding: 10px; text-align: center; color: #818cf8; width: 80px;">Maths (100)</th>
+                                <th style="padding: 10px; text-align: center; color: #38bdf8; width: 85px;">Science (100)</th>
+                                <th style="padding: 10px; text-align: center; color: #34d399; width: 80px;">English (100)</th>
+                                <th style="padding: 10px; text-align: center; color: #c084fc; width: 80px;">Prog (100)</th>
+                                <th style="padding: 10px; text-align: center; color: #f8fafc; width: 95px; font-weight: 800;">Total (400)</th>
+                                <th style="padding: 10px; text-align: center; color: #38bdf8; width: 80px; font-weight: 800;">Pct (%)</th>
+                                <th style="padding: 10px; text-align: center; color: #fbbf24; width: 75px; font-weight: 800;">SGPA</th>
+                                <th style="padding: 10px; text-align: center; color: #cbd5e1; width: 85px;">Attendance</th>
+                                <th style="padding: 10px; text-align: center; color: #cbd5e1; width: 85px;">Result</th>
+                                <th style="padding: 10px; text-align: center; color: #cbd5e1; width: 75px;">Grade</th>
+                                <th style="padding: 10px; text-align: center; color: #cbd5e1; width: 140px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allMarksTableBody">
+                            <!-- Populated dynamically via renderAllStudentMarksRows -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer" style="padding: 14px 24px; border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                <div style="font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 8px;">
+                    <span>🏛️ Official Academic Gradebook</span>
+                    <span>&bull;</span>
+                    <span>UGC CBCS Evaluation Standard</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="switchToTableFromAllMarksModal()" style="border-color: rgba(99, 102, 241, 0.4); color: #c7d2fe;">
+                        📋 View in Page Gradebook
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="closeAllStudentMarksModal()">
+                        Close Gradebook
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <!-- Footer -->
     <footer>
-        Bharath Institute of Engineering & Technology (Autonomous) &bull; Minimum Qualifying Pass Criteria: 35 Marks
+        Kalasalingam Academy of Research and Education (Deemed to be University) &bull; Tamil Nadu &bull; Minimum Qualifying Pass Criteria: 35 Marks
         &bull; Official Academic Progress Card Portal
     </footer>
 

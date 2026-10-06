@@ -226,7 +226,7 @@ function generateKpiTouchDetails(kpiId, data, isStudent) {
                 colorName: "Academic Discipline",
                 title: `🏫 Department: ${s.department}`,
                 category: "AFFILIATION",
-                reason: `${DEPT_NAMES[s.department] || 'Engineering'} under BIET Autonomous Academic Framework.`,
+                reason: `${DEPT_NAMES[s.department] || 'Engineering'} under KARE Deemed to be University Academic Framework, Tamil Nadu.`,
                 stats: [
                     `Department: <b>${s.department}</b>`,
                     `Roll Number: <b>${s.rollNo || '22A91A0504'}</b>`,
@@ -593,6 +593,8 @@ function switchViewTab(tab) {
         broadcastSection.style("display", "none");
         assignmentSection.style("display", "none");
         aiSection.style("display", "none");
+        // Keep 100 students marks table collapsed by default so dashboard is clean and fast
+        toggleInlineStudentTable(false);
         if (student) {
             initStudentSelector();
             populateMarksheet(student);
@@ -601,7 +603,7 @@ function switchViewTab(tab) {
     } else if (tab === 'analytics') {
         analyticsSection.style("display", "block");
         marksheetSection.style("display", "none");
-        tableSection.style("display", "block");
+        tableSection.style("display", "none");
         feeSection.style("display", "none");
         broadcastSection.style("display", "none");
         assignmentSection.style("display", "none");
@@ -635,6 +637,8 @@ function switchViewTab(tab) {
         broadcastSection.style("display", "none");
         assignmentSection.style("display", "none");
         aiSection.style("display", "none");
+        // Expand the table when user explicitly selects the table tab
+        toggleInlineStudentTable(true);
         const el = document.getElementById("tableSection");
         if (el && typeof el.scrollIntoView === 'function') {
             try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
@@ -878,16 +882,44 @@ function updateKPIs(data, isStudent) {
 // 5. MASTER TABLE WITH TOUCH-TO-REVEAL STUDENT PROFILES
 // ----------------------------------------------------
 
+function toggleInlineStudentTable(show) {
+    const banner = document.getElementById("tableCollapsedBanner");
+    const content = document.getElementById("tableExpandedContent");
+    if (!content) return;
+
+    if (show) {
+        content.style.display = "block";
+        if (banner) banner.style.display = "none";
+        const el = document.getElementById("tableExpandedContent");
+        if (el && typeof el.scrollIntoView === 'function') {
+            try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+        }
+    } else {
+        if (typeof currentUser !== 'undefined' && currentUser && currentUser.role === 'Student') {
+            content.style.display = "block";
+            if (banner) banner.style.display = "none";
+            return;
+        }
+        content.style.display = "none";
+        if (banner) banner.style.display = "block";
+    }
+}
+window.toggleInlineStudentTable = toggleInlineStudentTable;
+
 function updateTable(data, isStudent) {
     const tableBody = d3.select("#studentTable");
+    const banner = document.getElementById("tableCollapsedBanner");
+    const content = document.getElementById("tableExpandedContent");
 
     if (isStudent) {
         d3.select("#tableSectionHeading").text("📋 My Academic Evaluation & Marksheet");
-        d3.select("#tableRecordCount").html(`Displaying personal record for <b>${currentUser.name}</b> (Touch row for breakdown)`);
+        d3.select("#tableRecordCount").html(`Displaying personal record for <b>${currentUser.name}</b> • <button type="button" class="btn btn-accent btn-xs" onclick="openCompleteSubjectEvaluationModal('${currentUser.id}')" style="margin-left: 8px; font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer; background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff; border: none; font-weight: 700; box-shadow: 0 2px 8px rgba(99,102,241,0.35);">📊 View Complete Subject Evaluation</button>`);
         d3.select("#thActions").style("display", "none");
+        if (banner) banner.style.display = "none";
+        if (content) content.style.display = "block";
     } else {
         d3.select("#tableSectionHeading").text("📋 Student Academic Records & Progress Cards");
-        d3.select("#tableRecordCount").html(`Displaying <b>${data.length}</b> of <b>${students.length}</b> students • <i>Touch any row to view complete subject evaluation</i>`);
+        d3.select("#tableRecordCount").html(`Displaying <b>${data.length}</b> of <b>${students.length}</b> students • <button type="button" class="btn btn-accent btn-xs" id="btnRecordCountSubjectEval" onclick="openCompleteSubjectEvaluationModal()" style="margin-left: 6px; font-size: 11.5px; padding: 4px 12px; border-radius: 6px; cursor: pointer; background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff; border: 1px solid rgba(165,180,252,0.4); font-weight: 700; box-shadow: 0 2px 8px rgba(99,102,241,0.35); vertical-align: middle; transition: all 0.2s ease;">📊 View Complete Subject Evaluation</button> • <i>Touch any row to view complete subject evaluation</i>`);
         d3.select("#thActions").style("display", "");
     }
 
@@ -956,19 +988,34 @@ function updateTable(data, isStudent) {
             <td style="text-align: center;"><span style="color:${attColor}; font-weight:800; font-family: 'Space Grotesk', monospace;">${d.attendance}%</span></td>
             <td style="text-align: center;"><span class="badge ${d.status === 'Pass' ? 'status-pass' : 'status-fail'}">${d.status === 'Pass' ? 'PASS' : 'FAIL'}</span></td>
             <td style="text-align: center;"><span class="badge grade-${d.grade}">Gr. ${d.grade}</span></td>
-            <td style="text-align: center;">
-                <button type="button" class="btn-progress-card" 
-                        onclick="openProgressCard(${d.id})"
-                        title="View Official University Marksheet">
-                    🎓 Marksheet
-                </button>
+            <td style="text-align: center; white-space: nowrap;">
+                <div style="display: inline-flex; gap: 4px; align-items: center; justify-content: center;">
+                    <button type="button" class="btn-progress-card" 
+                            onclick="openProgressCard(${d.id})"
+                            title="View Official University Marksheet">
+                        🎓 Marksheet
+                    </button>
+                    <button type="button" class="btn-progress-card" 
+                            onclick="event.stopPropagation(); openCompleteSubjectEvaluationModal(${d.id})"
+                            style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(129, 140, 248, 0.5); color: #c7d2fe; padding: 4px 8px; font-size: 11px;"
+                            title="View Complete 4-Subject Evaluation for ${d.name}">
+                        📊 Eval
+                    </button>
+                </div>
             </td>
             ${actionsHtml}
         `;
     });
 
-    // Attach Touch & Hover Listeners to EVERY Student Row
+    // Attach Click and Touch/Hover Listeners to EVERY Student Row
     rows
+        .style("cursor", "pointer")
+        .on("click", function (event, d) {
+            if (event.target.tagName === 'BUTTON' || event.target.closest('button') || event.target.tagName === 'A' || event.target.closest('a')) {
+                return;
+            }
+            openCompleteSubjectEvaluationModal(d.id);
+        })
         .on("pointerenter touchstart", function (event, d) {
             d3.select(this).classed("touch-active", true);
             showTooltip(event, generateStudentTouchDetails(d));
@@ -1400,4 +1447,642 @@ function populateExecutiveDossier() {
         ${arrearsHtml}
     `);
 }
+
+/* ====================================================
+   COMPLETE 4-SUBJECT EVALUATION MATRIX MODAL SUITE
+   Touch & Click inspector across all 100 students
+==================================================== */
+
+const COMPLETE_SUBJECTS_CATALOG = [
+    {
+        key: 'maths',
+        code: 'CS501',
+        name: 'Engineering Mathematics - III',
+        department: 'Basic Sciences & Mathematics',
+        credits: 4,
+        maxMarks: 100,
+        passMarks: 35,
+        color: '#6366f1',
+        icon: '📐',
+        syllabusUnit: 'Discrete Calculus, Fourier Series & Linear Algebra',
+        facultyInCharge: 'Dr. S. R. Rao, Ph.D.'
+    },
+    {
+        key: 'science',
+        code: 'CS502',
+        name: 'Applied Science & Physics',
+        department: 'Applied Sciences Division',
+        credits: 4,
+        maxMarks: 100,
+        passMarks: 35,
+        color: '#0ea5e9',
+        icon: '🔬',
+        syllabusUnit: 'Quantum Mechanics, Solid State Physics & Optoelectronics',
+        facultyInCharge: 'Dr. M. K. Sharma, Ph.D.'
+    },
+    {
+        key: 'english',
+        code: 'CS503',
+        name: 'Professional English & Tech Comm',
+        department: 'Humanities & Social Sciences',
+        credits: 4,
+        maxMarks: 100,
+        passMarks: 35,
+        color: '#10b981',
+        icon: '📖',
+        syllabusUnit: 'Technical Documentation, Corporate Oratory & Research Writing',
+        facultyInCharge: 'Prof. Ananya Sen, M.Phil.'
+    },
+    {
+        key: 'programming',
+        code: 'CS504',
+        name: 'Data Structures & Web Architecture',
+        department: 'Computer Science & Engineering',
+        credits: 4,
+        maxMarks: 100,
+        passMarks: 35,
+        color: '#a855f7',
+        icon: '💻',
+        syllabusUnit: 'Algorithms, Object Oriented Paradigms, DOM & Full-Stack Tech',
+        facultyInCharge: 'Prof. K. V. Raman, M.Tech.'
+    }
+];
+
+function openCompleteSubjectEvaluationModal(studentId) {
+    const modal = document.getElementById("completeSubjectEvaluationModal");
+    if (!modal) return;
+
+    // Pick student: passed ID -> or currentSelectedStudentId -> or currently logged in student -> or first student
+    let targetId = studentId;
+    if (targetId === undefined || targetId === null) {
+        if (typeof currentUser !== 'undefined' && currentUser && currentUser.role === 'Student') {
+            targetId = currentUser.id;
+        } else if (typeof currentSelectedStudentId !== 'undefined' && currentSelectedStudentId) {
+            targetId = currentSelectedStudentId;
+        } else if (Array.isArray(students) && students.length > 0) {
+            targetId = students[0].id;
+        } else {
+            targetId = 1;
+        }
+    }
+
+    // Populate student select dropdown with all students
+    const select = document.getElementById("completeEvalStudentSelect");
+    if (select && Array.isArray(students)) {
+        select.innerHTML = students.map(s => {
+            const isSel = String(s.id) === String(targetId);
+            return `<option value="${s.id}" ${isSel ? 'selected' : ''}>#${s.id} - ${s.name} (${s.department}) [Roll: ${s.rollNo || ('22A91A05' + String(s.id).padStart(2,'0'))}]</option>`;
+        }).join('');
+    }
+
+    renderCompleteSubjectEvaluationModal(targetId);
+
+    modal.classList.add("active");
+    modal.style.display = "flex";
+    modal.style.opacity = "1";
+    modal.style.visibility = "visible";
+    modal.style.pointerEvents = "auto";
+}
+
+function closeCompleteSubjectEvaluationModal() {
+    const modal = document.getElementById("completeSubjectEvaluationModal");
+    if (!modal) return;
+    modal.classList.remove("active");
+    modal.style.display = "none";
+    modal.style.opacity = "0";
+    modal.style.visibility = "hidden";
+    modal.style.pointerEvents = "none";
+}
+
+function openStudentMarksheetFromEval() {
+    const select = document.getElementById("completeEvalStudentSelect");
+    const studentId = select ? select.value : (typeof currentSelectedStudentId !== 'undefined' ? currentSelectedStudentId : 1);
+    closeCompleteSubjectEvaluationModal();
+    if (typeof openProgressCard === 'function') {
+        openProgressCard(studentId);
+    }
+}
+
+function renderCompleteSubjectEvaluationModal(studentId) {
+    if (!Array.isArray(students) || students.length === 0) return;
+    
+    const student = students.find(s => String(s.id) === String(studentId)) || students[0];
+    if (!student) return;
+
+    if (typeof currentSelectedStudentId !== 'undefined') {
+        currentSelectedStudentId = student.id;
+    }
+
+    // Sync select dropdown
+    const select = document.getElementById("completeEvalStudentSelect");
+    if (select && select.value !== String(student.id)) {
+        select.value = String(student.id);
+    }
+
+    // 1. Header Pills Container
+    const pillsContainer = document.getElementById("completeEvalPillsContainer");
+    if (pillsContainer) {
+        const isPass = student.status === 'Pass';
+        const statusBadge = isPass 
+            ? `<span class="badge status-pass" style="font-weight: 800; padding: 4px 10px;">✅ SEMESTER CLEARED</span>`
+            : `<span class="badge status-fail" style="font-weight: 800; padding: 4px 10px;">⚠️ ARREARS DETECTED</span>`;
+
+        pillsContainer.innerHTML = `
+            <span class="badge badge-dept" style="font-size: 12px; padding: 5px 12px;">🏛️ Dept: ${student.department}</span>
+            <span class="badge" style="background: rgba(99, 102, 241, 0.2); color: #c7d2fe; font-size: 12px; padding: 5px 10px;">🆔 ${student.rollNo || ('22A91A05' + String(student.id).padStart(2,'0'))}</span>
+            <span class="badge" style="background: rgba(14, 165, 233, 0.2); color: #7dd3fc; font-size: 12px; padding: 5px 10px;">👤 ${student.gender}</span>
+            ${statusBadge}
+            <span class="badge grade-${student.grade}" style="font-size: 12px; padding: 5px 12px; font-weight: 800;">Grade: ${student.grade}</span>
+        `;
+    }
+
+    // 2. Student Key Metrics Summary Strip
+    const summaryStrip = document.getElementById("completeEvalSummaryStrip");
+    if (summaryStrip) {
+        const cohortAvg = d3.mean(students, s => s.average) || 0;
+        const diffFromAvg = (student.average - cohortAvg).toFixed(1);
+        const diffSign = diffFromAvg >= 0 ? `+${diffFromAvg}` : `${diffFromAvg}`;
+        const diffColor = diffFromAvg >= 0 ? '#34d399' : '#f87171';
+
+        // Rank in cohort
+        const sortedStudents = [...students].sort((a, b) => b.average - a.average);
+        const rank = sortedStudents.findIndex(s => s.id === student.id) + 1;
+
+        summaryStrip.innerHTML = `
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700;">Grand Total</div>
+                <div style="font-size: 16px; font-weight: 800; color: #f8fafc; font-family: 'Space Grotesk', monospace; margin-top: 2px;">
+                    ${student.total} <span style="font-size: 11px; color: #64748b;">/ 400</span>
+                </div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700;">Aggregate %</div>
+                <div style="font-size: 16px; font-weight: 800; color: #a5b4fc; font-family: 'Space Grotesk', monospace; margin-top: 2px;">
+                    ${student.average.toFixed(2)}%
+                </div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700;">CBCS SGPA</div>
+                <div style="font-size: 16px; font-weight: 800; color: #38bdf8; font-family: 'Space Grotesk', monospace; margin-top: 2px;">
+                    ${student.gpa || (student.average / 10).toFixed(2)} <span style="font-size: 11px; color: #64748b;">/ 10</span>
+                </div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700;">Cohort Rank</div>
+                <div style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: 'Space Grotesk', monospace; margin-top: 2px;">
+                    #${rank} <span style="font-size: 11px; color: #64748b;">of ${students.length}</span>
+                </div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700;">Cohort Variance</div>
+                <div style="font-size: 16px; font-weight: 800; color: ${diffColor}; font-family: 'Space Grotesk', monospace; margin-top: 2px;">
+                    ${diffSign}%
+                </div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700;">Attendance</div>
+                <div style="font-size: 16px; font-weight: 800; color: ${student.attendance >= 75 ? '#34d399' : '#fb7185'}; font-family: 'Space Grotesk', monospace; margin-top: 2px;">
+                    ${student.attendance}%
+                </div>
+            </div>
+        `;
+    }
+
+    // 3. 4-Subject Evaluation Cards Grid
+    const cardsGrid = document.getElementById("completeEvalCardsGrid");
+    if (cardsGrid) {
+        cardsGrid.innerHTML = COMPLETE_SUBJECTS_CATALOG.map(subj => {
+            const rawScore = Number(student[subj.key]) || 0;
+            const isSubjPass = rawScore >= subj.passMarks;
+            
+            // Theory (70%) and Internal/Practical (30%) breakdown
+            const theoryMark = Math.round(rawScore * 0.70);
+            const internalMark = rawScore - theoryMark;
+
+            // UGC Grading
+            const gradeInfo = typeof getSubjectGradeInfo === 'function' 
+                ? getSubjectGradeInfo(rawScore) 
+                : { grade: rawScore >= 90 ? 'O' : rawScore >= 80 ? 'A' : rawScore >= 70 ? 'B' : rawScore >= 60 ? 'C' : rawScore >= 35 ? 'D' : 'F', gradePoint: Math.min(10, Math.floor(rawScore/10) + 1), description: rawScore >= 35 ? 'Pass' : 'Fail', isPass: rawScore >= 35 };
+
+            // Cohort metrics for this subject
+            const cohortSubjectMean = d3.mean(students, s => Number(s[subj.key]) || 0) || 0;
+            const cohortSubjectMax = d3.max(students, s => Number(s[subj.key]) || 0) || 100;
+            const cohortSubjectMin = d3.min(students, s => Number(s[subj.key]) || 0) || 0;
+            const deviation = (rawScore - cohortSubjectMean).toFixed(1);
+            const devSign = deviation >= 0 ? `+${deviation}` : `${deviation}`;
+            const devColor = deviation >= 0 ? '#34d399' : '#f87171';
+
+            // Custom faculty remarks based on score band
+            let facultyRemark = "";
+            if (rawScore >= 90) {
+                facultyRemark = "🌟 Exceptional mastery. Consistently displays flawless theoretical formulation and practical problem solving.";
+            } else if (rawScore >= 80) {
+                facultyRemark = "✨ Strong analytical acumen. High conceptual clarity with consistent performance across assessments.";
+            } else if (rawScore >= 70) {
+                facultyRemark = "👍 Good solid comprehension. Meets all subject benchmarks; minor refinement needed in advanced topics.";
+            } else if (rawScore >= 60) {
+                facultyRemark = "Satisfactory grasp. Satisfies course prerequisites; extra practice on numerical problem sets recommended.";
+            } else if (rawScore >= 35) {
+                facultyRemark = "⚠️ Borderline clearance. Fundamental understanding verified; faculty tutorial hours advised to reinforce fundamentals.";
+            } else {
+                facultyRemark = "🚨 Arrear status (Below 35 threshold). Mandatory remedial coaching sessions and supplementary lab work required.";
+            }
+
+            return `
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid ${isSubjPass ? 'rgba(255,255,255,0.08)' : 'rgba(239, 68, 68, 0.35)'}; border-radius: 12px; padding: 16px 18px; position: relative; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.35);">
+                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${subj.color};"></div>
+                    
+                    <!-- Subject Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 22px;">${subj.icon}</span>
+                            <div>
+                                <div style="font-size: 11px; font-weight: 700; color: ${subj.color}; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    ${subj.code} &bull; ${subj.credits} Credits (CBCS)
+                                </div>
+                                <div style="font-size: 14px; font-weight: 800; color: #f8fafc; margin-top: 1px;">
+                                    ${subj.name}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span class="badge ${isSubjPass ? 'status-pass' : 'status-fail'}" style="font-weight: 800; font-size: 11px; padding: 4px 8px;">
+                                ${isSubjPass ? 'PASSED' : 'ARREAR'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Marks Banner & Progress -->
+                    <div style="background: rgba(15, 23, 42, 0.6); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                            <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">Overall Subject Score</span>
+                            <div>
+                                <span style="font-size: 22px; font-weight: 900; color: #fff; font-family: 'Space Grotesk', monospace;">${rawScore}</span>
+                                <span style="font-size: 12px; color: #64748b;">/ 100</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; margin: 8px 0 6px 0;">
+                            <div style="width: ${Math.min(100, rawScore)}%; height: 100%; background: linear-gradient(90deg, ${subj.color}, #a855f7); border-radius: 4px; transition: width 0.4s ease;"></div>
+                        </div>
+
+                        <!-- Theory vs Internal breakdown -->
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #cbd5e1; margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.08);">
+                            <span>📝 Theory Exam: <b>${theoryMark} / 70</b></span>
+                            <span>🧪 Lab & Continuous Eval: <b>${internalMark} / 30</b></span>
+                            <span style="color: ${gradeInfo.isPass ? '#a5b4fc' : '#f87171'}; font-weight: 700;">Grade: <b>${gradeInfo.grade} (${gradeInfo.gradePoint} GP)</b></span>
+                        </div>
+                    </div>
+
+                    <!-- Cohort Benchmark Stats -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; background: rgba(15, 23, 42, 0.35); padding: 8px; border-radius: 8px; margin-bottom: 12px; font-size: 11px;">
+                        <div>
+                            <span style="color: #64748b; display: block; font-size: 10px;">Class Mean</span>
+                            <b style="color: #cbd5e1;">${cohortSubjectMean.toFixed(1)}</b>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; display: block; font-size: 10px;">Deviation</span>
+                            <b style="color: ${devColor};">${devSign}%</b>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; display: block; font-size: 10px;">Class Peak / Low</span>
+                            <b style="color: #cbd5e1;">${cohortSubjectMax} / ${cohortSubjectMin}</b>
+                        </div>
+                    </div>
+
+                    <!-- Faculty Diagnostic Remark -->
+                    <div style="font-size: 11.5px; color: #94a3b8; background: rgba(99, 102, 241, 0.08); border-left: 3px solid ${subj.color}; padding: 7px 10px; border-radius: 0 6px 6px 0; line-height: 1.45;">
+                        <div style="font-size: 10px; font-weight: 700; color: #c7d2fe; margin-bottom: 2px;">
+                            Faculty In-Charge: ${subj.facultyInCharge}
+                        </div>
+                        ${facultyRemark}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // 4. Cohort Comparison & Faculty Insights Box
+    const comparisonBox = document.getElementById("completeEvalCohortComparisonBox");
+    if (comparisonBox) {
+        const deptStudents = students.filter(s => s.department === student.department);
+        const deptAvg = d3.mean(deptStudents, s => s.average) || 0;
+        const cohortAvg = d3.mean(students, s => s.average) || 0;
+        
+        let standingText = "";
+        if (student.average >= 85) {
+            standingText = "🏆 Top 10% Decile: Qualified for Academic Distinction & Honors Recognition.";
+        } else if (student.average >= 70) {
+            standingText = "🌟 First Class with Distinction: Demonstrates solid institutional competence.";
+        } else if (student.average >= 55) {
+            standingText = "📈 Second Class Standard: Good progress; targeted study recommended for top placement eligibility.";
+        } else if (student.status === 'Pass') {
+            standingText = "⚠️ Pass Division: All 4 modules cleared. Recommended to undertake peer group study programs.";
+        } else {
+            standingText = "🚨 Academic Warning Division: Contains arrear papers. Subject to mandatory supplementary exams and remedial sessions.";
+        }
+
+        comparisonBox.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                <h5 style="font-size: 13px; color: #e2e8f0; margin: 0; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+                    <span>⚖️</span> 4-Module Institutional Benchmarking Table
+                </h5>
+                <span style="font-size: 11px; color: #818cf8; font-weight: 600;">
+                    ${deptStudents.length} Students in Department (${student.department}) &bull; ${students.length} Total Cohort
+                </span>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: #94a3b8; font-size: 11px;">
+                            <th style="padding: 6px 8px;">Course Paper</th>
+                            <th style="padding: 6px 8px; text-align: center;">Student Mark</th>
+                            <th style="padding: 6px 8px; text-align: center;">Dept Mean (${student.department})</th>
+                            <th style="padding: 6px 8px; text-align: center;">Cohort Mean (All)</th>
+                            <th style="padding: 6px 8px; text-align: center;">Variance</th>
+                            <th style="padding: 6px 8px; text-align: center;">UGC Grade</th>
+                            <th style="padding: 6px 8px; text-align: center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${COMPLETE_SUBJECTS_CATALOG.map(subj => {
+                            const studentMark = Number(student[subj.key]) || 0;
+                            const dMean = d3.mean(deptStudents, s => Number(s[subj.key]) || 0) || 0;
+                            const cMean = d3.mean(students, s => Number(s[subj.key]) || 0) || 0;
+                            const diff = (studentMark - cMean).toFixed(1);
+                            const sign = diff >= 0 ? `+${diff}` : `${diff}`;
+                            const color = diff >= 0 ? '#34d399' : '#f87171';
+                            const gradeInfo = typeof getSubjectGradeInfo === 'function' ? getSubjectGradeInfo(studentMark) : { grade: studentMark >= 35 ? 'P' : 'F' };
+                            const pass = studentMark >= subj.passMarks;
+
+                            return `
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding: 8px; font-weight: 700; color: #f1f5f9;">
+                                        ${subj.icon} ${subj.name} <span style="font-size: 10.5px; color: #64748b;">(${subj.code})</span>
+                                    </td>
+                                    <td style="padding: 8px; text-align: center; font-weight: 800; font-family: 'Space Grotesk', monospace; color: #fff;">
+                                        ${studentMark} / 100
+                                    </td>
+                                    <td style="padding: 8px; text-align: center; color: #94a3b8; font-family: 'Space Grotesk', monospace;">
+                                        ${dMean.toFixed(1)}
+                                    </td>
+                                    <td style="padding: 8px; text-align: center; color: #94a3b8; font-family: 'Space Grotesk', monospace;">
+                                        ${cMean.toFixed(1)}
+                                    </td>
+                                    <td style="padding: 8px; text-align: center; font-weight: 700; color: ${color}; font-family: 'Space Grotesk', monospace;">
+                                        ${sign}%
+                                    </td>
+                                    <td style="padding: 8px; text-align: center;">
+                                        <span class="badge grade-${gradeInfo.grade}" style="font-size: 10.5px; padding: 2px 7px;">${gradeInfo.grade}</span>
+                                    </td>
+                                    <td style="padding: 8px; text-align: center;">
+                                        <span class="badge ${pass ? 'status-pass' : 'status-fail'}" style="font-size: 10px; padding: 2px 6px;">${pass ? 'PASS' : 'FAIL'}</span>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 14px; padding: 10px 14px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <div style="font-size: 12px; color: #c7d2fe; font-weight: 600;">
+                    ${standingText}
+                </div>
+                <button type="button" class="btn btn-outline btn-xs" onclick="openStudentMarksheetFromEval()" style="border-color: #818cf8; color: #fff; font-weight: 700; padding: 4px 10px;">
+                    🎓 Print / Inspect Official Marksheet
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Global exposure
+window.COMPLETE_SUBJECTS_CATALOG = COMPLETE_SUBJECTS_CATALOG;
+window.openCompleteSubjectEvaluationModal = openCompleteSubjectEvaluationModal;
+window.closeCompleteSubjectEvaluationModal = closeCompleteSubjectEvaluationModal;
+window.renderCompleteSubjectEvaluationModal = renderCompleteSubjectEvaluationModal;
+window.openStudentMarksheetFromEval = openStudentMarksheetFromEval;
+
+// ====================================================
+// MASTER ALL-STUDENT MARKS & GRADEBOOK CONTROLLER
+// (Instant 1-Click Consolidated View of All Student Marks)
+// ====================================================
+
+let allMarksCurrentDept = 'All';
+let allMarksCurrentStatus = 'all';
+let allMarksSearchQuery = '';
+
+function openAllStudentMarksModal() {
+    allMarksCurrentDept = 'All';
+    allMarksCurrentStatus = 'all';
+    allMarksSearchQuery = '';
+
+    const searchInput = document.getElementById("allMarksSearchInput");
+    if (searchInput) searchInput.value = '';
+
+    // Reset filter pills
+    d3.selectAll(".all-marks-pill").classed("active", false);
+    d3.select("#ampill-dept-all").classed("active", true);
+    d3.selectAll(".all-marks-status-pill").classed("active", false);
+    d3.select("#ampill-status-all").classed("active", true);
+
+    renderAllStudentMarksStats();
+    renderAllStudentMarksRows();
+
+    const modal = document.getElementById("allStudentMarksModal");
+    if (modal) {
+        modal.classList.add("active");
+        modal.style.display = "flex";
+        modal.style.opacity = "1";
+        modal.style.visibility = "visible";
+        modal.style.pointerEvents = "auto";
+    }
+}
+
+function closeAllStudentMarksModal() {
+    const modal = document.getElementById("allStudentMarksModal");
+    if (modal) {
+        modal.classList.remove("active");
+        modal.style.display = "none";
+        modal.style.opacity = "0";
+        modal.style.visibility = "hidden";
+        modal.style.pointerEvents = "none";
+    }
+}
+
+function filterAllMarksDept(dept) {
+    allMarksCurrentDept = dept;
+    d3.selectAll(".all-marks-pill").classed("active", false);
+    d3.select(`#ampill-dept-${dept}`).classed("active", true);
+    renderAllStudentMarksRows();
+}
+
+function filterAllMarksStatus(status) {
+    allMarksCurrentStatus = status;
+    d3.selectAll(".all-marks-status-pill").classed("active", false);
+    d3.select(`#ampill-status-${status}`).classed("active", true);
+    renderAllStudentMarksRows();
+}
+
+function onAllMarksSearchInput(val) {
+    allMarksSearchQuery = (val || '').trim().toLowerCase();
+    renderAllStudentMarksRows();
+}
+
+function switchToTableFromAllMarksModal() {
+    closeAllStudentMarksModal();
+    if (typeof switchViewTab === 'function') {
+        switchViewTab('table');
+    }
+}
+
+function printAllStudentMarks() {
+    window.print();
+}
+
+function renderAllStudentMarksStats() {
+    const container = document.getElementById("allMarksStatsGrid");
+    if (!container || !Array.isArray(students)) return;
+
+    const data = students;
+    const total = data.length || 0;
+    const passedCount = data.filter(s => s.status === 'Pass').length;
+    const failCount = total - passedCount;
+    const passRate = total > 0 ? ((passedCount / total) * 100).toFixed(1) : "0.0";
+    const avgScore = total > 0 ? (d3.mean(data, d => d.average) || 0).toFixed(1) : "0.0";
+    const avgAtt = total > 0 ? (d3.mean(data, d => d.attendance) || 0).toFixed(1) : "0.0";
+
+    container.innerHTML = `
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Total Cohort</div>
+            <div style="font-size: 22px; font-weight: 800; color: #f8fafc; font-family: 'Space Grotesk', monospace; margin: 4px 0 2px;">${total} <span style="font-size: 12px; font-weight: 600; color: #94a3b8;">Students</span></div>
+            <div style="font-size: 11px; color: #64748b;">Enrolled across 5 depts</div>
+        </div>
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Class Aggregate Mean</div>
+            <div style="font-size: 22px; font-weight: 800; color: #38bdf8; font-family: 'Space Grotesk', monospace; margin: 4px 0 2px;">${avgScore}%</div>
+            <div style="font-size: 11px; color: #94a3b8;">400 Total Mark Base</div>
+        </div>
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 12px 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: #34d399; text-transform: uppercase;">Pass Clearance</div>
+            <div style="font-size: 22px; font-weight: 800; color: #34d399; font-family: 'Space Grotesk', monospace; margin: 4px 0 2px;">${passRate}% <span style="font-size: 12px; font-weight: 600; color: #a7f3d0;">(${passedCount}/${total})</span></div>
+            <div style="font-size: 11px; color: #94a3b8;">All 4 subjects &ge; 35</div>
+        </div>
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(244, 63, 94, 0.25); border-radius: 12px; padding: 12px 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: #fb7185; text-transform: uppercase;">Arrears / Remedials</div>
+            <div style="font-size: 22px; font-weight: 800; color: #fb7185; font-family: 'Space Grotesk', monospace; margin: 4px 0 2px;">${failCount} <span style="font-size: 12px; font-weight: 600; color: #fecdd3;">Students</span></div>
+            <div style="font-size: 11px; color: #94a3b8;">&lt; 35 in 1+ subjects</div>
+        </div>
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 12px 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: #fbbf24; text-transform: uppercase;">Average Attendance</div>
+            <div style="font-size: 22px; font-weight: 800; color: #fbbf24; font-family: 'Space Grotesk', monospace; margin: 4px 0 2px;">${avgAtt}%</div>
+            <div style="font-size: 11px; color: #94a3b8;">Eligibility Cutoff: 75%</div>
+        </div>
+    `;
+}
+
+function renderAllStudentMarksRows() {
+    const tbody = document.getElementById("allMarksTableBody");
+    const countEl = document.getElementById("allMarksRecordCount");
+    if (!tbody || !Array.isArray(students)) return;
+
+    let filtered = students.slice();
+
+    // Dept filter
+    if (allMarksCurrentDept !== 'All') {
+        filtered = filtered.filter(s => s.department === allMarksCurrentDept);
+    }
+
+    // Status filter
+    if (allMarksCurrentStatus === 'pass') {
+        filtered = filtered.filter(s => s.status === 'Pass');
+    } else if (allMarksCurrentStatus === 'fail') {
+        filtered = filtered.filter(s => s.status === 'Fail');
+    } else if (allMarksCurrentStatus === 'topper') {
+        filtered = filtered.filter(s => s.grade === 'O');
+    } else if (allMarksCurrentStatus === 'lowatt') {
+        filtered = filtered.filter(s => s.attendance < 75);
+    }
+
+    // Search query
+    if (allMarksSearchQuery) {
+        filtered = filtered.filter(s => {
+            const roll = (s.rollNo || ('22A91A05' + String(s.id).padStart(2, '0'))).toLowerCase();
+            const name = (s.name || '').toLowerCase();
+            const dept = (s.department || '').toLowerCase();
+            return name.includes(allMarksSearchQuery) || roll.includes(allMarksSearchQuery) || dept.includes(allMarksSearchQuery);
+        });
+    }
+
+    if (countEl) {
+        countEl.innerHTML = `Displaying <b>${filtered.length}</b> of <b>${students.length}</b> students${allMarksCurrentDept !== 'All' ? ` in <b>${allMarksCurrentDept}</b>` : ''}${allMarksCurrentStatus !== 'all' ? ` (${allMarksCurrentStatus})` : ''}`;
+    }
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="15" style="text-align: center; padding: 40px; color: #64748b; font-size: 14px;">
+                    🔍 No student marks matching the current filter criteria.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    const maxAverage = d3.max(students, d => d.average);
+
+    tbody.innerHTML = filtered.map(d => {
+        const evalRes = (typeof calculateSemesterEvaluation === 'function') ? calculateSemesterEvaluation(d) : null;
+        const sgpa = evalRes ? evalRes.sgpa : (d.average / 10).toFixed(2);
+        const roll = d.rollNo || ('22A91A05' + String(d.id).padStart(2, '0'));
+        const attColor = d.attendance >= 85 ? '#34d399' : d.attendance >= 75 ? '#fbbf24' : '#fb7185';
+        const isTopper = d.average === maxAverage && maxAverage > 0 && d.status === "Pass";
+
+        return `
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseenter="this.style.background='rgba(99,102,241,0.08)'" onmouseleave="this.style.background='transparent'">
+                <td style="font-weight: 800; text-align: center; color: #818cf8; padding: 8px;">#${d.id}</td>
+                <td style="padding: 8px;">
+                    <div style="font-weight: 700; color: #f1f5f9; display: flex; align-items: center; gap: 6px;">
+                        ${d.name}
+                        ${isTopper ? '<span class="tag-topper" style="font-size: 10px; padding: 1px 6px;">🌟 Topper</span>' : ''}
+                    </div>
+                    <div style="font-size: 10.5px; color: #818cf8; font-family: 'Space Grotesk', monospace; font-weight: 600;">${roll}</div>
+                </td>
+                <td style="text-align: center; padding: 8px;"><span class="badge badge-dept">${d.department}</span></td>
+                <td style="text-align: center; color: #94a3b8; padding: 8px;">${d.gender}</td>
+                <td style="text-align: center; padding: 8px;">${formatVisualScore(d.maths, '#6366f1')}</td>
+                <td style="text-align: center; padding: 8px;">${formatVisualScore(d.science, '#0ea5e9')}</td>
+                <td style="text-align: center; padding: 8px;">${formatVisualScore(d.english, '#10b981')}</td>
+                <td style="text-align: center; padding: 8px;">${formatVisualScore(d.programming, '#a855f7')}</td>
+                <td style="font-weight: 800; text-align: center; color: #e2e8f0; font-family: 'Space Grotesk', monospace; padding: 8px;">${d.total} / 400</td>
+                <td style="text-align: center; padding: 8px;"><span class="badge-percentage">${d3.format(".2f")(d.average)}%</span></td>
+                <td style="text-align: center; font-weight: 800; color: #fbbf24; font-family: 'Space Grotesk', monospace; padding: 8px;">${sgpa}</td>
+                <td style="text-align: center; padding: 8px;"><span style="color:${attColor}; font-weight:800; font-family: 'Space Grotesk', monospace;">${d.attendance}%</span></td>
+                <td style="text-align: center; padding: 8px;"><span class="badge ${d.status === 'Pass' ? 'status-pass' : 'status-fail'}">${d.status === 'Pass' ? 'PASS' : 'FAIL'}</span></td>
+                <td style="text-align: center; padding: 8px;"><span class="badge grade-${d.grade}">Gr. ${d.grade}</span></td>
+                <td style="text-align: center; padding: 8px; white-space: nowrap;">
+                    <button type="button" class="btn-progress-card" onclick="openProgressCard(${d.id})" style="font-size: 11px; padding: 4px 8px;" title="View Official UGC Marksheet">
+                        🎓 Marksheet
+                    </button>
+                    <button type="button" class="btn-progress-card" onclick="openCompleteSubjectEvaluationModal(${d.id})" style="background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(129, 140, 248, 0.4); color: #c7d2fe; font-size: 11px; padding: 4px 8px; margin-left: 4px;" title="View Subject Breakdown">
+                        📊 Eval
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+window.openAllStudentMarksModal = openAllStudentMarksModal;
+window.closeAllStudentMarksModal = closeAllStudentMarksModal;
+window.filterAllMarksDept = filterAllMarksDept;
+window.filterAllMarksStatus = filterAllMarksStatus;
+window.onAllMarksSearchInput = onAllMarksSearchInput;
+window.switchToTableFromAllMarksModal = switchToTableFromAllMarksModal;
+window.printAllStudentMarks = printAllStudentMarks;
+
+
 

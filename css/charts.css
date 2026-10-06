@@ -492,18 +492,26 @@
 /* SVG Graphical Elements */
 .conduit-path {
     fill: none;
-    transition: stroke-opacity 0.25s ease, stroke-width 0.25s ease;
+    pointer-events: stroke;
+}
+
+.conduit-hitarea {
+    pointer-events: stroke;
     cursor: pointer;
 }
 
-.conduit-path:hover {
-    stroke-opacity: 1 !important;
-    stroke-width: 3.5px !important;
+.conduit-flow-group {
+    cursor: pointer;
+}
+
+.student-dot-wrapper {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
 }
 
 .student-dot {
     cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
+    transition: r 0.2s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.2s ease, filter 0.2s ease;
 }
 
 .student-dot:hover {
@@ -512,11 +520,15 @@
 
 .target-sink-node {
     cursor: pointer;
-    transition: transform 0.2s ease;
 }
 
-.target-sink-node:hover {
-    transform: scale(1.03);
+.target-sink-node:hover .sink-halo {
+    opacity: 0.32;
+    r: 23px;
+}
+
+.target-sink-node:hover .sink-core {
+    stroke-width: 3.5px;
 }
 
 @media (max-width: 900px) {

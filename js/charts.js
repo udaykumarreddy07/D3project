@@ -193,6 +193,11 @@ function setHeroChartMetric(metric) {
 }
 
 function filterHeroTier(tier) {
+    if (heroSelectedTier === tier && tier !== 'All') {
+        clearHeroHighlight();
+        return;
+    }
+
     heroSelectedTier = tier;
     d3.selectAll(".hero-tier-pill").classed("active", false);
     d3.select(`#tierPill-${tier}`).classed("active", true);
@@ -210,9 +215,19 @@ function filterHeroTier(tier) {
             return d3.select(this).attr("data-tier") === tier ? "3.2px" : "1.2px";
         });
 
-    d3.selectAll(".student-dot")
+    d3.selectAll(".conduit-pulse")
+        .style("opacity", function () {
+            return d3.select(this).attr("data-tier") === tier ? 0.9 : 0.1;
+        });
+
+    d3.selectAll(".student-dot-wrapper")
         .style("opacity", function () {
             return d3.select(this).attr("data-tier") === tier ? 1 : 0.2;
+        });
+
+    d3.selectAll(".student-dot")
+        .style("opacity", function () {
+            return d3.select(this).attr("data-tier") === tier ? 1 : 0.25;
         });
 
     const matchingCount = lastHeroCohortData.filter(d => {
@@ -240,11 +255,19 @@ function clearHeroHighlight() {
         .style("stroke-opacity", 0.45)
         .style("stroke-width", "2px");
 
+    d3.selectAll(".conduit-pulse")
+        .style("opacity", 0.65);
+
+    d3.selectAll(".student-dot-wrapper")
+        .style("opacity", 1);
+
     d3.selectAll(".student-dot")
         .style("opacity", 1)
-        .attr("r", function () { return d3.select(this).attr("data-base-r") || 7; });
+        .attr("r", function () { return d3.select(this).attr("data-base-r") || 7; })
+        .attr("stroke", "rgba(255,255,255,0.7)")
+        .attr("stroke-width", 1.5);
 
-    d3.select("#heroFooterText").html("<b>Hover over any student bubble</b> to trace their conduit flow into their graduation outcome tier. <b>Click on a student</b> to inspect and print their official UGC marksheet.");
+    d3.select("#heroFooterText").html("<b>Hover over any student bubble or conduit flow line</b> to trace their graduation outcome tier. <b>Click on an edge or student</b> to inspect marksheet.");
     d3.select("#heroFooterActions").style("display", "none");
 }
 
@@ -1059,7 +1082,15 @@ function drawStudentFlowConduitChart(svg, data, targetStudentId) {
 
         const isTarget = targetStudentId && (d.id === targetStudentId);
 
-        const path = conduitGroup.append("path")
+        // Group for conduit path and hit area
+        const conduitPathG = conduitGroup.append("g")
+            .attr("class", `conduit-flow-group conduit-group-${d.id}`)
+            .attr("data-id", d.id)
+            .attr("data-tier", d.tierKey)
+            .style("cursor", "pointer");
+
+        // Visible conduit curve
+        const path = conduitPathG.append("path")
             .attr("class", `conduit-path conduit-${d.id}`)
             .attr("data-id", d.id)
             .attr("data-tier", d.tierKey)
@@ -1068,15 +1099,107 @@ function drawStudentFlowConduitChart(svg, data, targetStudentId) {
             .attr("stroke-width", isTarget ? 3.5 : 2)
             .attr("stroke-opacity", isTarget ? 1 : 0.45)
             .attr("stroke-linecap", "round")
-            .style("transition", "all 0.25s ease");
+            .style("transition", "stroke-opacity 0.2s ease, stroke-width 0.2s ease");
 
-        // Small pulse indicator at the boundary transition point
+        // Invisible wider stroke hit-area to make clicking edges smooth, effortless and jitter-free
+        conduitPathG.append("path")
+            .attr("class", `conduit-hitarea conduit-hit-${d.id}`)
+            .attr("d", pathData)
+            .attr("fill", "none")
+            .attr("stroke", "transparent")
+            .attr("stroke-width", 14)
+            .attr("stroke-linecap", "round");
+
+        // Pulse indicator at the boundary transition point
         g.append("circle")
+            .attr("class", `conduit-pulse conduit-pulse-${d.id}`)
+            .attr("data-tier", d.tierKey)
             .attr("cx", xMid)
             .attr("cy", yMid)
             .attr("r", 2.2)
             .attr("fill", d.color)
             .attr("opacity", 0.65);
+
+        // Conduit edge hover & click handlers
+        function highlightThisStudent(event) {
+            heroHighlightedStudentId = d.id;
+
+            d3.selectAll(".conduit-path")
+                .style("stroke-opacity", 0.08)
+                .style("stroke-width", "1.5px");
+
+            path
+                .style("stroke-opacity", 1)
+                .style("stroke-width", "3.8px");
+
+            conduitPathG.raise();
+
+            d3.selectAll(".student-dot-wrapper").style("opacity", 0.25);
+            const targetDot = d3.select(`.student-${d.id}`);
+            targetDot.style("opacity", 1);
+            targetDot.select(".student-dot")
+                .attr("r", d.r + 3.5)
+                .attr("stroke", "#ffffff")
+                .attr("stroke-width", 3);
+
+            showTooltip(event, formatColorTooltip({
+                color: d.color,
+                colorName: `${d.dept} (${d.gender})`,
+                title: `🎓 ${d.name} (Roll #${d.id})`,
+                category: `${d.dept} Department`,
+                reason: `Trajectory conduit streams into <b>${d.tierInfo.shortLabel}</b> outcome tier with <b>${d.percentage}%</b> aggregate and <b>${d.sgpa}</b> SGPA.`,
+                stats: [
+                    `Maths: <b>${d.maths}</b> &bull; Science: <b>${d.science}</b>`,
+                    `English: <b>${d.english}</b> &bull; Programming: <b>${d.programming}</b>`,
+                    `Attendance: <b>${d.attendance}%</b>`,
+                    `Semester Result: <b>${d.isPass ? 'PASSED' : 'ARREAR / BACKLOG'}</b>`
+                ],
+                rule: d.isPass ? "Eligible for standard autonomous CBCS degree certificate." : "Statutory remedial examination required for clearing backlog.",
+                actionHint: "Click conduit edge to open official UGC marksheet card"
+            }));
+
+            d3.select("#heroFooterText").html(`Selected: <b>${d.name}</b> (${d.dept}) &bull; Aggregate: <b>${d.percentage}%</b> &bull; SGPA: <b>${d.sgpa}</b> &bull; Outcome: <b style="color:${d.tierInfo.color};">${d.tierInfo.label}</b>`);
+            d3.select("#heroFooterActions").style("display", "flex");
+        }
+
+        function restoreThisStudent() {
+            hideTooltip();
+            const targetDot = d3.select(`.student-${d.id}`);
+            targetDot.select(".student-dot")
+                .attr("r", d.r)
+                .attr("stroke", isTarget ? "#ffffff" : "rgba(255,255,255,0.7)")
+                .attr("stroke-width", isTarget ? 2.5 : 1.5);
+
+            if (heroSelectedTier && heroSelectedTier !== 'All') {
+                filterHeroTier(heroSelectedTier);
+            } else {
+                clearHeroHighlight();
+            }
+        }
+
+        conduitPathG
+            .on("mouseenter", highlightThisStudent)
+            .on("mousemove", function (event) {
+                showTooltip(event, formatColorTooltip({
+                    color: d.color,
+                    colorName: `${d.dept} (${d.gender})`,
+                    title: `🎓 ${d.name} (Roll #${d.id})`,
+                    category: `${d.dept} Department`,
+                    reason: `Trajectory conduit streams into <b>${d.tierInfo.shortLabel}</b> outcome tier with <b>${d.percentage}%</b> aggregate.`,
+                    stats: [
+                        `Maths: <b>${d.maths}</b> &bull; Science: <b>${d.science}</b>`,
+                        `English: <b>${d.english}</b> &bull; Programming: <b>${d.programming}</b>`,
+                        `Attendance: <b>${d.attendance}%</b>`
+                    ],
+                    actionHint: "Click conduit edge to open marksheet card"
+                }));
+            })
+            .on("mouseleave", restoreThisStudent)
+            .on("click", function (event) {
+                if (event && event.stopPropagation) event.stopPropagation();
+                heroHighlightedStudentId = d.id;
+                openProgressCard(d.id);
+            });
     });
 
     // 2. Draw Target Outcome Sinks on Right (Screenshot 3 Target Nodes)
@@ -1093,7 +1216,24 @@ function drawStudentFlowConduitChart(svg, data, targetStudentId) {
             .attr("transform", `translate(${xTarget},${yPos})`)
             .style("cursor", "pointer")
             .on("mouseenter", function (event) {
-                filterHeroTier(tier.key);
+                d3.selectAll(".conduit-path")
+                    .style("stroke-opacity", function () {
+                        return d3.select(this).attr("data-tier") === tier.key ? 1 : 0.08;
+                    })
+                    .style("stroke-width", function () {
+                        return d3.select(this).attr("data-tier") === tier.key ? "3.2px" : "1.2px";
+                    });
+
+                d3.selectAll(".conduit-pulse")
+                    .style("opacity", function () {
+                        return d3.select(this).attr("data-tier") === tier.key ? 0.9 : 0.1;
+                    });
+
+                d3.selectAll(".student-dot-wrapper")
+                    .style("opacity", function () {
+                        return d3.select(this).attr("data-tier") === tier.key ? 1 : 0.15;
+                    });
+
                 showTooltip(event, formatColorTooltip({
                     color: tier.color,
                     colorName: `${tier.shortLabel} Tier`,
@@ -1105,7 +1245,7 @@ function drawStudentFlowConduitChart(svg, data, targetStudentId) {
                         `Criteria: <b>${tier.key === 'Arrears' ? '< 35 Marks in 1+ subjects' : `≥ ${tier.minScore}% Aggregate`}</b>`
                     ],
                     rule: "Statutory Autonomous Academic Regulation",
-                    actionHint: "Click tier pill above to filter data table"
+                    actionHint: "Click to toggle filter or spotlight this tier"
                 }));
             })
             .on("mousemove", function (event) {
@@ -1120,25 +1260,39 @@ function drawStudentFlowConduitChart(svg, data, targetStudentId) {
             })
             .on("mouseleave", function () {
                 hideTooltip();
-                if (heroSelectedTier === 'All') clearHeroHighlight();
+                if (heroSelectedTier && heroSelectedTier !== 'All') {
+                    filterHeroTier(heroSelectedTier);
+                } else {
+                    clearHeroHighlight();
+                }
             })
-            .on("click", function () {
-                filterHeroTier(tier.key);
-                showToast(`Filtered by ${tier.shortLabel}: ${count} student(s) qualifying`, "info");
+            .on("click", function (event) {
+                if (event && event.stopPropagation) event.stopPropagation();
+                if (heroSelectedTier === tier.key) {
+                    clearHeroHighlight();
+                    showToast("Cleared outcome filter - showing all students", "info");
+                } else {
+                    filterHeroTier(tier.key);
+                    showToast(`Filtered by ${tier.shortLabel}: ${count} student(s) qualifying`, "info");
+                }
             });
 
         // Glowing outer halo
         sinkG.append("circle")
+            .attr("class", "sink-halo")
             .attr("r", 20)
             .attr("fill", tier.color)
-            .attr("opacity", 0.12);
+            .attr("opacity", 0.12)
+            .style("transition", "opacity 0.2s ease, r 0.2s ease");
 
         sinkG.append("circle")
+            .attr("class", "sink-core")
             .attr("r", 14)
             .attr("fill", "rgba(15, 23, 42, 0.95)")
             .attr("stroke", tier.color)
             .attr("stroke-width", 2.5)
-            .style("filter", "drop-shadow(0 0 8px " + tier.color + ")");
+            .style("filter", "drop-shadow(0 0 8px " + tier.color + ")")
+            .style("transition", "stroke-width 0.2s ease");
 
         // Central Count Label inside circle
         sinkG.append("text")
@@ -1177,7 +1331,10 @@ function drawStudentFlowConduitChart(svg, data, targetStudentId) {
 
         const dotG = dotsGroup.append("g")
             .attr("class", `student-dot-wrapper student-${d.id}`)
-            .attr("transform", `translate(${d.x},${d.y})`);
+            .attr("data-id", d.id)
+            .attr("data-tier", d.tierKey)
+            .attr("transform", `translate(${d.x},${d.y})`)
+            .style("cursor", "pointer");
 
         const circle = dotG.append("circle")
             .attr("class", "student-dot")
@@ -1192,12 +1349,13 @@ function drawStudentFlowConduitChart(svg, data, targetStudentId) {
 
         // Center dot core
         dotG.append("circle")
+            .attr("class", "student-dot-core")
             .attr("r", 2.5)
             .attr("fill", "#ffffff")
             .attr("opacity", 0.9);
 
         // Hover & Click Handlers for Student Bubble
-        dotG.style("cursor", "pointer")
+        dotG
             .on("mouseenter", function (event) {
                 heroHighlightedStudentId = d.id;
 
@@ -1208,13 +1366,15 @@ function drawStudentFlowConduitChart(svg, data, targetStudentId) {
 
                 d3.select(`.conduit-${d.id}`)
                     .style("stroke-opacity", 1)
-                    .style("stroke-width", "3.8px")
-                    .raise();
+                    .style("stroke-width", "3.8px");
 
-                d3.selectAll(".student-dot")
+                d3.select(`.conduit-group-${d.id}`).raise();
+
+                d3.selectAll(".student-dot-wrapper")
                     .style("opacity", 0.25);
 
-                circle.style("opacity", 1)
+                dotG.style("opacity", 1);
+                circle
                     .attr("r", d.r + 3.5)
                     .attr("stroke", "#ffffff")
                     .attr("stroke-width", 3);
@@ -1256,11 +1416,16 @@ function drawStudentFlowConduitChart(svg, data, targetStudentId) {
                 }));
             })
             .on("mouseleave", function () {
-                circle.attr("r", d.r).attr("stroke", "rgba(255,255,255,0.7)").attr("stroke-width", 1.5);
+                circle.attr("r", d.r).attr("stroke", isTarget ? "#ffffff" : "rgba(255,255,255,0.7)").attr("stroke-width", isTarget ? 2.5 : 1.5);
                 hideTooltip();
-                if (heroSelectedTier === 'All') clearHeroHighlight();
+                if (heroSelectedTier && heroSelectedTier !== 'All') {
+                    filterHeroTier(heroSelectedTier);
+                } else {
+                    clearHeroHighlight();
+                }
             })
-            .on("click", function () {
+            .on("click", function (event) {
+                if (event && event.stopPropagation) event.stopPropagation();
                 heroHighlightedStudentId = d.id;
                 openProgressCard(d.id);
             });
@@ -1318,7 +1483,7 @@ function drawRadialOrbitChart(svg, data, targetStudentId) {
             .attr("stroke-dasharray", "3,4");
     });
 
-    // 1. Center Institutional Hub (BIET Autonomous)
+    // 1. Center Institutional Hub (KARE Deemed to be University, Tamil Nadu)
     const centerG = g.append("g")
         .attr("class", "center-orbit-hub")
         .style("cursor", "pointer")
@@ -1326,7 +1491,7 @@ function drawRadialOrbitChart(svg, data, targetStudentId) {
             showTooltip(event, formatColorTooltip({
                 color: "#6366f1",
                 colorName: "Autonomous Institution Core",
-                title: "BIET Autonomous College",
+                title: "KARE Deemed to be University, Tamil Nadu",
                 category: "Central Academic Hub",
                 reason: "Central repository coordinating 5 engineering departments and UGC 10-point evaluation standard.",
                 stats: [`Total Cohort: <b>${data.length} Enrolled</b>`]
@@ -1353,7 +1518,7 @@ function drawRadialOrbitChart(svg, data, targetStudentId) {
         .attr("fill", "#fef08a")
         .attr("font-size", "11px")
         .attr("font-weight", "900")
-        .text("BIET");
+        .text("KARE");
 
     centerG.append("text")
         .attr("text-anchor", "middle")

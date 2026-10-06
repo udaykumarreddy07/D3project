@@ -234,8 +234,8 @@ function populateMarksheet(student) {
 
     const deptFullName = DEPT_NAMES[student.department] || `${student.department} Engineering`;
     const regNo = student.rollNo || `22A91A05${String(student.id).padStart(2, '0')}`;
-    const serial = `BIET/2026/UG/${String(student.id).padStart(4, '0')}`;
-    const certHash = `BIET-DIGI-CERT-2026-${String(student.id).padStart(4, '0')}-${(student.id * 739 + 1042).toString(16).toUpperCase()}`;
+    const serial = `KARE/2026/UG/${String(student.id).padStart(4, '0')}`;
+    const certHash = `KARE-DIGI-CERT-2026-${String(student.id).padStart(4, '0')}-${(student.id * 739 + 1042).toString(16).toUpperCase()}`;
     const dateStr = new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
 
     const evalRes = calculateSemesterEvaluation(student);
@@ -434,7 +434,7 @@ function copyTranscriptSummary() {
 
     const evalRes = calculateSemesterEvaluation(student);
     const summaryText = `
-🏛️ BHARATH INSTITUTE OF ENGINEERING & TECHNOLOGY (AUTONOMOUS)
+🏛️ KALASALINGAM ACADEMY OF RESEARCH AND EDUCATION - TAMIL NADU
 OFFICIAL ACADEMIC TRANSCRIPT & SEMESTER PROGRESS REPORT
 ------------------------------------------------------------
 Student Name: ${student.name}
@@ -573,7 +573,7 @@ const DEPARTMENT_SIGNATORIES = {
         role: "HOD & Professor, CSE",
         department: "Computer Science & Engineering",
         color: "#1d4ed8",
-        keyId: "BIET-FAC-CSE-0194",
+        keyId: "KARE-FAC-CSE-0194",
         path: "M10 30 C18 20, 24 8, 30 14 C36 18, 30 38, 38 28 C45 18, 52 14, 60 22 C68 26, 72 34, 80 24 C88 16, 96 14, 108 22 C116 26, 124 18, 134 14 M16 28 C38 26, 68 28, 122 24 M28 34 C44 32, 70 34, 100 32"
     },
     ECE: {
@@ -582,7 +582,7 @@ const DEPARTMENT_SIGNATORIES = {
         role: "HOD & Professor, ECE",
         department: "Electronics & Communication Engg",
         color: "#0284c7",
-        keyId: "BIET-FAC-ECE-0211",
+        keyId: "KARE-FAC-ECE-0211",
         path: "M12 28 C20 12, 28 6, 36 12 C44 18, 38 34, 46 26 C52 18, 58 12, 68 18 C76 22, 82 32, 90 20 C98 12, 108 24, 118 16 C124 12, 130 18, 136 14 M14 34 C36 30, 68 32, 126 28"
     },
     EEE: {
@@ -591,7 +591,7 @@ const DEPARTMENT_SIGNATORIES = {
         role: "HOD & Professor, EEE",
         department: "Electrical & Electronics Engg",
         color: "#0f766e",
-        keyId: "BIET-FAC-EEE-0188",
+        keyId: "KARE-FAC-EEE-0188",
         path: "M8 32 C14 16, 20 8, 26 18 C32 28, 38 12, 44 22 C50 32, 58 18, 66 26 C74 14, 82 28, 92 18 C102 26, 112 16, 122 22 C128 26, 132 20, 136 16 M12 36 C40 32, 75 34, 130 30"
     },
     MECH: {
@@ -600,7 +600,7 @@ const DEPARTMENT_SIGNATORIES = {
         role: "HOD & Professor, MECH",
         department: "Mechanical Engineering",
         color: "#4338ca",
-        keyId: "BIET-FAC-MECH-0245",
+        keyId: "KARE-FAC-MECH-0245",
         path: "M10 26 C18 12, 26 6, 32 16 C38 26, 42 36, 50 24 C58 14, 66 28, 76 18 C84 10, 94 22, 104 14 C114 26, 122 18, 132 12 M8 32 C35 30, 75 32, 128 28 M115 22 C122 28, 128 32, 134 30"
     },
     CIVIL: {
@@ -609,7 +609,7 @@ const DEPARTMENT_SIGNATORIES = {
         role: "HOD & Professor, CIVIL",
         department: "Civil Engineering",
         color: "#0369a1",
-        keyId: "BIET-FAC-CIV-0167",
+        keyId: "KARE-FAC-CIV-0167",
         path: "M14 30 C22 18, 28 8, 34 16 C40 24, 34 36, 44 26 C52 16, 62 20, 72 24 C82 28, 88 16, 98 22 C108 28, 116 18, 126 14 C132 12, 136 18, 138 20 M18 36 C42 34, 78 36, 132 30"
     }
 };
@@ -620,7 +620,7 @@ const CONTROLLER_SIGNATORY = {
     role: "Controller of Examinations",
     department: "Office of the Controller of Examinations (Autonomous)",
     color: "#1e3a8a",
-    keyId: "BIET-COE-OFFICIAL-8890",
+    keyId: "KARE-COE-OFFICIAL-8890",
     path: "M12 34 C16 18, 22 6, 28 12 C34 18, 26 38, 38 24 C46 14, 54 32, 65 18 C74 10, 84 28, 95 16 C104 8, 114 24, 126 14 M8 38 C30 34, 60 36, 128 30 M110 18 C118 12, 125 10, 132 14"
 };
 
@@ -630,11 +630,11 @@ const PRINCIPAL_SIGNATORY = {
     role: "Principal & Chairman, Academic Council",
     department: "Principal's Office & Academic Directorate",
     color: "#0f172a",
-    keyId: "BIET-PRIN-OFFICIAL-0012",
+    keyId: "KARE-REG-OFFICIAL-0012",
     path: "M8 26 C16 10, 24 6, 30 12 C36 18, 32 36, 42 26 C50 16, 56 12, 66 18 C75 24, 80 12, 92 16 C102 20, 110 10, 124 14 C128 16, 132 20, 135 18 M14 32 C38 30, 72 32, 128 26 M122 30 C125 30, 128 30, 130 30 M134 30 C136 30, 138 30, 140 30"
 };
 
-let lastActiveSignatoryKey = "BIET-COE-OFFICIAL-8890";
+let lastActiveSignatoryKey = "KARE-COE-OFFICIAL-8890";
 
 function renderMarksheetSignatures(student) {
     const deptSig = DEPARTMENT_SIGNATORIES[student.department] || DEPARTMENT_SIGNATORIES.CSE;
@@ -751,7 +751,7 @@ function showSignatoryVerification(type) {
         </div>
 
         <div style="font-size:11.5px; color:#475569; background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:10px 14px; line-height:1.45;">
-            ℹ️ <b>Institutional Verification Note:</b> This digital signature is issued under the authority of BIET Autonomous Academic Regulations and UGC CBCS Guidelines.
+            ℹ️ <b>Institutional Verification Note:</b> This digital signature is issued under the authority of KARE Deemed to be University Academic Regulations (Tamil Nadu) and UGC CBCS Guidelines.
         </div>
     `);
 
@@ -770,13 +770,13 @@ function showSealVerification() {
                     <circle cx="40" cy="40" r="38" stroke="#1e3a8a" stroke-width="2" stroke-dasharray="4,2"/>
                     <circle cx="40" cy="40" r="33" stroke="#1e3a8a" stroke-width="1.2"/>
                     <circle cx="40" cy="40" r="14" fill="rgba(30, 58, 138, 0.08)" stroke="#1e3a8a" stroke-width="1"/>
-                    <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">BIET AUTONOMOUS</text>
+                    <text x="40" y="24" font-size="5.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">KARE DEEMED UNIVERSITY</text>
                     <text x="40" y="42.5" font-size="7.5" font-weight="900" fill="#1e3a8a" text-anchor="middle" font-family="'Cinzel', serif">SEAL</text>
                     <text x="40" y="60" font-size="4.5" font-weight="800" fill="#1e3a8a" text-anchor="middle" letter-spacing="0.5">★ EXAM BRANCH ★</text>
                 </svg>
             </div>
-            <div style="font-weight:900; font-size:16px; color:#0f172a;">BHARATH INSTITUTE OF ENGINEERING & TECHNOLOGY</div>
-            <div style="font-size:12px; font-weight:800; color:#4f46e5; margin-top:2px;">UGC AUTONOMOUS INSTITUTION &bull; ESTD. 1998</div>
+            <div style="font-weight:900; font-size:16px; color:#0f172a;">KALASALINGAM ACADEMY OF RESEARCH AND EDUCATION</div>
+            <div style="font-size:12px; font-weight:800; color:#4f46e5; margin-top:2px;">DEEMED TO BE UNIVERSITY UNDER SEC. 3 OF UGC ACT &bull; ESTD. 1984</div>
         </div>
 
         <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; margin:14px 0;">
