@@ -231,20 +231,46 @@ function printConsoleSummary(activePort) {
         console.warn('Analytics summary skipped:', e.message);
     }
 
+    // Resolve deployed Vercel API URL or local API URL
+    let targetApiUrl = '';
+    const configPath = path.join(__dirname, '..', 'vercel.config.json');
+    if (fs.existsSync(configPath)) {
+        try {
+            const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+            if (config.vercelUrl && config.vercelUrl.trim()) {
+                let base = config.vercelUrl.trim().replace(/\/+$/, '');
+                if (!base.startsWith('http://') && !base.startsWith('https://')) {
+                    base = 'https://' + base;
+                }
+                const endpoint = config.defaultApiEndpoint || '/api/students';
+                targetApiUrl = `${base}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+            }
+        } catch (e) {}
+    }
+
+    if (process.env.VERCEL_URL) {
+        let vUrl = process.env.VERCEL_URL.trim().replace(/\/+$/, '');
+        if (!vUrl.startsWith('http://') && !vUrl.startsWith('https://')) {
+            vUrl = 'https://' + vUrl;
+        }
+        targetApiUrl = `${vUrl}/api/students`;
+    }
+
+    const openUrl = targetApiUrl || `http://localhost:${activePort}/api/students`;
+
     console.log('='.repeat(68));
     console.log(`🚀 Web Application Live at : http://localhost:${activePort}`);
-    console.log(`📡 REST API Endpoint at    : http://localhost:${activePort}/api/students`);
+    console.log(`📡 Direct REST API URL     : ${openUrl}`);
     console.log(`📊 Analytics API at        : http://localhost:${activePort}/api/analytics`);
     console.log(`📽️ Interactive Slides at   : http://localhost:${activePort}/presentation/index.html`);
-    console.log(`✨ Launching your web browser automatically...`);
+    console.log(`✨ Automatically launching REST API in browser (Not localhost homepage)...`);
     console.log('='.repeat(68) + '\n');
 
-    // Automatically launch default browser on local environments
+    // Automatically launch default browser to the API directly
     if (!process.env.PORT && !process.env.VERCEL && !process.env.RENDER && process.env.NODE_ENV !== 'production') {
-        const url = `http://localhost:${activePort}`;
         const startCmd = process.platform === 'win32'
-            ? `start "" "${url}"`
-            : (process.platform === 'darwin' ? `open "${url}"` : `xdg-open "${url}"`);
+            ? `start "" "${openUrl}"`
+            : (process.platform === 'darwin' ? `open "${openUrl}"` : `xdg-open "${openUrl}"`);
         try { exec(startCmd, () => {}); } catch (e) {}
     }
 }
@@ -272,3 +298,4 @@ server.listen(currentPort, '0.0.0.0', () => {
 });
 
 module.exports = server;
+

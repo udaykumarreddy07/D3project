@@ -131,3 +131,4 @@ fs.writeFileSync(path.join(ROOT_DIR, 'uday.html'), bundledHtml, 'utf8');
 
 console.log('✅ Synchronized frontend/index.html & frontend/uday.html bundles (' + bundledHtml.length + ' bytes)');
 console.log('✅ All CSS styles, JavaScript modules, and logos successfully compiled for production.');
+

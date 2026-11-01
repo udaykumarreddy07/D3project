@@ -56,3 +56,4 @@ npm run dev
 
 ### 2. Standalone / Offline
 Double-click `frontend/uday.html` or `frontend/index.html` to open directly in any modern browser without requiring Node.js or internet connectivity.
+

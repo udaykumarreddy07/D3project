@@ -7,7 +7,8 @@
     "dev": "node backend/server.js",
     "start": "node backend/server.js",
     "report": "node backend/report.js",
-    "open": "start http://localhost:3000",
+    "open": "node backend/open-api.js",
+    "api": "node backend/open-api.js",
     "build": "node backend/build.js",
     "ppt": "node backend/generate_ppt.js"
   },

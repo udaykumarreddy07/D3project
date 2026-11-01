@@ -61,3 +61,4 @@ const toppers = db.getTopStudents(5);
 const stats = db.getAnalytics();
 console.log(`Class Average: ${stats.classAverage}, Pass Rate: ${stats.passRate}`);
 ```
+

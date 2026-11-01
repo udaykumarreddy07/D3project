@@ -1,0 +1,5 @@
+{
+  "description": "Configuration for deployed Vercel production URL and API routing",
+  "vercelUrl": "https://d3project-two.vercel.app",
+  "defaultApiEndpoint": "/api/students"
+}

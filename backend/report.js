@@ -70,3 +70,4 @@ console.log(`   • Cohort Average Score    : ${analytics.classAverage}`);
 console.log(`   • Valedictorian / Topper  : ${analytics.topPerformer.name} (${analytics.topPerformer.department}) — ${analytics.topPerformer.average}`);
 console.log(`   • Subject Averages        : Maths: ${analytics.subjectAverages.maths}%, Sci: ${analytics.subjectAverages.science}%, Eng: ${analytics.subjectAverages.english}%, Prog: ${analytics.subjectAverages.programming}%`);
 console.log('='.repeat(72) + '\n');
+
