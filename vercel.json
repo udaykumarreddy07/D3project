@@ -1,14 +1,13 @@
 {
   "cleanUrls": true,
-  "functions": {
-    "api/*.js": {
-      "includeFiles": "database/**"
-    }
-  },
   "rewrites": [
     {
       "source": "/presentation",
       "destination": "/presentation/index.html"
+    },
+    {
+      "source": "/presentation/:path*",
+      "destination": "/presentation/:path*"
     },
     {
       "source": "/hardcopy",
@@ -16,6 +15,10 @@
     },
     {
       "source": "/uday",
+      "destination": "/uday.html"
+    },
+    {
+      "source": "/standalone",
       "destination": "/uday.html"
     }
   ]

@@ -1,25 +1,31 @@
-/**
- * Vercel Serverless Function: /api/analytics
- */
 const db = require('../database/db');
 
 module.exports = (req, res) => {
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
     if (req.method === 'OPTIONS') {
-        res.statusCode = 204;
+        res.statusCode = 200;
         return res.end();
     }
 
     try {
         const stats = db.getAnalytics();
-        res.statusCode = 200;
-        return res.end(JSON.stringify(stats, null, 2));
-    } catch (err) {
-        res.statusCode = 500;
-        return res.end(JSON.stringify({ error: err.message }));
+        if (typeof res.json === 'function') {
+            return res.status(200).json(stats);
+        } else {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            return res.end(JSON.stringify(stats, null, 2));
+        }
+    } catch (e) {
+        if (typeof res.json === 'function') {
+            return res.status(500).json({ error: e.message });
+        } else {
+            res.statusCode = 500;
+            return res.end(JSON.stringify({ error: e.message }));
+        }
     }
 };

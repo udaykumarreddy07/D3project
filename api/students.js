@@ -1,48 +1,39 @@
-/**
- * Vercel Serverless Function: /api/students
- */
 const db = require('../database/db');
 
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
     if (req.method === 'OPTIONS') {
-        res.statusCode = 204;
+        res.statusCode = 200;
         return res.end();
     }
 
     try {
-        const host = req.headers['x-forwarded-host'] || req.headers.host || 'localhost';
-        const proto = req.headers['x-forwarded-proto'] || 'https';
-        const parsedUrl = new URL(req.url, `${proto}://${host}`);
-
-        if (req.method === 'GET') {
-            const dept = parsedUrl.searchParams.get('department');
-            if (dept) {
-                return res.end(JSON.stringify(db.getStudentsByDepartment(dept), null, 2));
-            }
-            return res.end(JSON.stringify(db.getAllStudents(), null, 2));
+        const query = req.query || {};
+        let dept = query.department;
+        if (!dept && req.url && req.url.includes('?')) {
+            const params = new URLSearchParams(req.url.split('?')[1]);
+            dept = params.get('department');
         }
 
-        if (req.method === 'POST') {
-            let body = '';
-            req.on('data', c => body += c);
-            req.on('end', () => {
-                const parsed = body ? JSON.parse(body) : {};
-                const created = db.insertStudent(parsed);
-                res.statusCode = 201;
-                return res.end(JSON.stringify(created, null, 2));
-            });
-            return;
-        }
+        const data = dept ? db.getStudentsByDepartment(dept) : db.getAllStudents();
 
-        res.statusCode = 405;
-        return res.end(JSON.stringify({ error: 'Method Not Allowed' }));
-    } catch (err) {
-        res.statusCode = 500;
-        return res.end(JSON.stringify({ error: err.message }));
+        if (typeof res.json === 'function') {
+            return res.status(200).json(data);
+        } else {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            return res.end(JSON.stringify(data, null, 2));
+        }
+    } catch (e) {
+        if (typeof res.json === 'function') {
+            return res.status(500).json({ error: e.message });
+        } else {
+            res.statusCode = 500;
+            return res.end(JSON.stringify({ error: e.message }));
+        }
     }
 };
