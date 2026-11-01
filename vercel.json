@@ -28,10 +28,6 @@
     {
       "source": "/standalone/?",
       "destination": "/frontend/uday.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/frontend/$1"
     }
   ]
 }

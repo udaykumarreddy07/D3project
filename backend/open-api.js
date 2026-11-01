@@ -62,3 +62,4 @@ try {
 } catch (e) {
     console.error('Launch error:', e.message);
 }
+

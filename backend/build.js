@@ -126,9 +126,10 @@ ${appJs}
 fs.writeFileSync(path.join(FRONTEND_DIR, 'index.html'), bundledHtml, 'utf8');
 fs.writeFileSync(path.join(FRONTEND_DIR, 'uday.html'), bundledHtml, 'utf8');
 
-// Also sync root uday.html for quick top-level offline launch if desired
+// Write to root index.html & uday.html (for Vercel root serving & instant offline launch)
+fs.writeFileSync(path.join(ROOT_DIR, 'index.html'), bundledHtml, 'utf8');
 fs.writeFileSync(path.join(ROOT_DIR, 'uday.html'), bundledHtml, 'utf8');
 
-console.log('✅ Synchronized frontend/index.html & frontend/uday.html bundles (' + bundledHtml.length + ' bytes)');
+console.log('✅ Synchronized index.html, uday.html, frontend/index.html & frontend/uday.html bundles (' + bundledHtml.length + ' bytes)');
 console.log('✅ All CSS styles, JavaScript modules, and logos successfully compiled for production.');
 

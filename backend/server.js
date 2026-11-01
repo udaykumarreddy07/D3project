@@ -256,14 +256,15 @@ function printConsoleSummary(activePort) {
         targetApiUrl = `${vUrl}/api/students`;
     }
 
-    const openUrl = targetApiUrl || `http://localhost:${activePort}/api/students`;
+    const shouldOpenApi = process.argv.includes('--api') || Boolean(targetApiUrl);
+    const openUrl = targetApiUrl || (shouldOpenApi ? `http://localhost:${activePort}/api/students` : `http://localhost:${activePort}`);
 
     console.log('='.repeat(68));
     console.log(`🚀 Web Application Live at : http://localhost:${activePort}`);
-    console.log(`📡 Direct REST API URL     : ${openUrl}`);
+    console.log(`📡 REST API Endpoint at    : http://localhost:${activePort}/api/students`);
     console.log(`📊 Analytics API at        : http://localhost:${activePort}/api/analytics`);
     console.log(`📽️ Interactive Slides at   : http://localhost:${activePort}/presentation/index.html`);
-    console.log(`✨ Automatically launching REST API in browser (Not localhost homepage)...`);
+    console.log(`✨ Automatically launching in browser: ${openUrl}`);
     console.log('='.repeat(68) + '\n');
 
     // Automatically launch default browser to the API directly
