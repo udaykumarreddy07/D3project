@@ -1,5 +1,5 @@
 {
-  "description": "Configuration for deployed Vercel production URL and API routing. Set vercelUrl to your live domain to auto-open it.",
-  "vercelUrl": "",
+  "description": "Configuration for deployed Vercel production URL and API routing",
+  "vercelUrl": "https://d3project-kappa.vercel.app",
   "defaultApiEndpoint": "/api/students"
 }

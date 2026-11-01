@@ -1,33 +1,22 @@
 {
   "cleanUrls": true,
+  "functions": {
+    "api/*.js": {
+      "includeFiles": "database/**"
+    }
+  },
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/index.js"
+      "source": "/presentation",
+      "destination": "/presentation/index.html"
     },
     {
-      "source": "/api",
-      "destination": "/api/index.js"
+      "source": "/hardcopy",
+      "destination": "/hardcopy.html"
     },
     {
-      "source": "/presentation/?",
-      "destination": "/frontend/presentation/index.html"
-    },
-    {
-      "source": "/presentation/:path*",
-      "destination": "/frontend/presentation/:path*"
-    },
-    {
-      "source": "/hardcopy/?",
-      "destination": "/frontend/hardcopy.html"
-    },
-    {
-      "source": "/uday/?",
-      "destination": "/frontend/uday.html"
-    },
-    {
-      "source": "/standalone/?",
-      "destination": "/frontend/uday.html"
+      "source": "/uday",
+      "destination": "/uday.html"
     }
   ]
 }

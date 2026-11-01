@@ -8,13 +8,30 @@ const path = require('path');
 
 const DB_FILE = path.join(__dirname, 'students.json');
 
-// Default fallback student data if JSON file is missing or corrupted
+// Full 22-student cohort fallback for resilient zero-config serverless deployments
 const FALLBACK_STUDENTS = [
     { id: 1, name: "Arun Kumar", rollNo: "22A91A0501", department: "CSE", gender: "Male", maths: 88, science: 91, english: 85, programming: 95, attendance: 92 },
     { id: 2, name: "Priya Sharma", rollNo: "22A91A0502", department: "ECE", gender: "Female", maths: 92, science: 89, english: 94, programming: 90, attendance: 95 },
     { id: 3, name: "Rahul Raj", rollNo: "22A91A0503", department: "EEE", gender: "Male", maths: 75, science: 78, english: 70, programming: 82, attendance: 85 },
     { id: 4, name: "Sneha Devi", rollNo: "22A91A0504", department: "CSE", gender: "Female", maths: 96, science: 94, english: 91, programming: 97, attendance: 98 },
-    { id: 5, name: "Vijay Kumar", rollNo: "22A91A0505", department: "MECH", gender: "Male", maths: 65, science: 72, english: 68, programming: 70, attendance: 78 }
+    { id: 5, name: "Vijay Kumar", rollNo: "22A91A0505", department: "MECH", gender: "Male", maths: 65, science: 72, english: 68, programming: 70, attendance: 78 },
+    { id: 6, name: "Anjali Reddy", rollNo: "22A91A0506", department: "CIVIL", gender: "Female", maths: 82, science: 80, english: 85, programming: 78, attendance: 88 },
+    { id: 7, name: "Karthik Rao", rollNo: "22A91A0507", department: "CSE", gender: "Male", maths: 90, science: 86, english: 88, programming: 92, attendance: 94 },
+    { id: 8, name: "Divya Singh", rollNo: "22A91A0508", department: "ECE", gender: "Female", maths: 78, science: 84, english: 80, programming: 85, attendance: 90 },
+    { id: 9, name: "Rohit Kumar", rollNo: "22A91A0509", department: "EEE", gender: "Male", maths: 55, science: 62, english: 60, programming: 58, attendance: 70 },
+    { id: 10, name: "Meena Devi", rollNo: "22A91A0510", department: "CSE", gender: "Female", maths: 89, science: 93, english: 90, programming: 94, attendance: 96 },
+    { id: 11, name: "Suresh Babu", rollNo: "22A91A0511", department: "MECH", gender: "Male", maths: 72, science: 68, english: 75, programming: 70, attendance: 82 },
+    { id: 12, name: "Lakshmi Priya", rollNo: "22A91A0512", department: "CIVIL", gender: "Female", maths: 91, science: 88, english: 92, programming: 89, attendance: 93 },
+    { id: 13, name: "Manoj Kumar", rollNo: "22A91A0513", department: "ECE", gender: "Male", maths: 83, science: 79, english: 81, programming: 86, attendance: 87 },
+    { id: 14, name: "Pooja Rani", rollNo: "22A91A0514", department: "EEE", gender: "Female", maths: 95, science: 90, english: 94, programming: 96, attendance: 97 },
+    { id: 15, name: "Ajay Kumar", rollNo: "22A91A0515", department: "CSE", gender: "Male", maths: 48, science: 55, english: 52, programming: 50, attendance: 65 },
+    { id: 16, name: "Harini Rao", rollNo: "22A91A0516", department: "ECE", gender: "Female", maths: 86, science: 91, english: 87, programming: 90, attendance: 92 },
+    { id: 17, name: "Gokul Raj", rollNo: "22A91A0517", department: "MECH", gender: "Male", maths: 69, science: 73, english: 71, programming: 67, attendance: 76 },
+    { id: 18, name: "Swathi Reddy", rollNo: "22A91A0518", department: "CIVIL", gender: "Female", maths: 88, science: 85, english: 90, programming: 87, attendance: 91 },
+    { id: 19, name: "Naveen Kumar", rollNo: "22A91A0519", department: "EEE", gender: "Male", maths: 77, science: 74, english: 79, programming: 81, attendance: 84 },
+    { id: 20, name: "Keerthana Devi", rollNo: "22A91A0520", department: "CSE", gender: "Female", maths: 93, science: 96, english: 92, programming: 95, attendance: 99 },
+    { id: 21, name: "Ramesh Gupta", rollNo: "22A91A0521", department: "MECH", gender: "Male", maths: 32, science: 45, english: 38, programming: 40, attendance: 72 },
+    { id: 22, name: "Deepa Verma", rollNo: "22A91A0522", department: "CIVIL", gender: "Female", maths: 28, science: 31, english: 42, programming: 30, attendance: 68 }
 ];
 
 class Database {
@@ -33,13 +50,10 @@ class Database {
                 this.cache = JSON.parse(data);
                 return this.cache;
             } else {
-                this.cache = [...FALLBACK_STUDENTS];
-                this.saveAllStudents(this.cache);
-                return this.cache;
+                return FALLBACK_STUDENTS;
             }
         } catch (err) {
-            console.error('[Database Error] Failed to read students:', err.message);
-            return this.cache || [...FALLBACK_STUDENTS];
+            return this.cache || FALLBACK_STUDENTS;
         }
     }
 
@@ -52,7 +66,7 @@ class Database {
             this.cache = students;
             return true;
         } catch (err) {
-            console.error('[Database Error] Failed to write students:', err.message);
+            this.cache = students;
             return false;
         }
     }
@@ -224,4 +238,3 @@ class Database {
 const db = new Database();
 module.exports = db;
 module.exports.Database = Database;
-
