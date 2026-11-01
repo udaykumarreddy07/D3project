@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Start Web Server (server.js)",
+            "name": "Start Web Server (backend/server.js)",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/backend/server.js",
             "restart": true,
             "console": "integratedTerminal"
         },
@@ -14,13 +14,13 @@
             "type": "chrome",
             "request": "launch",
             "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}/frontend"
         },
         {
-            "name": "Python Debugger: Current File",
-            "type": "debugpy",
+            "name": "Run Academic Audit (report.js)",
+            "type": "node",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceFolder}/backend/report.js",
             "console": "integratedTerminal"
         }
     ]

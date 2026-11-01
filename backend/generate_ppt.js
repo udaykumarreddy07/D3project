@@ -818,7 +818,7 @@ function addSlideHeader(slide, title, category, slideNum) {
 }
 
 // Generate Presentation File
-const outputPath = path.join(__dirname, 'Academic_Analytics_Portal_Presentation.pptx');
+const outputPath = path.join(__dirname, '..', 'Academic_Analytics_Portal_Presentation.pptx');
 pptx.writeFile({ fileName: outputPath })
     .then(fileName => {
         console.log(`Presentation generated successfully at: ${fileName}`);

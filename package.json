@@ -1,14 +1,15 @@
 {
   "name": "d3project",
-  "version": "1.0.0",
-  "description": "Academic Analytics & Student Marksheet Portal",
-  "main": "index.html",
+  "version": "2.0.0",
+  "description": "Academic Analytics & Student Marksheet Portal (Modular 3-Tier Architecture)",
+  "main": "frontend/index.html",
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js",
-    "report": "node report.js",
+    "dev": "node backend/server.js",
+    "start": "node backend/server.js",
+    "report": "node backend/report.js",
     "open": "start http://localhost:3000",
-    "build": "node build.js"
+    "build": "node backend/build.js",
+    "ppt": "node backend/generate_ppt.js"
   },
   "dependencies": {
     "pptxgenjs": "^4.0.1"

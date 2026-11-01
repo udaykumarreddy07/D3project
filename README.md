@@ -48,46 +48,41 @@ This project is an **Autonomous College Academic Operations & Analytics Portal**
 
 ## 🏗️ 2. High-Level Architecture
 
-The system follows a clean **Model-View-Controller (MVC)** client-side architecture with persistent state synchronizing to `localStorage` and seamless fallback to memory:
+The system follows a clean **3-Tier Modular Architecture** separated into `frontend`, `backend`, and `database`:
 
 ```mermaid
 graph TD
-    subgraph Client ["Client Browser (Presentation Layer)"]
-        UI["Semantic HTML5 Shell (index.html / uday.html)"]
-        CSS["Modular CSS System (css/)"]
+    subgraph Presentation ["Presentation Layer (frontend/)"]
+        UI["Semantic HTML5 Shell (frontend/index.html & template.html)"]
+        CSS["Modular CSS System (frontend/css/)"]
         D3["D3.js v7 Visualization Engine"]
+        CONTROLLER["Client Controllers (frontend/js/)"]
     end
 
-    subgraph State ["Client-Side State Controllers (js/)"]
-        AUTH["auth.js (RBAC & Session Token)"]
-        APP["app.js (Bootstrap & Event Bus)"]
-        STUDENT["data.js & ui.js (Cohort Models & KPI)"]
-        MARKS["marksheet.js (UGC 10-Point Engine)"]
-        ASSIGN["assignments.js (Assignments & Submissions)"]
-        FEES["fees-notices.js (Fees, Passbook & Receipts)"]
-        AI["ai-explainer.js (Dual-Role AI Assistant)"]
+    subgraph Service ["Backend & API Layer (backend/)"]
+        SERVER["HTTP & REST Server (backend/server.js)"]
+        API["REST APIs (/api/students, /api/analytics, /api/arrears)"]
+        BUILD["Asset Bundler (backend/build.js)"]
+        REPORT["CLI Audit Engine (backend/report.js)"]
     end
 
-    subgraph Storage ["Persistent Storage Layer"]
-        LS["localStorage (Cohort, Assignments, Fee Records)"]
-        SS["sessionStorage (Session Tokens)"]
-        MEM["In-Memory Defensive Fallback"]
+    subgraph Storage ["Database & Storage Layer (database/)"]
+        DB["Data Access Object DAO (database/db.js)"]
+        STORE["Master Cohort Store (database/students.json)"]
+        SCHEMA["Data Validation Schema (database/schema.json)"]
+        LS["localStorage (Offline Client Fallback)"]
     end
 
     UI --> CSS
-    UI --> APP
-    APP --> AUTH
-    APP --> STUDENT
-    APP --> MARKS
-    APP --> ASSIGN
-    APP --> FEES
-    APP --> AI
-    STUDENT --> D3
-    STUDENT --> LS
-    ASSIGN --> LS
-    FEES --> LS
-    AUTH --> SS
-    LS -.-> MEM
+    UI --> CONTROLLER
+    CONTROLLER --> D3
+    CONTROLLER -.->|Fetch/Sync| API
+    CONTROLLER --> LS
+    SERVER --> API
+    API --> DB
+    BUILD --> UI
+    REPORT --> DB
+    DB --> STORE
 ```
 
 ---
@@ -185,39 +180,53 @@ flowchart TD
 
 ```
 D3project/
-├── index.html                                   # Modular HTML shell & application entry point
-├── uday.html                                    # Consolidated all-in-one distribution bundle
-├── presentation.html                            # Interactive slide deck with live embedded D3 charts
-├── Academic_Analytics_Portal_Presentation.pptx  # 10-Slide Microsoft PowerPoint presentation deck
-├── build.js                                     # Asset synchronizer (merges modular CSS/JS into uday.html)
-├── server.js                                    # Built-in lightweight Node.js development server
-├── report.js                                    # CLI terminal reporting tool
-├── package.json                                 # Project metadata and npm scripts
-├── README.md                                    # Complete project documentation & guide
+├── frontend/                                    # 🎨 Presentation & Client UI Layer
+│   ├── index.html                               # Production web application entry point
+│   ├── template.html                            # Modular development template
+│   ├── uday.html                                # Standalone offline distribution bundle
+│   ├── hardcopy.html                            # Print-ready university grade report
+│   ├── kare-logo.png                            # Official KARE University emblem
+│   ├── d3.v7.min.js                             # D3.js v7 local offline fallback library
+│   ├── css/                                     # 🎨 Modular Stylesheets
+│   │   ├── styles.css                           # Design tokens, variables, buttons & tooltips
+│   │   ├── auth.css                             # Aurora glassmorphism authentication gateway
+│   │   ├── dashboard.css                        # Layout grid, KPI cards & table dock
+│   │   ├── charts.css                           # D3.js SVG chart containers & legends
+│   │   ├── marksheet.css                        # UGC Progress Card & @media print styles
+│   │   ├── assignments.css                      # Coursework submission & grading modals
+│   │   ├── fees-notices.css                     # Fee ledger, digital passbook & admit cards
+│   │   └── ai-explainer.css                     # Dual-persona AI Copilot floating panel
+│   ├── js/                                      # ⚡ Client Controllers & Engines
+│   │   ├── app.js                               # Main bootstrap & event dispatch
+│   │   ├── auth.js                              # Session management & RBAC switching
+│   │   ├── charts.js                            # D3 visualizations (Donut, Bar, Scatter, Radar)
+│   │   ├── data.js                              # Default cohort constants & course maps
+│   │   ├── marksheet.js                         # UGC 10-point GPA & SGPA calculation engine
+│   │   ├── ui.js                                # Dynamic KPI cards, cohort filters & sorting
+│   │   ├── assignments.js                       # Coursework intake & faculty evaluation
+│   │   ├── fees-notices.js                      # Fee schedule, offline receipts & hall tickets
+│   │   ├── ai-explainer.js                      # Dual-persona AI academic mentor
+│   │   └── database.js                          # Client-side localStorage persistence engine
+│   └── presentation/                            # 📽️ Slide Presentation Subsystem
+│       └── index.html                           # 10-slide HTML presentation with live D3 charts
 │
-├── css/                                         # 🎨 Stylesheet Subsystem
-│   ├── styles.css                               # Design tokens, resets, buttons, badges & tooltips
-│   ├── auth.css                                 # Aurora glowing login gateway & glassmorphism
-│   ├── dashboard.css                            # Layout grid, KPI cards, table filters & inspection dock
-│   ├── charts.css                               # D3.js SVG chart wrappers, gridlines & legends
-│   ├── marksheet.css                            # UGC Progress Card & @media print stylesheet
-│   ├── assignments.css                          # Assignment creator, student submission cards & grading modal
-│   ├── fees-notices.css                         # Fee schedules, passbook ledger, receipts & admit cards
-│   └── ai-explainer.css                         # AI floating copilot window, chat stream & prompt chips
+├── backend/                                     # ⚙️ Application Server & Services Layer
+│   ├── server.js                                # Zero-dependency HTTP & REST API server
+│   ├── build.js                                 # Production bundler for single-file compilation
+│   ├── report.js                                # CLI terminal academic audit utility
+│   ├── generate_ppt.js                          # Automated PowerPoint deck generator
+│   ├── generate_hardcopy_pdf.js                 # Headless print engine for A4 PDF reports
+│   └── capture_dashboards.js                    # Automated screenshot capture utility
 │
-├── js/                                          # ⚡ Application Logic Subsystem
-│   ├── data.js                                  # 22-student cohort dataset, course maps & safe storage
-│   ├── auth.js                                  # Session management, role switching & gateway triggers
-│   ├── ui.js                                    # Dynamic KPI calculators, table sorting & toast notices
-│   ├── charts.js                                # D3.js visualizers (Bar, Donut, Scatter, Radar, Gauge)
-│   ├── marksheet.js                             # UGC 10-point GPA calculation & marksheet generator
-│   ├── assignments.js                           # Assignment authoring, submission handling & grading engine
-│   ├── fees-notices.js                          # Fee schedule, offline self-reporting, passbook & receipts
-│   ├── ai-explainer.js                          # Dual-engine AI Academic Copilot & chat interface
-│   └── app.js                                   # Main application bootstrap & event dispatch
+├── database/                                    # 🗄️ Database & Persistence Layer
+│   ├── students.json                            # Master cohort JSON dataset (22 students)
+│   ├── db.js                                    # Node.js DAO (CRUD, queries, cohort analytics)
+│   ├── schema.json                              # JSON Schema validation specification
+│   └── README.md                                # Database layer documentation & usage
 │
-└── data/                                        # 📊 Static Data Assets
-    └── students.json                            # Seed cohort dataset
+├── package.json                                 # Project dependencies and script runner
+├── README.md                                    # GitHub repository guide
+└── vercel.json                                  # Production deployment routing
 ```
 
 ---
@@ -226,12 +235,15 @@ D3project/
 
 | Module | Location | Primary Responsibilities |
 |---|---|---|
-| **Assignment Hub** | [`js/assignments.js`](js/assignments.js)<br>[`css/assignments.css`](css/assignments.css) | Handles faculty assignment authoring (title, start date, due date, max marks, rubrics), student submission intake (files, git repos, solutions), and faculty grading modal with score award & feedback notes. |
-| **Fees & Passbook** | [`js/fees-notices.js`](js/fees-notices.js)<br>[`css/fees-notices.css`](css/fees-notices.css) | Powers student fee schedules, self-reported offline payment recording (challan/cash/UTR), real-time passbook ledger, printable receipts, and exam hall ticket clearance. |
-| **AI Academic Copilot** | [`js/ai-explainer.js`](js/ai-explainer.js)<br>[`css/ai-explainer.css`](css/ai-explainer.css) | Powers floating dual-role academic advisor with automated response engines for student doubts and faculty cohort diagnostics. |
-| **D3 Visualizations** | [`js/charts.js`](js/charts.js)<br>[`css/charts.css`](css/charts.css) | Implements D3.js coordinate scales (`scaleBand`, `scaleLinear`), pie/donut generators (`d3.pie`, `d3.arc`), correlation scatter plots, and student radar charts. |
-| **UGC Marksheets** | [`js/marksheet.js`](js/marksheet.js)<br>[`css/marksheet.css`](css/marksheet.css) | Computes UGC 10-point GP, SGPA, and renders tamper-proof progress cards with university seals, verification QR code, and print styles. |
-| **Authentication** | [`js/auth.js`](js/auth.js)<br>[`css/auth.css`](css/auth.css) | Manages quick-login presets, session tokens, and dynamic role-based UI switching (`applyRoleBasedUI`). |
+| **Database DAO** | [`database/db.js`](database/db.js)<br>[`database/students.json`](database/students.json) | High-performance data access layer providing CRUD operations, cohort analytics calculation, arrears filtering, and topper ranking. |
+| **Backend REST API** | [`backend/server.js`](backend/server.js) | Serves frontend static files and exposes REST endpoints (`/api/students`, `/api/analytics`, `/api/arrears`, `/api/toppers`). |
+| **CLI Academic Audit** | [`backend/report.js`](backend/report.js) | Terminal reporting tool with flags for department filters (`--dept`), arrears (`--arrears`), and toppers (`--toppers`). |
+| **Assignment Hub** | [`frontend/js/assignments.js`](frontend/js/assignments.js)<br>[`frontend/css/assignments.css`](frontend/css/assignments.css) | Handles faculty assignment authoring (title, start date, due date, max marks, rubrics), student submission intake, and grading modal. |
+| **Fees & Passbook** | [`frontend/js/fees-notices.js`](frontend/js/fees-notices.js)<br>[`frontend/css/fees-notices.css`](frontend/css/fees-notices.css) | Powers student fee schedules, self-reported offline payment recording, passbook ledger, printable receipts, and exam hall ticket clearance. |
+| **AI Academic Copilot** | [`frontend/js/ai-explainer.js`](frontend/js/ai-explainer.js)<br>[`frontend/css/ai-explainer.css`](frontend/css/ai-explainer.css) | Powers floating dual-role academic advisor with automated response engines for student doubts and faculty cohort diagnostics. |
+| **D3 Visualizations** | [`frontend/js/charts.js`](frontend/js/charts.js)<br>[`frontend/css/charts.css`](frontend/css/charts.css) | Implements D3.js coordinate scales, pie/donut charts, correlation scatter plots, and student radar proficiencies. |
+| **UGC Marksheets** | [`frontend/js/marksheet.js`](frontend/js/marksheet.js)<br>[`frontend/css/marksheet.css`](frontend/css/marksheet.css) | Computes UGC 10-point GP, SGPA, and renders tamper-proof progress cards with university seals, QR verification, and print styles. |
+| **Authentication** | [`frontend/js/auth.js`](frontend/js/auth.js)<br>[`frontend/css/auth.css`](frontend/css/auth.css) | Manages quick-login presets, session tokens, and dynamic role-based UI switching (`applyRoleBasedUI`). |
 
 ---
 

@@ -6,7 +6,7 @@ const path = require('path');
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const DEBUG_PORT = 9228;
 const TARGET_URL = 'http://localhost:3000/hardcopy.html';
-const OUTPUT_PDF = path.join(__dirname, 'Academic_Analytics_Portal_Final_Project_Report.pdf');
+const OUTPUT_PDF = path.join(__dirname, '..', 'Academic_Analytics_Portal_Final_Project_Report.pdf');
 
 async function getWebSocketDebuggerUrl(port) {
     return new Promise((resolve, reject) => {

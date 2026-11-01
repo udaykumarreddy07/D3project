@@ -3,23 +3,31 @@
   "rewrites": [
     {
       "source": "/presentation/?",
-      "destination": "/presentation/index.html"
+      "destination": "/frontend/presentation/index.html"
     },
     {
       "source": "/presentation/:path*",
-      "destination": "/presentation/:path*"
+      "destination": "/frontend/presentation/:path*"
     },
     {
       "source": "/hardcopy/?",
-      "destination": "/hardcopy.html"
+      "destination": "/frontend/hardcopy.html"
     },
     {
       "source": "/uday/?",
-      "destination": "/uday.html"
+      "destination": "/frontend/uday.html"
     },
     {
       "source": "/standalone/?",
-      "destination": "/uday.html"
+      "destination": "/frontend/uday.html"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
     }
   ]
 }

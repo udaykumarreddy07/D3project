@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EduPulseStudentCohort",
+  "description": "Database Schema for Academic Analytics & Student Marksheet Portal",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "name", "department", "gender", "maths", "science", "english", "programming", "attendance"],
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Unique identifier for student record"
+      },
+      "rollNo": {
+        "type": "string",
+        "description": "Institutional roll number (e.g. 22A91A0501)"
+      },
+      "name": {
+        "type": "string",
+        "description": "Full student name"
+      },
+      "department": {
+        "type": "string",
+        "enum": ["CSE", "ECE", "EEE", "MECH", "CIVIL"],
+        "description": "Academic engineering department"
+      },
+      "gender": {
+        "type": "string",
+        "enum": ["Male", "Female", "Other"]
+      },
+      "maths": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "Mathematics score (Passing threshold: 35)"
+      },
+      "science": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "Physics/Science score (Passing threshold: 35)"
+      },
+      "english": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "English Communication score (Passing threshold: 35)"
+      },
+      "programming": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "Computer Programming score (Passing threshold: 35)"
+      },
+      "attendance": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "Semester attendance percentage (Eligibility threshold: 75%)"
+      }
+    }
+  }
+}
